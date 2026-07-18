@@ -10,7 +10,10 @@ describe('localization and time formatting', () => {
   });
 
   it('formats decimal and hours/minutes values', () => {
-    expect(formatMinutes(345, 'decimal', 'en')).toBe('5¾ Hours');
+    expect(formatMinutes(345, 'decimal', 'en')).toBe('6 Hours');
+    expect(formatMinutes(918, 'decimal', 'en')).toBe('15½ Hours');
+    expect(formatMinutes(1164, 'decimal', 'en')).toBe('19½ Hours');
+    expect(formatMinutes(1728, 'decimal', 'en')).toBe('29 Hours');
     expect(formatMinutes(345, 'hoursMinutes', 'ru')).toBe('5 ч 45 мин');
     expect(formatMinutes(null, 'decimal', 'en')).toBe('—');
   });

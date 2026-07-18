@@ -18,6 +18,8 @@ An independent, privacy-friendly Chromium extension that adds HowLongToBeat comp
 
 Download the Chrome ZIP from the latest [GitHub Release](../../releases/latest), extract it, open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the extracted folder.
 
+Firefox releases also include an unsigned `.xpi` development build. Load it temporarily from `about:debugging#/runtime/this-firefox` using **Load Temporary Add-on**. Permanent installation in regular Firefox requires Mozilla AMO signing; the package already contains its stable Gecko ID and current data-transmission declaration.
+
 For development:
 
 ```sh
@@ -31,10 +33,14 @@ Production checks and packaging:
 npm run check
 npx playwright install chromium
 npm run test:browser
-npm run zip
+npm run test:live -- 2258500 CRYMACHINA
+npm run build:firefox
+npm run verify:firefox
+npm run zip:all
 ```
 
 The unpacked extension is written to `.output/chrome-mv3`; the release ZIP is written to `.output/`.
+The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
 
 ## Architecture
 

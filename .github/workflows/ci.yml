@@ -22,10 +22,14 @@ jobs:
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-      - run: npm run zip
+      - run: npm run build:firefox
+      - run: npm run verify:firefox
+      - run: npm run zip:all
       - uses: actions/upload-artifact@v7
         with:
-          name: chrome-extension
-          path: .output/*-chrome.zip
+          name: browser-extensions
+          path: |
+            .output/*-chrome.zip
+            .output/*-firefox.xpi
           if-no-files-found: error
           include-hidden-files: true

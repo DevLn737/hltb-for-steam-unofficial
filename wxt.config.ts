@@ -2,11 +2,11 @@ import { defineConfig } from 'wxt';
 
 export default defineConfig({
   manifestVersion: 3,
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'HLTB for Steam — Unofficial',
     short_name: 'HLTB for Steam',
     description: 'Shows HowLongToBeat completion times on Steam game pages.',
-    version: '2.0.3',
+    version: '2.0.4',
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
     host_permissions: [
       'https://store.steampowered.com/*',
@@ -28,14 +28,25 @@ export default defineConfig({
         16: 'icons/icon16.png',
         32: 'icons/icon32.png',
         48: 'icons/icon48.png',
-        128: 'icons/icon128.png',
+        ...(browser === 'firefox' ? {} : { 128: 'icons/icon128.png' }),
       },
     },
     icons: {
       16: 'icons/icon16.png',
       32: 'icons/icon32.png',
       48: 'icons/icon48.png',
-      128: 'icons/icon128.png',
+      ...(browser === 'firefox' ? {} : { 128: 'icons/icon128.png' }),
     },
-  },
+    ...(browser === 'firefox' ? {
+      browser_specific_settings: {
+        gecko: {
+          id: 'hltb-for-steam-unofficial@devln737.github.io',
+          strict_min_version: '142.0',
+          data_collection_permissions: {
+            required: ['websiteContent'],
+          },
+        },
+      },
+    } : {}),
+  }),
 });

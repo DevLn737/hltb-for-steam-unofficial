@@ -1,20 +1,24 @@
 import { access, readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
-const root = path.resolve('.output/chrome-mv3');
+const root = path.resolve('.output/firefox-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
-if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.0.4') throw new Error('Unexpected extension version');
-if (manifest.permissions.includes('alarms')) throw new Error('The extension must not use keep-alive alarms');
+if (manifest.manifest_version !== 3) throw new Error('Expected Firefox Manifest V3');
+if (manifest.version !== '2.0.4') throw new Error('Unexpected Firefox extension version');
+if (manifest.browser_specific_settings?.gecko?.id !== 'hltb-for-steam-unofficial@devln737.github.io') {
+  throw new Error('Firefox add-on ID is missing');
+}
+if (!manifest.browser_specific_settings?.gecko?.data_collection_permissions?.required?.includes('websiteContent')) {
+  throw new Error('Firefox website-content disclosure is missing');
+}
 
 const required = [
-  manifest.background?.service_worker,
+  ...(manifest.background?.scripts ?? []),
   manifest.action?.default_popup,
   ...Object.values(manifest.icons ?? {}),
   ...(manifest.declarative_net_request?.rule_resources ?? []).map((rule) => rule.path),
 ].filter(Boolean);
-
 for (const relative of required) await access(path.join(root, relative));
 
 async function scan(directory) {
@@ -29,9 +33,6 @@ async function scan(directory) {
 }
 
 const files = await scan(root);
-const forbidden = files.find((file) => /fallback-data|scraper|coverage/i.test(file));
-if (forbidden) throw new Error(`Forbidden legacy artifact in build: ${forbidden}`);
 const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size))).reduce((sum, size) => sum + size, 0);
-if (totalBytes > 1_000_000) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
-
-console.log(`Verified ${files.length} packaged files (${totalBytes} bytes).`);
+if (totalBytes > 1_000_000) throw new Error(`Firefox build is unexpectedly large: ${totalBytes} bytes`);
+console.log(`Verified Firefox build: ${files.length} files (${totalBytes} bytes).`);

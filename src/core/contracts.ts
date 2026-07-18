@@ -39,9 +39,14 @@ export type LookupErrorCode =
   | 'service_error'
   | 'invalid_request';
 
+export interface LookupDiagnostic {
+  stage: 'initialization' | 'search';
+  status?: number;
+}
+
 export type LookupResult =
   | { ok: true; data: GameTimes }
-  | { ok: false; error: LookupErrorCode; retryAfterSeconds?: number };
+  | { ok: false; error: LookupErrorCode; retryAfterSeconds?: number; diagnostic?: LookupDiagnostic };
 
 export type RuntimeRequest =
   | { type: 'GET_GAME_TIMES'; appId: string; title: string }

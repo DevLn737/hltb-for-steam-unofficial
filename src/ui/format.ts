@@ -4,13 +4,13 @@ import type { Locale } from './i18n';
 export function formatMinutes(minutes: number | null, format: TimeFormat, locale: Locale): string {
   if (minutes === null) return '—';
   if (format === 'decimal') {
-    const hours = minutes / 60;
+    const hours = Math.round(minutes / 30) / 2;
     if (locale === 'ru') {
       return `${new Intl.NumberFormat('ru', { maximumFractionDigits: 1 }).format(hours)} ч`;
     }
     const whole = Math.floor(hours);
     const fraction = Math.round((hours - whole) * 60);
-    const glyph = fraction === 15 ? '¼' : fraction === 30 ? '½' : fraction === 45 ? '¾' : '';
+    const glyph = fraction === 30 ? '½' : '';
     const value = glyph ? `${whole || ''}${glyph}` : new Intl.NumberFormat('en', { maximumFractionDigits: 1 }).format(hours);
     return `${value} ${Math.abs(hours - 1) < Number.EPSILON ? 'Hour' : 'Hours'}`;
   }

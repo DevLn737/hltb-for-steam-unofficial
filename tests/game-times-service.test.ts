@@ -44,7 +44,13 @@ describe('GameTimesService', () => {
 
   it('does not invent a result on a cold network failure', async () => {
     await expect(new GameTimesService(new StubClient(new HltbNetworkError('offline'))).getGameTimes('10', 'Unknown Game'))
-      .resolves.toEqual({ ok: false, error: 'network' });
+      .resolves.toEqual({ ok: false, error: 'network', diagnostic: { stage: 'initialization' } });
+  });
+
+  it('exposes only the failed HLTB stage and HTTP status', async () => {
+    const error = new HltbNetworkError('blocked', 403, undefined, 'search');
+    await expect(new GameTimesService(new StubClient(error)).getGameTimes('10', 'Unknown Game'))
+      .resolves.toEqual({ ok: false, error: 'network', diagnostic: { stage: 'search', status: 403 } });
   });
 
   it('limits concurrent HLTB requests', async () => {

@@ -40,4 +40,11 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).toContain('Надёжное совпадение');
     expect(host.shadowRoot?.querySelector('a')?.href).toContain('Unknown%20%26%20Game');
   });
+
+  it('shows a safe network stage and status instead of hiding the cause', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderError(host, 'network', 'CRYMACHINA', 'en', { stage: 'initialization', status: 403 });
+    expect(host.shadowRoot?.textContent).toContain('initialization (HTTP 403)');
+  });
 });

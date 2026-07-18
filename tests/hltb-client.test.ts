@@ -32,7 +32,10 @@ describe('HltbClient', () => {
     const search = fetchMock.mock.calls[1];
     expect(search?.[0]).toBe('https://howlongtobeat.com/api/bleed');
     expect(search?.[1]?.headers).toMatchObject({ 'x-auth-token': 'token', 'x-hp-key': 'captcha', 'x-hp-val': 'pass' });
-    expect(JSON.parse(String(search?.[1]?.body))).toMatchObject({ captcha: 'pass' });
+    expect(JSON.parse(String(search?.[1]?.body))).toMatchObject({
+      captcha: 'pass',
+      searchOptions: { games: { rangeTime: { min: 0, max: 0 } } },
+    });
   });
 
   it('refreshes authentication exactly once after an authorization failure', async () => {
@@ -80,5 +83,22 @@ describe('HltbClient', () => {
       init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
     }));
     await expect(new HltbClient({ fetch: fetchMock, timeoutMs: 1 }).lookup('Game')).rejects.toBeInstanceOf(HltbNetworkError);
+  });
+
+  it('binds the native fetch implementation to the global browser context', async () => {
+    const nativeFetch = vi.fn(function (this: unknown) {
+      expect(this).toBe(globalThis);
+      return Promise.resolve(nativeFetch.mock.calls.length === 1
+        ? initResponse()
+        : new Response('not-json', { status: 200 }));
+    });
+    vi.stubGlobal('fetch', nativeFetch);
+    try {
+      const client = new HltbClient();
+      await expect(client.lookup('Game')).rejects.toBeInstanceOf(HltbNetworkError);
+      expect(nativeFetch).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
