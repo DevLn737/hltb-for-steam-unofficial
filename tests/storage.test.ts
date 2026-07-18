@@ -16,6 +16,7 @@ describe('storage', () => {
     await setCachedGame({
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
+      imageUrl: 'https://howlongtobeat.com/games/155183_Trails.jpg',
       source: 'network', fetchedAt: 1_000, stale: false,
     });
     await expect(getCachedGame('3375780', 'Trails in the Sky 1st Chapter', 7, 2_000)).resolves.toMatchObject({ fresh: true });
@@ -23,9 +24,8 @@ describe('storage', () => {
   });
 
   it('clears game cache without deleting settings', async () => {
-    await browser.storage.local.set({ 'settings:v2': DEFAULT_SETTINGS, 'game:v2:1:test': { schema: 2 } });
+    await browser.storage.local.set({ 'settings:v2': DEFAULT_SETTINGS, 'game:v3:1:test': { schema: 3 } });
     await clearGameCache();
     expect(await browser.storage.local.get(null)).toEqual({ 'settings:v2': DEFAULT_SETTINGS });
   });
 });
-

@@ -33,8 +33,8 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
       chrome: { storage: { local: { set(value: Record<string, unknown>): Promise<void> } } };
     }).chrome;
     await extensionApi.storage.local.set({
-      'game:v2:3375780:trails in the sky 1st chapter': {
-        schema: 2,
+      'game:v3:3375780:trails in the sky 1st chapter': {
+        schema: 3,
         data: {
           appId: '3375780',
           requestedTitle: 'Trails in the Sky 1st Chapter',
@@ -43,6 +43,7 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
           mainPlusExtras: 3420,
           completionist: 3480,
           hltbUrl: 'https://howlongtobeat.com/game/155183',
+          imageUrl: null,
           fetchedAt: Date.now(),
         },
       },
@@ -57,8 +58,8 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   const widget = page.locator('#hltb-for-steam-unofficial');
   await expect(widget).toHaveCount(1);
   await expect(widget.locator('xpath=following-sibling::*[1]')).toHaveClass('game_area_purchase');
-  await expect(widget).toContainText('40 h');
-  await expect(widget).toContainText('57 h');
-  await expect(widget).toContainText('58 h');
+  await expect(widget).toContainText('40 Hours');
+  await expect(widget).toContainText('57 Hours');
+  await expect(widget).toContainText('58 Hours');
   await expect(widget).not.toContainText('4.6');
 });

@@ -20,13 +20,17 @@ describe('Steam widget', () => {
     renderResult(host, {
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
+      imageUrl: 'https://howlongtobeat.com/games/155183_Trails.jpg',
       source: 'network', fetchedAt: Date.UTC(2026, 6, 18), stale: false,
     }, DEFAULT_SETTINGS, 'en');
-    expect(host.shadowRoot?.textContent).toContain('40 h');
-    expect(host.shadowRoot?.textContent).toContain('57 h');
-    expect(host.shadowRoot?.textContent).toContain('58 h');
+    expect(host.shadowRoot?.textContent).toContain('40 Hours');
+    expect(host.shadowRoot?.textContent).toContain('57 Hours');
+    expect(host.shadowRoot?.textContent).toContain('58 Hours');
     expect(host.shadowRoot?.textContent).not.toContain('4.6');
     expect(host.shadowRoot?.querySelector('a')?.href).toBe('https://howlongtobeat.com/game/155183');
+    expect(host.shadowRoot?.querySelector('img')?.src).toBe('https://howlongtobeat.com/games/155183_Trails.jpg');
+    expect(host.shadowRoot?.querySelector('.cover-backdrop')).not.toBeNull();
+    expect(host.shadowRoot?.querySelector('.time-mainStory')).not.toBeNull();
   });
 
   it('renders a safe search link for uncertain matches', () => {

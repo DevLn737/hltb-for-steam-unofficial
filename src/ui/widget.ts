@@ -25,13 +25,30 @@ export function ensureWidgetHost(documentRef: Document, placement: WidgetPlaceme
   return host;
 }
 
-function frame(host: HTMLElement, locale: Locale, body: string): void {
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[character] ?? character);
+}
+
+function safeHltbUrl(value: string, expectedPath: '/game/' | '/games/'): string | null {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname === 'howlongtobeat.com' && url.pathname.startsWith(expectedPath)
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function frame(host: HTMLElement, locale: Locale, body: string, className = ''): void {
   if (!host.shadowRoot) throw new Error('Widget host has no shadow root');
-  host.shadowRoot.innerHTML = `<style>${styles}</style><article class="card"><header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header>${body}</article>`;
+  host.shadowRoot.innerHTML = `<style>${styles}</style><article class="card ${className}">${body}</article>`;
 }
 
 export function renderLoading(host: HTMLElement, locale = detectLocale()): void {
-  frame(host, locale, `<p class="status loading">${translate('loading', locale)}</p>`);
+  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status loading">${translate('loading', locale)}</p>`);
 }
 
 export function renderResult(host: HTMLElement, data: GameTimes, settings: ExtensionSettings, locale = detectLocale()): void {
@@ -42,15 +59,21 @@ export function renderResult(host: HTMLElement, data: GameTimes, settings: Exten
   ] as const;
   const rows = categories
     .filter(([setting]) => settings.categories[setting])
-    .map(([, label, value]) => `<div class="time"><span>${translate(label, locale)}</span><strong>${formatMinutes(value, settings.timeFormat, locale)}</strong></div>`)
+    .map(([setting, label, value]) => `<div class="time time-${setting}"><span>${translate(label, locale)}</span><strong>${formatMinutes(value, settings.timeFormat, locale)}</strong></div>`)
     .join('');
   const badge = data.source === 'cache' ? `<span class="badge">${translate(data.stale ? 'stale' : 'cached', locale)}</span>` : '';
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.fetchedAt);
-  frame(host, locale, `<div class="times">${rows}</div><footer>${badge}<span>${translate('updated', locale, { date })}</span><a href="${data.hltbUrl}" target="_blank" rel="noopener noreferrer">${translate('openHltb', locale)} ↗</a></footer>`);
+  const pageUrl = safeHltbUrl(data.hltbUrl, '/game/') ?? 'https://howlongtobeat.com/';
+  const imageUrl = data.imageUrl ? safeHltbUrl(data.imageUrl, '/games/') : null;
+  const cover = imageUrl
+    ? `<img src="${escapeHtml(imageUrl)}" alt="" referrerpolicy="no-referrer">`
+    : `<span>${translate('heading', locale)}</span>`;
+  frame(host, locale, `<div class="cover-backdrop" aria-hidden="true"></div><div class="card-shade" aria-hidden="true"></div><div class="result-layout"><figure class="cover">${cover}</figure><section class="result-content"><h2>${escapeHtml(data.matchedTitle)}</h2><div class="times">${rows}</div><footer>${badge}<span class="updated">${translate('updated', locale, { date })}</span><a href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener noreferrer">${translate('openHltb', locale)} ↗</a></footer></section></div>`, 'result-card');
+  if (imageUrl) host.shadowRoot?.querySelector<HTMLElement>('.result-card')?.style.setProperty('--cover-image', `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`);
 }
 
 export function renderError(host: HTMLElement, error: LookupErrorCode, title: string, locale = detectLocale()): void {
   const key = error === 'not_found' ? 'notFound' : error === 'network' ? 'network' : error === 'rate_limited' ? 'rateLimited' : 'serviceError';
   const searchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
-  frame(host, locale, `<p class="status error">${translate(key, locale)}</p><a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
+  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status error">${translate(key, locale)}</p><a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
 }

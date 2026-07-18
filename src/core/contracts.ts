@@ -26,6 +26,7 @@ export interface GameTimes {
   mainPlusExtras: number | null;
   completionist: number | null;
   hltbUrl: string;
+  imageUrl: string | null;
   source: 'network' | 'cache';
   fetchedAt: number;
   stale: boolean;
@@ -53,4 +54,3 @@ export type RuntimeResponse =
   | { ok: true; settings: ExtensionSettings }
   | { ok: true; cleared: true }
   | { ok: false; error: 'invalid_request' | 'service_error' };
-

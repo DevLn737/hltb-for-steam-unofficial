@@ -40,6 +40,7 @@ export class GameTimesService {
         mainPlusExtras: found.mainPlusExtras,
         completionist: found.completionist,
         hltbUrl: found.hltbUrl,
+        imageUrl: found.imageUrl,
         source: 'network',
         fetchedAt: Date.now(),
         stale: false,
