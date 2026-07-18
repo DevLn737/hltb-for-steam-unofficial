@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HLTB for Steam</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header><strong>HowLongToBeat</strong><span id="unofficial"></span></header>
+      <h1 id="settings-title"></h1>
+      <fieldset>
+        <legend id="categories-title"></legend>
+        <label><input id="mainStory" type="checkbox" /><span id="mainStory-label"></span></label>
+        <label><input id="mainPlusExtras" type="checkbox" /><span id="mainPlusExtras-label"></span></label>
+        <label><input id="completionist" type="checkbox" /><span id="completionist-label"></span></label>
+      </fieldset>
+      <label class="select-label" for="timeFormat" id="time-format-label"></label>
+      <select id="timeFormat"><option value="decimal" id="decimal-option"></option><option value="hoursMinutes" id="hours-minutes-option"></option></select>
+      <label class="select-label" for="cacheDuration" id="cache-duration-label"></label>
+      <select id="cacheDuration"><option value="1" id="one-day-option"></option><option value="7" id="seven-days-option"></option><option value="30" id="thirty-days-option"></option></select>
+      <button id="clear-cache" type="button"></button>
+      <p id="notice" role="status"></p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
+
