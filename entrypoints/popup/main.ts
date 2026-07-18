@@ -1,6 +1,8 @@
 import { browser } from 'wxt/browser';
-import type { CacheDurationDays, ExtensionSettings, RuntimeResponse, TimeFormat } from '../../src/core/contracts';
+import type { CacheDurationDays, ExtensionSettings, TimeFormat } from '../../src/core/contracts';
 import { detectLocale, translate, type MessageKey } from '../../src/ui/i18n';
+import { isClearCacheResponse, isSettingsResponse } from '../../src/core/runtime-validation';
+import { DEFAULT_SETTINGS } from '../../src/core/contracts';
 
 const locale = detectLocale();
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -46,23 +48,30 @@ function applySettings(settings: ExtensionSettings): void {
 }
 
 let noticeTimeout: ReturnType<typeof setTimeout> | undefined;
-function notice(key: 'saved' | 'cacheCleared'): void {
+function notice(key: 'saved' | 'cacheCleared' | 'saveError'): void {
   clearTimeout(noticeTimeout);
   byId('notice').textContent = translate(key, locale);
   noticeTimeout = setTimeout(() => { byId('notice').textContent = ''; }, 1800);
 }
 
 async function save(): Promise<void> {
-  await browser.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings: readSettings() });
-  notice('saved');
+  try {
+    const response: unknown = await browser.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings: readSettings() });
+    notice(isSettingsResponse(response) ? 'saved' : 'saveError');
+  } catch {
+    notice('saveError');
+  }
 }
 
 document.querySelectorAll('input, select').forEach((element) => element.addEventListener('change', () => void save()));
 byId<HTMLButtonElement>('clear-cache').addEventListener('click', async () => {
-  await browser.runtime.sendMessage({ type: 'CLEAR_CACHE' });
-  notice('cacheCleared');
+  try {
+    const response: unknown = await browser.runtime.sendMessage({ type: 'CLEAR_CACHE' });
+    notice(isClearCacheResponse(response) ? 'cacheCleared' : 'saveError');
+  } catch {
+    notice('saveError');
+  }
 });
 
-const response = await browser.runtime.sendMessage({ type: 'GET_SETTINGS' }) as RuntimeResponse;
-if (response.ok && 'settings' in response) applySettings(response.settings);
-
+const response: unknown = await browser.runtime.sendMessage({ type: 'GET_SETTINGS' }).catch(() => undefined);
+applySettings(isSettingsResponse(response) ? response.settings : DEFAULT_SETTINGS);

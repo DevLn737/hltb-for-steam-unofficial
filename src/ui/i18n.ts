@@ -30,6 +30,7 @@ const messages = {
     clearCache: 'Clear cached games',
     cacheCleared: 'Cache cleared',
     saved: 'Saved',
+    saveError: 'Extension connection failed',
   },
   ru: {
     heading: 'HowLongToBeat',
@@ -60,6 +61,7 @@ const messages = {
     clearCache: 'Очистить кэш игр',
     cacheCleared: 'Кэш очищен',
     saved: 'Сохранено',
+    saveError: 'Нет связи с расширением',
   },
 } as const;
 
@@ -74,4 +76,3 @@ export function translate(key: MessageKey, locale: Locale, replacements: Record<
   for (const [name, replacement] of Object.entries(replacements)) value = value.replace(`{${name}}`, replacement);
   return value;
 }
-
