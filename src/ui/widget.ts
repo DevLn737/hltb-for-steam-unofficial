@@ -11,6 +11,8 @@ export function ensureWidgetHost(documentRef: Document, placement: WidgetPlaceme
   if (!host.id) {
     host.id = WIDGET_ID;
     host.setAttribute('aria-live', 'polite');
+    host.style.setProperty('display', 'block', 'important');
+    host.style.setProperty('margin', '0 0 28px', 'important');
     host.attachShadow({ mode: 'open' });
   }
 

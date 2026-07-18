@@ -12,7 +12,7 @@ describe('HLTB request header rules', () => {
   it('does not synthesize an Origin header for the initialization GET', () => {
     const init = rules.find((rule) => rule.condition.requestMethods?.includes('get'));
     expect(init?.condition.urlFilter).toContain('/api/bleed/init');
-    expect(init?.action.requestHeaders?.map((header) => header.header)).toEqual(['Referer']);
+    expect(init?.action.requestHeaders?.map((header) => header.header)).toEqual(['Referer', 'User-Agent']);
   });
 
   it('uses same-site Origin and Referer only for the search POST', () => {
@@ -22,5 +22,14 @@ describe('HLTB request header rules', () => {
       { header: 'Origin', operation: 'set', value: 'https://howlongtobeat.com' },
       { header: 'Referer', operation: 'set', value: 'https://howlongtobeat.com/' },
     ]));
+  });
+
+  it('replaces embedded-client user agents consistently for both HLTB API calls', () => {
+    const userAgents = rules.map((rule) => rule.action.requestHeaders
+      ?.find((header) => header.header.toLowerCase() === 'user-agent')?.value);
+
+    expect(userAgents[0]).toBe(userAgents[1]);
+    expect(userAgents[0]).toMatch(/Chrome\/\d+/);
+    expect(userAgents[0]).not.toMatch(/Steam|Headless/i);
   });
 });
