@@ -1,7 +1,7 @@
 import type { ExtensionSettings, GameTimes, LookupDiagnostic, LookupErrorCode } from '../core/contracts';
+import type { WidgetPlacement } from '../steam/page';
 import { formatMinutes } from './format';
 import { detectLocale, translate, type Locale } from './i18n';
-import type { WidgetPlacement } from '../steam/page';
 import styles from './widget.css?inline';
 
 export const WIDGET_ID = 'hltb-for-steam-unofficial';
@@ -25,12 +25,6 @@ export function ensureWidgetHost(documentRef: Document, placement: WidgetPlaceme
   return host;
 }
 
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>'"]/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
-  })[character] ?? character);
-}
-
 function safeHltbUrl(value: string, expectedPath: '/game/' | '/games/'): string | null {
   try {
     const url = new URL(value);
@@ -42,44 +36,125 @@ function safeHltbUrl(value: string, expectedPath: '/game/' | '/games/'): string 
   }
 }
 
-function frame(host: HTMLElement, locale: Locale, body: string, className = ''): void {
+function createElement<K extends keyof HTMLElementTagNameMap>(
+  documentRef: Document,
+  tag: K,
+  className?: string,
+  text?: string,
+): HTMLElementTagNameMap[K] {
+  const element = documentRef.createElement(tag);
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
+
+function frame(host: HTMLElement, className = ''): HTMLElement {
   if (!host.shadowRoot) throw new Error('Widget host has no shadow root');
-  host.shadowRoot.innerHTML = `<style>${styles}</style><article class="card ${className}">${body}</article>`;
+  const documentRef = host.ownerDocument;
+  const style = createElement(documentRef, 'style');
+  style.textContent = styles;
+  const article = createElement(documentRef, 'article', `card ${className}`.trim());
+  host.shadowRoot.replaceChildren(style, article);
+  return article;
+}
+
+function appendHeader(article: HTMLElement, locale: Locale): void {
+  const documentRef = article.ownerDocument;
+  const header = createElement(documentRef, 'header');
+  const row = createElement(documentRef, 'div');
+  row.append(
+    createElement(documentRef, 'strong', undefined, translate('heading', locale)),
+    createElement(documentRef, 'span', undefined, translate('unofficial', locale)),
+  );
+  header.append(row);
+  article.append(header);
 }
 
 export function renderLoading(host: HTMLElement, locale = detectLocale()): void {
-  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status loading">${translate('loading', locale)}</p>`);
+  const article = frame(host);
+  appendHeader(article, locale);
+  article.append(createElement(article.ownerDocument, 'p', 'status loading', translate('loading', locale)));
 }
 
 export function renderResult(host: HTMLElement, data: GameTimes, settings: ExtensionSettings, locale = detectLocale()): void {
+  const documentRef = host.ownerDocument;
+  const article = frame(host, 'result-card');
+  const backdrop = createElement(documentRef, 'div', 'cover-backdrop');
+  backdrop.setAttribute('aria-hidden', 'true');
+  const shade = createElement(documentRef, 'div', 'card-shade');
+  shade.setAttribute('aria-hidden', 'true');
+  const layout = createElement(documentRef, 'div', 'result-layout');
+  const cover = createElement(documentRef, 'figure', 'cover');
+  const pageUrl = safeHltbUrl(data.hltbUrl, '/game/') ?? 'https://howlongtobeat.com/';
+  const imageUrl = data.imageUrl ? safeHltbUrl(data.imageUrl, '/games/') : null;
+
+  if (imageUrl) {
+    const image = createElement(documentRef, 'img');
+    image.src = imageUrl;
+    image.alt = '';
+    image.referrerPolicy = 'no-referrer';
+    cover.append(image);
+    article.style.setProperty('--cover-image', `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`);
+  } else {
+    cover.append(createElement(documentRef, 'span', undefined, translate('heading', locale)));
+  }
+
+  const content = createElement(documentRef, 'section', 'result-content');
+  content.append(createElement(documentRef, 'h2', undefined, data.matchedTitle));
+  const times = createElement(documentRef, 'div', 'times');
   const categories = [
     ['mainStory', 'mainStory', data.mainStory],
     ['mainPlusExtras', 'mainPlusExtras', data.mainPlusExtras],
     ['completionist', 'completionist', data.completionist],
   ] as const;
-  const rows = categories
-    .filter(([setting]) => settings.categories[setting])
-    .map(([setting, label, value]) => `<div class="time time-${setting}"><span>${translate(label, locale)}</span><strong>${formatMinutes(value, settings.timeFormat, locale)}</strong></div>`)
-    .join('');
-  const badge = data.source === 'cache' ? `<span class="badge">${translate(data.stale ? 'stale' : 'cached', locale)}</span>` : '';
+  for (const [setting, label, value] of categories) {
+    if (!settings.categories[setting]) continue;
+    const row = createElement(documentRef, 'div', `time time-${setting}`);
+    row.append(
+      createElement(documentRef, 'span', undefined, translate(label, locale)),
+      createElement(documentRef, 'strong', undefined, formatMinutes(value, settings.timeFormat, locale)),
+    );
+    times.append(row);
+  }
+  content.append(times);
+
+  const footer = createElement(documentRef, 'footer');
+  if (data.source === 'cache') {
+    footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
+  }
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.fetchedAt);
-  const pageUrl = safeHltbUrl(data.hltbUrl, '/game/') ?? 'https://howlongtobeat.com/';
-  const imageUrl = data.imageUrl ? safeHltbUrl(data.imageUrl, '/games/') : null;
-  const cover = imageUrl
-    ? `<img src="${escapeHtml(imageUrl)}" alt="" referrerpolicy="no-referrer">`
-    : `<span>${translate('heading', locale)}</span>`;
-  frame(host, locale, `<div class="cover-backdrop" aria-hidden="true"></div><div class="card-shade" aria-hidden="true"></div><div class="result-layout"><figure class="cover">${cover}</figure><section class="result-content"><h2>${escapeHtml(data.matchedTitle)}</h2><div class="times">${rows}</div><footer>${badge}<span class="updated">${translate('updated', locale, { date })}</span><a href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener noreferrer">${translate('openHltb', locale)} ↗</a></footer></section></div>`, 'result-card');
-  if (imageUrl) host.shadowRoot?.querySelector<HTMLElement>('.result-card')?.style.setProperty('--cover-image', `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`);
+  footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
+  const link = createElement(documentRef, 'a', undefined, `${translate('openHltb', locale)} ↗`);
+  link.href = pageUrl;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  footer.append(link);
+  content.append(footer);
+  layout.append(cover, content);
+  article.append(backdrop, shade, layout);
 }
 
-export function renderError(host: HTMLElement, error: LookupErrorCode, title: string, locale = detectLocale(), diagnostic?: LookupDiagnostic): void {
+export function renderError(
+  host: HTMLElement,
+  error: LookupErrorCode,
+  title: string,
+  locale = detectLocale(),
+  diagnostic?: LookupDiagnostic,
+): void {
+  const documentRef = host.ownerDocument;
+  const article = frame(host);
+  appendHeader(article, locale);
   const key = error === 'not_found' ? 'notFound' : error === 'network' ? 'network' : error === 'rate_limited' ? 'rateLimited' : 'serviceError';
-  const searchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
-  const detail = error === 'network' && diagnostic
-    ? `<p class="diagnostic">${translate('networkDetail', locale, {
+  article.append(createElement(documentRef, 'p', 'status error', translate(key, locale)));
+  if (error === 'network' && diagnostic) {
+    article.append(createElement(documentRef, 'p', 'diagnostic', translate('networkDetail', locale, {
       stage: translate(diagnostic.stage === 'initialization' ? 'initializationStage' : 'searchStage', locale),
       status: diagnostic.status === undefined ? '' : ` (HTTP ${diagnostic.status})`,
-    })}</p>`
-    : '';
-  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status error">${translate(key, locale)}</p>${detail}<a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
+    })));
+  }
+  const link = createElement(documentRef, 'a', 'search', `${translate('searchHltb', locale)} ↗`);
+  link.href = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  article.append(link);
 }

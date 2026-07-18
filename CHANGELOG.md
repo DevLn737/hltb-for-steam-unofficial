@@ -14,6 +14,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 - Add an opt-in live Chromium smoke test against a real Steam page and HLTB response.
 - Show the safe failing HLTB stage and HTTP status when a network request is rejected.
+- Add a native Firefox Manifest V3 build and unsigned XPI release artifact.
 
 ## [2.0.3] - 2026-07-18
 
