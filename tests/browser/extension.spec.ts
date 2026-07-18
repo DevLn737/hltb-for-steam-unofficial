@@ -51,11 +51,12 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   const page = await context.newPage();
   await page.route('https://store.steampowered.com/app/3375780/Trails_in_the_Sky_1st_Chapter/', (route) => route.fulfill({
     contentType: 'text/html',
-    body: '<!doctype html><html><head><meta property="og:title" content="Wrong title on Steam"></head><body><div class="apphub_AppName">Trails in the Sky 1st Chapter</div><aside class="rightcol"></aside></body></html>',
+    body: '<!doctype html><html><head><meta property="og:title" content="Wrong title on Steam"></head><body><div class="apphub_AppName">Trails in the Sky 1st Chapter</div><main><div class="game_area_purchase"></div></main><aside class="rightcol"></aside></body></html>',
   }));
   await page.goto('https://store.steampowered.com/app/3375780/Trails_in_the_Sky_1st_Chapter/');
   const widget = page.locator('#hltb-for-steam-unofficial');
   await expect(widget).toHaveCount(1);
+  await expect(widget.locator('xpath=following-sibling::*[1]')).toHaveClass('game_area_purchase');
   await expect(widget).toContainText('40 h');
   await expect(widget).toContainText('57 h');
   await expect(widget).toContainText('58 h');

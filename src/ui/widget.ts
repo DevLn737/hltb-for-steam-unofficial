@@ -1,18 +1,27 @@
 import type { ExtensionSettings, GameTimes, LookupErrorCode } from '../core/contracts';
 import { formatMinutes } from './format';
 import { detectLocale, translate, type Locale } from './i18n';
+import type { WidgetPlacement } from '../steam/page';
 import styles from './widget.css?inline';
 
 export const WIDGET_ID = 'hltb-for-steam-unofficial';
 
-export function ensureWidgetHost(documentRef: Document, anchor: Element): HTMLElement {
-  const existing = documentRef.getElementById(WIDGET_ID);
-  if (existing) return existing;
-  const host = documentRef.createElement('section');
-  host.id = WIDGET_ID;
-  host.setAttribute('aria-live', 'polite');
-  host.attachShadow({ mode: 'open' });
-  anchor.insertBefore(host, anchor.firstChild);
+export function ensureWidgetHost(documentRef: Document, placement: WidgetPlacement): HTMLElement {
+  const host = documentRef.getElementById(WIDGET_ID) ?? documentRef.createElement('section');
+  if (!host.id) {
+    host.id = WIDGET_ID;
+    host.setAttribute('aria-live', 'polite');
+    host.attachShadow({ mode: 'open' });
+  }
+
+  const { anchor, position } = placement;
+  const parent = anchor.parentNode;
+  if (!parent) throw new Error('Widget anchor has no parent');
+  if (position === 'before') {
+    if (host.parentNode !== parent || host.nextSibling !== anchor) parent.insertBefore(host, anchor);
+  } else if (host.parentNode !== parent || anchor.nextSibling !== host) {
+    parent.insertBefore(host, anchor.nextSibling);
+  }
   return host;
 }
 
@@ -45,4 +54,3 @@ export function renderError(host: HTMLElement, error: LookupErrorCode, title: st
   const searchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
   frame(host, locale, `<p class="status error">${translate(key, locale)}</p><a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
 }
-

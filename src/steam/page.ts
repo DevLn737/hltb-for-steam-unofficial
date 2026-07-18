@@ -3,6 +3,11 @@ export interface SteamGamePage {
   title: string;
 }
 
+export interface WidgetPlacement {
+  anchor: Element;
+  position: 'before' | 'after';
+}
+
 function cleanSteamTitle(value: string): string {
   return value
     .replace(/\s+on Steam$/i, '')
@@ -22,7 +27,19 @@ export function extractSteamGamePage(documentRef: Document = document, url = loc
   return title ? { appId, title } : null;
 }
 
-export function findWidgetAnchor(documentRef: Document = document): Element | null {
-  return documentRef.querySelector('.rightcol, .game_meta_data, #game_area_purchase, .game_area_purchase');
+export function findWidgetPlacement(documentRef: Document = document): WidgetPlacement | null {
+  const candidates: ReadonlyArray<readonly [string, WidgetPlacement['position']]> = [
+    ['.game_area_purchase', 'before'],
+    ['.game_area_purchase_game', 'before'],
+    ['.apphub_AppName', 'after'],
+    ['.apphub_HomeHeader', 'after'],
+    ['#appHubAppName', 'after'],
+    ['.rightcol', 'before'],
+    ['.game_meta_data', 'before'],
+  ];
+  for (const [selector, position] of candidates) {
+    const anchor = documentRef.querySelector(selector);
+    if (anchor) return { anchor, position };
+  }
+  return null;
 }
-

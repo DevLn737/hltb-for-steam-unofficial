@@ -1,11 +1,12 @@
 import { browser } from 'wxt/browser';
-import type { ExtensionSettings, LookupResult, RuntimeRequest, RuntimeResponse } from '../src/core/contracts';
-import { extractSteamGamePage, findWidgetAnchor } from '../src/steam/page';
+import { DEFAULT_SETTINGS, type ExtensionSettings, type LookupResult, type RuntimeRequest, type RuntimeResponse } from '../src/core/contracts';
+import { withTimeout } from '../src/core/async';
+import { extractSteamGamePage, findWidgetPlacement } from '../src/steam/page';
 import { detectLocale } from '../src/ui/i18n';
 import { ensureWidgetHost, renderError, renderLoading, renderResult, WIDGET_ID } from '../src/ui/widget';
 
-async function send(message: RuntimeRequest): Promise<RuntimeResponse> {
-  return await browser.runtime.sendMessage(message) as RuntimeResponse;
+async function send(message: RuntimeRequest, timeoutMs: number): Promise<RuntimeResponse> {
+  return await withTimeout(browser.runtime.sendMessage(message) as Promise<RuntimeResponse>, timeoutMs);
 }
 
 export default defineContentScript({
@@ -17,23 +18,30 @@ export default defineContentScript({
 
     const refresh = async () => {
       const page = extractSteamGamePage();
-      const anchor = findWidgetAnchor();
-      if (!page || !anchor) {
+      const placement = findWidgetPlacement();
+      if (!page || !placement) {
         document.getElementById(WIDGET_ID)?.remove();
         currentPage = '';
         return;
       }
       const pageKey = `${page.appId}:${page.title}`;
-      if (pageKey === currentPage && document.getElementById(WIDGET_ID)) return;
+      const host = ensureWidgetHost(document, placement);
+      if (pageKey === currentPage) return;
       currentPage = pageKey;
-      const host = ensureWidgetHost(document, anchor);
       const locale = detectLocale();
       renderLoading(host, locale);
 
-      const [lookup, settingsResponse] = await Promise.all([
-        send({ type: 'GET_GAME_TIMES', appId: page.appId, title: page.title }),
-        send({ type: 'GET_SETTINGS' }),
-      ]);
+      let lookup: RuntimeResponse;
+      let settingsResponse: RuntimeResponse;
+      try {
+        [lookup, settingsResponse] = await Promise.all([
+          send({ type: 'GET_GAME_TIMES', appId: page.appId, title: page.title }, 20_000),
+          send({ type: 'GET_SETTINGS' }, 3_000).catch((): RuntimeResponse => ({ ok: true, settings: DEFAULT_SETTINGS })),
+        ]);
+      } catch {
+        if (currentPage === pageKey) renderError(host, 'service_error', page.title, locale);
+        return;
+      }
       if (currentPage !== pageKey) return;
       const result = lookup as LookupResult;
       if (result.ok) {
@@ -56,4 +64,3 @@ export default defineContentScript({
     window.addEventListener('popstate', schedule);
   },
 });
-
