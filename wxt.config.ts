@@ -6,7 +6,7 @@ export default defineConfig({
     name: 'HLTB for Steam — Unofficial',
     short_name: 'HLTB for Steam',
     description: 'Shows HowLongToBeat completion times on Steam game pages.',
-    version: '2.0.1',
+    version: '2.0.2',
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
     host_permissions: [
       'https://store.steampowered.com/*',

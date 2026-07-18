@@ -1,12 +1,13 @@
 import { browser } from 'wxt/browser';
-import { DEFAULT_SETTINGS, type ExtensionSettings, type LookupResult, type RuntimeRequest, type RuntimeResponse } from '../src/core/contracts';
+import { DEFAULT_SETTINGS, type ExtensionSettings, type RuntimeRequest } from '../src/core/contracts';
 import { withTimeout } from '../src/core/async';
+import { isLookupResult, isSettingsResponse } from '../src/core/runtime-validation';
 import { extractSteamGamePage, findWidgetPlacement } from '../src/steam/page';
 import { detectLocale } from '../src/ui/i18n';
 import { ensureWidgetHost, renderError, renderLoading, renderResult, WIDGET_ID } from '../src/ui/widget';
 
-async function send(message: RuntimeRequest, timeoutMs: number): Promise<RuntimeResponse> {
-  return await withTimeout(browser.runtime.sendMessage(message) as Promise<RuntimeResponse>, timeoutMs);
+async function send(message: RuntimeRequest, timeoutMs: number): Promise<unknown> {
+  return await withTimeout(browser.runtime.sendMessage(message) as Promise<unknown>, timeoutMs);
 }
 
 export default defineContentScript({
@@ -31,25 +32,26 @@ export default defineContentScript({
       const locale = detectLocale();
       renderLoading(host, locale);
 
-      let lookup: RuntimeResponse;
-      let settingsResponse: RuntimeResponse;
+      let lookup: unknown;
+      let settings: ExtensionSettings;
       try {
-        [lookup, settingsResponse] = await Promise.all([
+        [lookup, settings] = await Promise.all([
           send({ type: 'GET_GAME_TIMES', appId: page.appId, title: page.title }, 20_000),
-          send({ type: 'GET_SETTINGS' }, 3_000).catch((): RuntimeResponse => ({ ok: true, settings: DEFAULT_SETTINGS })),
+          send({ type: 'GET_SETTINGS' }, 3_000)
+            .then((response) => isSettingsResponse(response) ? response.settings : DEFAULT_SETTINGS)
+            .catch(() => DEFAULT_SETTINGS),
         ]);
       } catch {
         if (currentPage === pageKey) renderError(host, 'service_error', page.title, locale);
         return;
       }
       if (currentPage !== pageKey) return;
-      const result = lookup as LookupResult;
-      if (result.ok) {
-        const settings = settingsResponse.ok && 'settings' in settingsResponse ? settingsResponse.settings : undefined;
-        if (settings) renderResult(host, result.data, settings as ExtensionSettings, locale);
-        else renderError(host, 'service_error', page.title, locale);
+      if (!isLookupResult(lookup)) {
+        renderError(host, 'service_error', page.title, locale);
+      } else if (lookup.ok) {
+        renderResult(host, lookup.data, settings, locale);
       } else {
-        renderError(host, result.error, page.title, locale);
+        renderError(host, lookup.error, page.title, locale);
       }
     };
 

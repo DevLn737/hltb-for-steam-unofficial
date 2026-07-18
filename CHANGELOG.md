@@ -2,6 +2,14 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.2] - 2026-07-18
+
+### Fixed
+
+- Validate runtime message responses before reading discriminant fields.
+- Treat an undefined settings response as defaults and an undefined lookup response as a controlled service error.
+- Prevent uncaught popup message errors when the extension context is unavailable.
+
 ## [2.0.1] - 2026-07-18
 
 ### Fixed
