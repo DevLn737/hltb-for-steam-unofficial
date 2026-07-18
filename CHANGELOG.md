@@ -2,6 +2,14 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.1] - 2026-07-18
+
+### Fixed
+
+- Loading now always resolves to a result or an error, even when the extension message channel never settles.
+- Restored the legacy Steam placement immediately before the purchase area instead of the top of the right column.
+- Repositions an already mounted card when Steam finishes rendering a preferred anchor later.
+
 ## [2.0.0] - 2026-07-18
 
 ### Added
@@ -15,4 +23,3 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ### Removed
 
 - Bundled game-time database, fuzzy fallback estimates, HTML scraper, legacy services, and keep-alive alarms.
-

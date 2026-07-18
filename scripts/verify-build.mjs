@@ -5,7 +5,7 @@ const root = path.resolve('.output/chrome-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.0.0') throw new Error('Unexpected extension version');
+if (manifest.version !== '2.0.1') throw new Error('Unexpected extension version');
 if (manifest.permissions.includes('alarms')) throw new Error('The extension must not use keep-alive alarms');
 
 const required = [
@@ -35,4 +35,3 @@ const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file
 if (totalBytes > 1_000_000) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
 
 console.log(`Verified ${files.length} packaged files (${totalBytes} bytes).`);
-

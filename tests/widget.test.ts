@@ -5,8 +5,9 @@ import { ensureWidgetHost, renderError, renderLoading, renderResult } from '../s
 describe('Steam widget', () => {
   it('uses one Shadow DOM host and renders loading state', () => {
     const anchor = document.body.appendChild(document.createElement('aside'));
-    const first = ensureWidgetHost(document, anchor);
-    const second = ensureWidgetHost(document, anchor);
+    const placement = { anchor, position: 'before' as const };
+    const first = ensureWidgetHost(document, placement);
+    const second = ensureWidgetHost(document, placement);
     renderLoading(first, 'en');
     expect(first).toBe(second);
     expect(document.querySelectorAll('#hltb-for-steam-unofficial')).toHaveLength(1);
@@ -14,7 +15,8 @@ describe('Steam widget', () => {
   });
 
   it('renders the verified Trails contract and source link', () => {
-    const host = ensureWidgetHost(document, document.body);
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
@@ -28,7 +30,8 @@ describe('Steam widget', () => {
   });
 
   it('renders a safe search link for uncertain matches', () => {
-    const host = ensureWidgetHost(document, document.body);
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderError(host, 'not_found', 'Unknown & Game', 'ru');
     expect(host.shadowRoot?.textContent).toContain('Надёжное совпадение');
     expect(host.shadowRoot?.querySelector('a')?.href).toContain('Unknown%20%26%20Game');
