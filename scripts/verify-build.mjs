@@ -5,7 +5,7 @@ const root = path.resolve('.output/chrome-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.0.3') throw new Error('Unexpected extension version');
+if (manifest.version !== '2.0.4') throw new Error('Unexpected extension version');
 if (manifest.permissions.includes('alarms')) throw new Error('The extension must not use keep-alive alarms');
 
 const required = [

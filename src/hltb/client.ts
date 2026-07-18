@@ -70,7 +70,7 @@ export class HltbClient {
   private session: AuthSession | null = null;
 
   constructor(options: HltbClientOptions = {}) {
-    this.fetchImpl = options.fetch ?? fetch;
+    this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
     this.timeoutMs = options.timeoutMs ?? 15_000;
     this.now = options.now ?? Date.now;
   }
@@ -111,7 +111,7 @@ export class HltbClient {
           platform: '',
           sortCategory: 'popular',
           rangeCategory: 'main',
-          rangeTime: { min: null, max: null },
+          rangeTime: { min: 0, max: 0 },
           gameplay: { perspective: '', flow: '', genre: '', difficulty: '' },
           rangeYear: { min: '', max: '' },
           modifier: '',
@@ -129,14 +129,14 @@ export class HltbClient {
     const response = await this.request(SEARCH_URL, {
       method: 'POST',
       headers: {
-        Accept: 'application/json',
+        Accept: '*/*',
         'Content-Type': 'application/json',
         'x-auth-token': auth.token,
         'x-hp-key': auth.hpKey,
         'x-hp-val': auth.hpVal,
       },
       body: JSON.stringify(payload),
-    });
+    }, 'search');
 
     if (response.status === 429) {
       throw new HltbRateLimitError(retryAfterSeconds(response.headers, this.now()));
@@ -145,40 +145,41 @@ export class HltbClient {
       this.session = null;
       return this.search(title, false);
     }
-    if (!response.ok) throw new HltbNetworkError(`HLTB search failed with HTTP ${response.status}`, response.status);
-    return this.readJson<HltbSearchResponse>(response, 'Invalid HLTB search response');
+    if (!response.ok) throw new HltbNetworkError(`HLTB search failed with HTTP ${response.status}`, response.status, undefined, 'search');
+    return this.readJson<HltbSearchResponse>(response, 'Invalid HLTB search response', 'search');
   }
 
   private async getSession(): Promise<AuthSession> {
     if (this.session && this.now() < this.session.expiresAt) return this.session;
     const response = await this.request(`${INIT_URL}?t=${this.now()}`, {
       method: 'GET',
-      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
-    });
+      headers: { Accept: '*/*', 'Cache-Control': 'no-cache' },
+    }, 'initialization');
     if (!response.ok) throw new HltbNetworkError(`HLTB initialization failed with HTTP ${response.status}`, response.status);
-    const raw = await this.readJson<Partial<AuthSession>>(response, 'Invalid HLTB initialization response');
+    const raw = await this.readJson<Partial<AuthSession>>(response, 'Invalid HLTB initialization response', 'initialization');
     if (!raw.token || !raw.hpKey || !raw.hpVal) throw new HltbNetworkError('HLTB initialization response is missing authentication fields');
     this.session = { token: raw.token, hpKey: raw.hpKey, hpVal: raw.hpVal, expiresAt: this.now() + AUTH_TTL_MS };
     return this.session;
   }
 
-  private async request(url: string, init: RequestInit): Promise<Response> {
+  private async request(url: string, init: RequestInit, stage: 'initialization' | 'search'): Promise<Response> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
       return await this.fetchImpl(url, { ...init, signal: controller.signal });
     } catch (error) {
-      throw new HltbNetworkError(error instanceof Error && error.name === 'AbortError' ? 'HLTB request timed out' : 'HLTB network request failed', undefined, { cause: error });
+      console.warn('[HLTB] request failed before receiving a response', new URL(url).pathname, error);
+      throw new HltbNetworkError(error instanceof Error && error.name === 'AbortError' ? 'HLTB request timed out' : 'HLTB network request failed', undefined, { cause: error }, stage);
     } finally {
       clearTimeout(timeout);
     }
   }
 
-  private async readJson<T>(response: Response, message: string): Promise<T> {
+  private async readJson<T>(response: Response, message: string, stage: 'initialization' | 'search'): Promise<T> {
     try {
       return await response.json() as T;
     } catch (error) {
-      throw new HltbNetworkError(message, response.status, { cause: error });
+      throw new HltbNetworkError(message, response.status, { cause: error }, stage);
     }
   }
 }

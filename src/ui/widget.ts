@@ -1,4 +1,4 @@
-import type { ExtensionSettings, GameTimes, LookupErrorCode } from '../core/contracts';
+import type { ExtensionSettings, GameTimes, LookupDiagnostic, LookupErrorCode } from '../core/contracts';
 import { formatMinutes } from './format';
 import { detectLocale, translate, type Locale } from './i18n';
 import type { WidgetPlacement } from '../steam/page';
@@ -72,8 +72,14 @@ export function renderResult(host: HTMLElement, data: GameTimes, settings: Exten
   if (imageUrl) host.shadowRoot?.querySelector<HTMLElement>('.result-card')?.style.setProperty('--cover-image', `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`);
 }
 
-export function renderError(host: HTMLElement, error: LookupErrorCode, title: string, locale = detectLocale()): void {
+export function renderError(host: HTMLElement, error: LookupErrorCode, title: string, locale = detectLocale(), diagnostic?: LookupDiagnostic): void {
   const key = error === 'not_found' ? 'notFound' : error === 'network' ? 'network' : error === 'rate_limited' ? 'rateLimited' : 'serviceError';
   const searchUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
-  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status error">${translate(key, locale)}</p><a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
+  const detail = error === 'network' && diagnostic
+    ? `<p class="diagnostic">${translate('networkDetail', locale, {
+      stage: translate(diagnostic.stage === 'initialization' ? 'initializationStage' : 'searchStage', locale),
+      status: diagnostic.status === undefined ? '' : ` (HTTP ${diagnostic.status})`,
+    })}</p>`
+    : '';
+  frame(host, locale, `<header><div><strong>${translate('heading', locale)}</strong><span>${translate('unofficial', locale)}</span></div></header><p class="status error">${translate(key, locale)}</p>${detail}<a class="search" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${translate('searchHltb', locale)} ↗</a>`);
 }

@@ -51,7 +51,7 @@ export default defineContentScript({
       } else if (lookup.ok) {
         renderResult(host, lookup.data, settings, locale);
       } else {
-        renderError(host, lookup.error, page.title, locale);
+        renderError(host, lookup.error, page.title, locale, lookup.diagnostic);
       }
     };
 

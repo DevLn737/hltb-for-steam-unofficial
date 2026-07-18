@@ -17,6 +17,8 @@ describe('runtime response validation', () => {
 
   it('accepts valid lookup success and failure responses', () => {
     expect(isLookupResult({ ok: false, error: 'network' })).toBe(true);
+    expect(isLookupResult({ ok: false, error: 'network', diagnostic: { stage: 'initialization', status: 403 } })).toBe(true);
+    expect(isLookupResult({ ok: false, error: 'network', diagnostic: { stage: 'token', status: '403' } })).toBe(false);
     expect(isLookupResult({
       ok: true,
       data: {

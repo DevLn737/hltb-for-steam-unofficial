@@ -1,5 +1,10 @@
 export class HltbNetworkError extends Error {
-  constructor(message: string, readonly status?: number, options?: ErrorOptions) {
+  constructor(
+    message: string,
+    readonly status?: number,
+    options?: ErrorOptions,
+    readonly stage: 'initialization' | 'search' = 'initialization',
+  ) {
     super(message, options);
     this.name = 'HltbNetworkError';
   }
@@ -11,4 +16,3 @@ export class HltbRateLimitError extends Error {
     this.name = 'HltbRateLimitError';
   }
 }
-

@@ -2,6 +2,19 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.4] - 2026-07-18
+
+### Fixed
+
+- Bind the native service-worker `fetch` to the browser global so real HLTB requests are actually sent instead of failing locally.
+- Match the current HLTB request payload and separate initialization/search header rules.
+- Round estimates to the half-hour presentation used by HLTB.
+
+### Added
+
+- Add an opt-in live Chromium smoke test against a real Steam page and HLTB response.
+- Show the safe failing HLTB stage and HTTP status when a network request is rejected.
+
 ## [2.0.3] - 2026-07-18
 
 ### Fixed

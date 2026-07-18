@@ -1,6 +1,6 @@
 {
   "name": "hltb-for-steam-unofficial",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "private": true,
   "description": "An unofficial Chromium extension that shows HowLongToBeat estimates on Steam game pages.",
   "type": "module",
@@ -15,6 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "playwright test",
+    "test:live": "node scripts/live-smoke.mjs",
     "screenshot": "node scripts/capture-widget-screenshot.mjs",
     "verify:build": "node scripts/verify-build.mjs",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run verify:build"

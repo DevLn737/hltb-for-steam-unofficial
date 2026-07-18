@@ -31,10 +31,12 @@ Production checks and packaging:
 npm run check
 npx playwright install chromium
 npm run test:browser
+npm run test:live -- 2258500 CRYMACHINA
 npm run zip
 ```
 
 The unpacked extension is written to `.output/chrome-mv3`; the release ZIP is written to `.output/`.
+The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
 
 ## Architecture
 

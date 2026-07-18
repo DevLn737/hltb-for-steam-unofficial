@@ -32,7 +32,12 @@ export function isLookupResult(value: unknown): value is LookupResult {
   if (!value.ok) {
     return typeof value.error === 'string'
       && LOOKUP_ERRORS.has(value.error)
-      && (value.retryAfterSeconds === undefined || typeof value.retryAfterSeconds === 'number');
+      && (value.retryAfterSeconds === undefined || typeof value.retryAfterSeconds === 'number')
+      && (value.diagnostic === undefined || (
+        isRecord(value.diagnostic)
+        && (value.diagnostic.stage === 'initialization' || value.diagnostic.stage === 'search')
+        && (value.diagnostic.status === undefined || typeof value.diagnostic.status === 'number')
+      ));
   }
   const data = value.data;
   return isRecord(data)

@@ -50,7 +50,13 @@ export class GameTimesService {
     } catch (error) {
       if (cached) return { ok: true, data: { ...cached.data, stale: true } };
       if (error instanceof HltbRateLimitError) return { ok: false, error: 'rate_limited', retryAfterSeconds: error.retryAfterSeconds };
-      if (error instanceof HltbNetworkError) return { ok: false, error: 'network' };
+      if (error instanceof HltbNetworkError) {
+        return {
+          ok: false,
+          error: 'network',
+          diagnostic: { stage: error.stage, ...(error.status === undefined ? {} : { status: error.status }) },
+        };
+      }
       return { ok: false, error: 'service_error' };
     } finally {
       this.release();
