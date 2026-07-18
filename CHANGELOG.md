@@ -2,6 +2,19 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.5] - 2026-07-18
+
+### Fixed
+
+- Normalize the User-Agent only for HLTB API requests so its anti-bot layer does not reject Steam's embedded Chromium with HTTP 403.
+- Keep the same browser identity across HLTB initialization and search requests.
+- Restore a Steam-sized gap between the HLTB card and the first purchase section.
+
+### Changed
+
+- Reduce the result card dimensions and typography by roughly 12–15% while retaining the HLTB-inspired layout.
+- Add a live smoke-test mode that launches Chromium with a Steam-like User-Agent and fails if a real HLTB result is not rendered.
+
 ## [2.0.4] - 2026-07-18
 
 ### Fixed

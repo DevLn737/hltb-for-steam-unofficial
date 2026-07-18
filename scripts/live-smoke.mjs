@@ -4,6 +4,10 @@ import { chromium } from '@playwright/test';
 
 const appId = process.argv[2] ?? '2258500';
 const slug = process.argv[3] ?? 'CRYMACHINA';
+const userAgentMode = process.argv[4] ?? 'chrome';
+const chromeUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
+const steamUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Valve Steam Client) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.183 Safari/537.36';
+if (!['chrome', 'steam'].includes(userAgentMode)) throw new Error(`Unknown user-agent mode: ${userAgentMode}`);
 const steamUrl = `https://store.steampowered.com/app/${appId}/${slug}/`;
 const outputDirectory = path.resolve('live-smoke');
 const extensionPath = path.resolve('.output/chrome-mv3');
@@ -14,7 +18,7 @@ const context = await chromium.launchPersistentContext('', {
   channel: 'chromium',
   headless: true,
   viewport: { width: 1440, height: 1000 },
-  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
+  userAgent: userAgentMode === 'steam' ? steamUserAgent : chromeUserAgent,
   args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`],
 });
 
@@ -113,8 +117,35 @@ try {
     return !image || (image.complete && image.naturalWidth > 0);
   }, undefined, { timeout: 10_000 }).catch(() => undefined);
   await widget.screenshot({ path: path.join(outputDirectory, `${appId}-widget.png`) });
+  const placement = await page.evaluate(() => {
+    const widgetElement = globalThis.document.querySelector('#hltb-for-steam-unofficial');
+    const purchaseElement = globalThis.document.querySelector('.game_area_purchase');
+    if (!widgetElement || !purchaseElement) return null;
+    const widgetRect = widgetElement.getBoundingClientRect();
+    const purchaseRect = purchaseElement.getBoundingClientRect();
+    return {
+      gap: Math.round(purchaseRect.top - widgetRect.bottom),
+      widget: { x: widgetRect.x, y: widgetRect.y, width: widgetRect.width, height: widgetRect.height },
+      purchase: { x: purchaseRect.x, y: purchaseRect.y, width: purchaseRect.width, height: purchaseRect.height },
+    };
+  });
+  if (placement) {
+    const x = Math.max(0, Math.min(placement.widget.x, placement.purchase.x) - 10);
+    const y = Math.max(0, placement.widget.y - 10);
+    const right = Math.max(placement.widget.x + placement.widget.width, placement.purchase.x + placement.purchase.width) + 10;
+    const bottom = placement.purchase.y + Math.min(placement.purchase.height, 190);
+    await page.screenshot({
+      path: path.join(outputDirectory, `${appId}-placement.png`),
+      clip: { x, y, width: right - x, height: bottom - y },
+    });
+  }
   const text = await widget.evaluate((element) => element.shadowRoot?.querySelector('.card')?.textContent?.replace(/\s+/g, ' ').trim() ?? '');
-  process.stdout.write(`${JSON.stringify({ steamUrl, probe, text, events }, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify({ steamUrl, userAgentMode, probe, placement, text, events }, null, 2)}\n`);
+  if (probe.stage !== 'complete') throw new Error(`HLTB probe failed at ${probe.stage} (HTTP ${probe.status ?? 'unknown'})`);
+  if (!placement || placement.gap < 20) throw new Error(`The widget-to-purchase gap is too small: ${placement?.gap ?? 'missing'}px`);
+  if (/temporarily unavailable|could not be loaded/i.test(text) || !text.includes('Open on HowLongToBeat')) {
+    throw new Error(`The extension did not render a live HLTB result: ${text}`);
+  }
 } finally {
   await context.close();
 }

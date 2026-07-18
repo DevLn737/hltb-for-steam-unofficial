@@ -5,7 +5,7 @@ const root = path.resolve('.output/firefox-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Firefox Manifest V3');
-if (manifest.version !== '2.0.4') throw new Error('Unexpected Firefox extension version');
+if (manifest.version !== '2.0.5') throw new Error('Unexpected Firefox extension version');
 if (manifest.browser_specific_settings?.gecko?.id !== 'hltb-for-steam-unofficial@devln737.github.io') {
   throw new Error('Firefox add-on ID is missing');
 }

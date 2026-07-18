@@ -8,6 +8,7 @@ An independent, privacy-friendly Chromium extension that adds HowLongToBeat comp
 
 - Main Story, Main + Extras, and Completionist estimates.
 - HLTB-inspired card with cover art, colored time bars, and a blurred cover backdrop.
+- Compatibility rule for Steam's embedded Chromium, scoped only to the HLTB API.
 - Strict title matching: uncertain results are never shown as facts.
 - Seven-day local cache with a saved-result fallback during temporary outages.
 - English and Russian interface selected from the browser language.
@@ -34,13 +35,14 @@ npm run check
 npx playwright install chromium
 npm run test:browser
 npm run test:live -- 2258500 CRYMACHINA
+npm run test:live -- 2258500 CRYMACHINA steam
 npm run build:firefox
 npm run verify:firefox
 npm run zip:all
 ```
 
 The unpacked extension is written to `.output/chrome-mv3`; the release ZIP is written to `.output/`.
-The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
+The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`. Pass `steam` as the final argument to reproduce the nonstandard user agent used by Steam's embedded browser.
 
 ## Architecture
 

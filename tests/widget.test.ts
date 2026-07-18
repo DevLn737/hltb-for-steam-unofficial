@@ -11,6 +11,8 @@ describe('Steam widget', () => {
     renderLoading(first, 'en');
     expect(first).toBe(second);
     expect(document.querySelectorAll('#hltb-for-steam-unofficial')).toHaveLength(1);
+    expect(first.style.getPropertyValue('margin')).toBe('0px 0px 28px');
+    expect(first.style.getPropertyPriority('margin')).toBe('important');
     expect(first.shadowRoot?.textContent).toContain('Loading completion times');
   });
 
