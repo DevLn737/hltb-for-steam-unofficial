@@ -3,6 +3,7 @@ import type { RuntimeRequest, RuntimeResponse } from '../src/core/contracts';
 import { GameTimesService } from '../src/background/game-times-service';
 import { clearGameCache } from '../src/storage/cache';
 import { getSettings, saveSettings } from '../src/storage/settings';
+import { createRuntimeMessageListener } from '../src/background/runtime-listener';
 
 const service = new GameTimesService();
 
@@ -31,9 +32,10 @@ async function handleMessage(message: unknown): Promise<RuntimeResponse> {
   }
 }
 
+export const handleRuntimeMessage = createRuntimeMessageListener(handleMessage);
+
 export default defineBackground(() => {
-  browser.runtime.onMessage.addListener(handleMessage);
+  browser.runtime.onMessage.addListener(handleRuntimeMessage);
 });
 
 export { handleMessage };
-

@@ -10,9 +10,8 @@
       ]
     },
     "condition": {
-      "urlFilter": "||howlongtobeat.com/api/find",
+      "urlFilter": "||howlongtobeat.com/api/bleed",
       "resourceTypes": ["xmlhttprequest"]
     }
   }
 ]
-

@@ -22,6 +22,7 @@ const found: HltbGameTimes = {
   mainPlusExtras: 3420,
   completionist: 3480,
   hltbUrl: 'https://howlongtobeat.com/game/155183',
+  imageUrl: 'https://howlongtobeat.com/games/155183_Trails.jpg',
 };
 
 describe('GameTimesService', () => {
@@ -34,6 +35,7 @@ describe('GameTimesService', () => {
     await setCachedGame({
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: found.matchedTitle,
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: found.hltbUrl,
+      imageUrl: found.imageUrl,
       source: 'network', fetchedAt: 1, stale: false,
     });
     const result = await new GameTimesService(new StubClient(new HltbNetworkError('offline'))).getGameTimes('3375780', 'Trails in the Sky 1st Chapter');
@@ -66,4 +68,3 @@ describe('GameTimesService', () => {
     expect(maximum).toBe(2);
   });
 });
-

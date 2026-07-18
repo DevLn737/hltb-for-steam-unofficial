@@ -2,11 +2,12 @@
 
 An independent, privacy-friendly Chromium extension that adds HowLongToBeat completion times to Steam game pages.
 
-![Completion-time card on a Steam page](docs/screenshots/widget.png)
+![HLTB-inspired completion-time card with cover art and a blurred backdrop](docs/screenshots/widget.png)
 
 ## Features
 
 - Main Story, Main + Extras, and Completionist estimates.
+- HLTB-inspired card with cover art, colored time bars, and a blurred cover backdrop.
 - Strict title matching: uncertain results are never shown as facts.
 - Seven-day local cache with a saved-result fallback during temporary outages.
 - English and Russian interface selected from the browser language.
@@ -56,4 +57,3 @@ Inspired by the original [k4sr4/hltbsteam](https://github.com/k4sr4/hltbsteam) p
 ## License
 
 [MIT](LICENSE)
-

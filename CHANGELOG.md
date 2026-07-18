@@ -2,6 +2,18 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.3] - 2026-07-18
+
+### Fixed
+
+- Restored live lookups with HLTB's current `init → bleed` request flow.
+- Fixed asynchronous responses on Chrome versions that do not support Promise-returning message listeners.
+
+### Changed
+
+- Added HLTB cover art and an HLTB-inspired result card with colored time bars and a blurred cover backdrop.
+- Bumped the game cache schema so incomplete older records cannot suppress a refreshed lookup.
+
 ## [2.0.2] - 2026-07-18
 
 ### Fixed

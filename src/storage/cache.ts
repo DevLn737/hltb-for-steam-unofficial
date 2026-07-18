@@ -2,10 +2,10 @@ import { browser } from 'wxt/browser';
 import type { GameTimes } from '../core/contracts';
 import { normalizeTitle } from '../core/title-matcher';
 
-const CACHE_PREFIX = 'game:v2:';
+const CACHE_PREFIX = 'game:v3:';
 
 interface CacheEntry {
-  schema: 2;
+  schema: 3;
   data: Omit<GameTimes, 'source' | 'stale'>;
 }
 
@@ -21,7 +21,7 @@ function cacheKey(appId: string, title: string): string {
 export async function getCachedGame(appId: string, title: string, ttlDays: number, now = Date.now()): Promise<CachedGame | null> {
   const key = cacheKey(appId, title);
   const value = (await browser.storage.local.get(key))[key] as CacheEntry | undefined;
-  if (!value || value.schema !== 2 || !value.data || value.data.appId !== appId) return null;
+  if (!value || value.schema !== 3 || !value.data || value.data.appId !== appId) return null;
   const fresh = now - value.data.fetchedAt <= ttlDays * 24 * 60 * 60 * 1000;
   return { data: { ...value.data, source: 'cache', stale: !fresh }, fresh };
 }
@@ -36,9 +36,10 @@ export async function setCachedGame(data: GameTimes): Promise<void> {
     mainPlusExtras: data.mainPlusExtras,
     completionist: data.completionist,
     hltbUrl: data.hltbUrl,
+    imageUrl: data.imageUrl,
     fetchedAt: data.fetchedAt,
   };
-  await browser.storage.local.set({ [key]: { schema: 2, data: storedData } satisfies CacheEntry });
+  await browser.storage.local.set({ [key]: { schema: 3, data: storedData } satisfies CacheEntry });
 }
 
 export async function clearGameCache(): Promise<void> {
