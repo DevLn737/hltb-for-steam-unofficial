@@ -42,10 +42,16 @@ context.on('requestfailed', (request) => {
   }
 });
 
+await context.addCookies([
+  { name: 'birthtime', value: '0', domain: 'store.steampowered.com', path: '/' },
+  { name: 'lastagecheckage', value: '1-January-1990', domain: 'store.steampowered.com', path: '/' },
+  { name: 'wants_mature_content', value: '1', domain: 'store.steampowered.com', path: '/' },
+]);
+
 try {
   const worker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
   worker.on('console', (message) => events.push({ type: 'console', level: message.type(), text: message.text() }));
-  const probe = await worker.evaluate(async () => {
+  const probe = userAgentMode === 'steam' ? { stage: 'skipped-local-snapshot' } : await worker.evaluate(async () => {
     try {
       const initUrl = `https://howlongtobeat.com/api/bleed/init?t=${Date.now()}`;
       const rulesets = await globalThis.chrome.declarativeNetRequest.getEnabledRulesets();
@@ -141,11 +147,15 @@ try {
   }
   const text = await widget.evaluate((element) => element.shadowRoot?.querySelector('.card')?.textContent?.replace(/\s+/g, ' ').trim() ?? '');
   process.stdout.write(`${JSON.stringify({ steamUrl, userAgentMode, probe, placement, text, events }, null, 2)}\n`);
-  if (probe.stage !== 'complete') throw new Error(`HLTB probe failed at ${probe.stage} (HTTP ${probe.status ?? 'unknown'})`);
+  if (userAgentMode === 'chrome' && probe.stage !== 'complete') throw new Error(`HLTB probe failed at ${probe.stage} (HTTP ${probe.status ?? 'unknown'})`);
+  if (userAgentMode === 'steam' && events.some((event) => event.type === 'request')) {
+    throw new Error('Steam mode unexpectedly contacted HowLongToBeat');
+  }
   if (!placement || placement.gap < 20) throw new Error(`The widget-to-purchase gap is too small: ${placement?.gap ?? 'missing'}px`);
   if (/temporarily unavailable|could not be loaded/i.test(text) || !text.includes('Open on HowLongToBeat')) {
     throw new Error(`The extension did not render a live HLTB result: ${text}`);
   }
+  if (userAgentMode === 'steam' && !text.includes('Local snapshot')) throw new Error(`Steam mode did not render snapshot data: ${text}`);
 } finally {
   await context.close();
 }

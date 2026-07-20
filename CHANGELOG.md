@@ -70,3 +70,15 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ### Removed
 
 - Bundled game-time database, fuzzy fallback estimates, HTML scraper, legacy services, and keep-alive alarms.
+## [2.1.0] - Unreleased
+
+### Added
+
+- Added a compact, versioned 52,000+ game snapshot for autonomous Steam-client lookups.
+- Added exact snapshot matching, per-entry data dates, checksum verification, and a manual importer.
+- Added Steam artwork extraction without storing or bundling cover images.
+
+### Changed
+
+- Steam now skips HLTB network requests that are known to receive HTTP 403; Chrome and Firefox still prefer current network data.
+- Redesigned the result as a shorter horizontal card and migrated the local cache to schema v4.

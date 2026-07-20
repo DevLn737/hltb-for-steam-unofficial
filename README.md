@@ -1,19 +1,19 @@
 # HLTB for Steam — Unofficial
 
-An independent, privacy-friendly Chromium extension that adds HowLongToBeat completion times to Steam game pages.
+An independent, privacy-friendly Chrome and Firefox extension that adds HowLongToBeat completion times to Steam game pages, including Steam's embedded browser.
 
-![HLTB-inspired completion-time card with cover art and a blurred backdrop](docs/screenshots/widget.png)
+![Compact HLTB-inspired completion-time card using Steam artwork and a blurred backdrop](docs/screenshots/widget.png)
 
 ## Features
 
 - Main Story, Main + Extras, and Completionist estimates.
-- HLTB-inspired card with cover art, colored time bars, and a blurred cover backdrop.
-- Compatibility rule for Steam's embedded Chromium, scoped only to the HLTB API.
+- Compact horizontal card using the Steam page artwork, colored time bars, and a blurred backdrop.
+- An autonomous local snapshot for Steam's embedded browser, where HLTB rejects extension requests.
 - Strict title matching: uncertain results are never shown as facts.
 - Seven-day local cache with a saved-result fallback during temporary outages.
 - English and Russian interface selected from the browser language.
 - Configurable categories, time format, cache duration, and cache clearing.
-- Manifest V3, no analytics, ads, remote code, backend, or bundled game database.
+- Manifest V3, no analytics, ads, remote code, or developer backend.
 
 ## Install
 
@@ -35,24 +35,25 @@ npm run check
 npx playwright install chromium
 npm run test:browser
 npm run test:live -- 2258500 CRYMACHINA
-npm run test:live -- 2258500 CRYMACHINA steam
 npm run build:firefox
 npm run verify:firefox
 npm run zip:all
 ```
 
 The unpacked extension is written to `.output/chrome-mv3`; the release ZIP is written to `.output/`.
-The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`. Pass `steam` as the final argument to reproduce the nonstandard user agent used by Steam's embedded browser.
+The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
 
 ## Architecture
 
-The Steam content script extracts the App ID and visible title, then renders an isolated Shadow DOM card. A short-lived Manifest V3 service worker owns the HLTB adapter, strict matcher, request concurrency, and versioned `chrome.storage.local` cache. HLTB-specific request details are contained in `src/hltb`, so site changes do not leak into UI or storage code.
+The Steam content script extracts the App ID, visible title, and existing Steam artwork, then renders an isolated Shadow DOM card. A short-lived Manifest V3 service worker owns the HLTB adapter, strict matcher, request concurrency, versioned `chrome.storage.local` cache, and local snapshot lookup.
 
-No offline game-time database is shipped. A tiny App ID alias map may correct naming differences, but never contains completion times.
+Steam's embedded Chromium uses a compact local snapshot because HLTB rejects its network fingerprint. Chrome and Firefox continue to prefer current HLTB responses and use the snapshot only when the service is unavailable. The snapshot contains no images, uses exact normalized matches only, and identifies its data date in the widget. Its 52,000+ records are split into 64 buckets so each lookup reads only a small portion.
+
+Snapshot updates are manual and reviewable. `npm run snapshot:import -- path/to/fallback-data.json` regenerates the compact files; `npm run verify:snapshot` verifies coverage, size, rows, and checksums. CI validates the committed snapshot and never scrapes HLTB.
 
 ## Privacy and independence
 
-The extension sends the Steam game title to HowLongToBeat only when a game page needs data. It has no telemetry or user accounts. See [PRIVACY.md](PRIVACY.md) for details.
+Chrome and Firefox send the Steam game title to HowLongToBeat when current data is requested. Steam's embedded browser resolves titles locally and sends nothing to HLTB. The extension has no telemetry or user accounts. See [PRIVACY.md](PRIVACY.md) for details.
 
 This project is not affiliated with, endorsed by, or sponsored by Valve Corporation, Steam, or HowLongToBeat. Product names and trademarks belong to their respective owners.
 
@@ -60,7 +61,7 @@ Inspired by the original [k4sr4/hltbsteam](https://github.com/k4sr4/hltbsteam) p
 
 ## Русский
 
-Расширение добавляет на страницы игр Steam время прохождения HowLongToBeat. Интерфейс автоматически переключается на русский язык браузера. Расширение не содержит локальной базы игр, аналитики или рекламы; при сомнительном совпадении оно предлагает открыть поиск HLTB вместо показа чужого времени.
+Расширение добавляет на страницы игр Steam время прохождения HowLongToBeat. В браузерах используются свежие сетевые данные, а внутри клиента Steam — компактный автономный снимок без обложек. Совпадения строго точные: при сомнении расширение не показывает чужое время.
 
 ## License
 

@@ -48,8 +48,7 @@ export function isLookupResult(value: unknown): value is LookupResult {
     && isNullableNumber(data.mainPlusExtras)
     && isNullableNumber(data.completionist)
     && typeof data.hltbUrl === 'string'
-    && (data.imageUrl === null || typeof data.imageUrl === 'string')
-    && (data.source === 'network' || data.source === 'cache')
-    && typeof data.fetchedAt === 'number'
+    && (data.source === 'network' || data.source === 'cache' || data.source === 'snapshot')
+    && typeof data.updatedAt === 'number'
     && typeof data.stale === 'boolean';
 }

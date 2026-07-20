@@ -26,11 +26,12 @@ export interface GameTimes {
   mainPlusExtras: number | null;
   completionist: number | null;
   hltbUrl: string;
-  imageUrl: string | null;
-  source: 'network' | 'cache';
-  fetchedAt: number;
+  source: 'network' | 'cache' | 'snapshot';
+  updatedAt: number;
   stale: boolean;
 }
+
+export type ClientContext = 'steam' | 'browser';
 
 export type LookupErrorCode =
   | 'not_found'
@@ -49,7 +50,7 @@ export type LookupResult =
   | { ok: false; error: LookupErrorCode; retryAfterSeconds?: number; diagnostic?: LookupDiagnostic };
 
 export type RuntimeRequest =
-  | { type: 'GET_GAME_TIMES'; appId: string; title: string }
+  | { type: 'GET_GAME_TIMES'; appId: string; title: string; client: ClientContext }
   | { type: 'GET_SETTINGS' }
   | { type: 'UPDATE_SETTINGS'; settings: ExtensionSettings }
   | { type: 'CLEAR_CACHE' };

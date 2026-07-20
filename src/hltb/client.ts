@@ -17,7 +17,6 @@ interface HltbGame {
   game_id: number;
   game_name: string;
   game_alias?: string;
-  game_image?: string;
   comp_main?: number;
   comp_plus?: number;
   comp_100?: number;
@@ -34,7 +33,6 @@ export interface HltbGameTimes {
   mainPlusExtras: number | null;
   completionist: number | null;
   hltbUrl: string;
-  imageUrl: string | null;
 }
 
 export interface HltbClientOptions {
@@ -46,12 +44,6 @@ export interface HltbClientOptions {
 function secondsToMinutes(value: number | undefined): number | null {
   if (!value || !Number.isFinite(value) || value <= 0) return null;
   return Math.round(value / 60);
-}
-
-function gameImageUrl(value: string | undefined): string | null {
-  if (!value) return null;
-  const path = value.replace(/^\/?(?:games\/)?/, '');
-  return path ? `${BASE_URL}/games/${path}` : null;
 }
 
 function retryAfterSeconds(headers: Headers, now: number): number {
@@ -94,7 +86,6 @@ export class HltbClient {
       mainPlusExtras: secondsToMinutes(game.comp_plus),
       completionist: secondsToMinutes(game.comp_100),
       hltbUrl: `${BASE_URL}/game/${game.game_id}`,
-      imageUrl: gameImageUrl(game.game_image),
     };
   }
 

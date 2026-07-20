@@ -1,8 +1,8 @@
 {
   "name": "hltb-for-steam-unofficial",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "private": true,
-  "description": "An unofficial Chromium extension that shows HowLongToBeat estimates on Steam game pages.",
+  "description": "An unofficial Chrome and Firefox extension that shows HowLongToBeat estimates on Steam game pages.",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -19,6 +19,8 @@
     "test:watch": "vitest",
     "test:browser": "playwright test",
     "test:live": "node scripts/live-smoke.mjs",
+    "snapshot:import": "node scripts/import-hltb-snapshot.mjs",
+    "verify:snapshot": "node scripts/verify-snapshot.mjs",
     "screenshot": "node scripts/capture-widget-screenshot.mjs",
     "verify:build": "node scripts/verify-build.mjs",
     "verify:firefox": "node scripts/verify-firefox-build.mjs",

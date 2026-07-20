@@ -1,0 +1,746 @@
+[
+  {
+    "normalized": "sprout",
+    "titles": [
+      "-SPROUT-",
+      "Sprout"
+    ]
+  },
+  {
+    "normalized": "flow",
+    "titles": [
+      ".flow",
+      "flOw"
+    ]
+  },
+  {
+    "normalized": "subject",
+    "titles": [
+      "[SUBJECT]",
+      "Subject"
+    ]
+  },
+  {
+    "normalized": "abzu",
+    "titles": [
+      "ABZU",
+      "ABZÛ"
+    ]
+  },
+  {
+    "normalized": "alex hunter lord of the mind",
+    "titles": [
+      "Alex Hunter - Lord of the Mind",
+      "Alex Hunter: Lord Of The Mind"
+    ]
+  },
+  {
+    "normalized": "alien breed impact",
+    "titles": [
+      "Alien Breed Impact",
+      "Alien Breed: Impact"
+    ]
+  },
+  {
+    "normalized": "alone",
+    "titles": [
+      "Alone",
+      "ALONE...",
+      "ALONE?"
+    ]
+  },
+  {
+    "normalized": "amaze",
+    "titles": [
+      "aMAZE",
+      "AMAZE!"
+    ]
+  },
+  {
+    "normalized": "aquanox deep descent",
+    "titles": [
+      "Aquanox Deep Descent",
+      "Aquanox: Deep Descent"
+    ]
+  },
+  {
+    "normalized": "aquarium",
+    "titles": [
+      "AQUARIUM",
+      "Aquarium."
+    ]
+  },
+  {
+    "normalized": "axis and allies",
+    "titles": [
+      "Axis & Allies",
+      "Axis and Allies"
+    ]
+  },
+  {
+    "normalized": "bit dungeon",
+    "titles": [
+      "bit Dungeon",
+      "bit Dungeon+"
+    ]
+  },
+  {
+    "normalized": "blade and sorcery",
+    "titles": [
+      "Blade & Sorcery",
+      "Blade and Sorcery"
+    ]
+  },
+  {
+    "normalized": "blazblue cross tag battle",
+    "titles": [
+      "BlazBlue Cross Tag Battle",
+      "BlazBlue: Cross Tag Battle"
+    ]
+  },
+  {
+    "normalized": "blue",
+    "titles": [
+      "Blue",
+      "blue."
+    ]
+  },
+  {
+    "normalized": "borderlands the pre sequel",
+    "titles": [
+      "Borderlands: The Pre-Sequel",
+      "Borderlands: The Pre-Sequel!"
+    ]
+  },
+  {
+    "normalized": "brain out",
+    "titles": [
+      "BRAIN / OUT",
+      "Brain Out"
+    ]
+  },
+  {
+    "normalized": "breakthru",
+    "titles": [
+      "BreakThru",
+      "BreakThru!"
+    ]
+  },
+  {
+    "normalized": "bridge",
+    "titles": [
+      "Bridge",
+      "Bridge!"
+    ]
+  },
+  {
+    "normalized": "cannons defenders",
+    "titles": [
+      "Cannons Defenders",
+      "Cannons-Defenders"
+    ]
+  },
+  {
+    "normalized": "cats",
+    "titles": [
+      "Cats",
+      "CATS!"
+    ]
+  },
+  {
+    "normalized": "cats and seek tokyo",
+    "titles": [
+      "Cats & Seek: Tokyo",
+      "Cats and Seek: Tokyo"
+    ]
+  },
+  {
+    "normalized": "cave story",
+    "titles": [
+      "Cave Story",
+      "Cave Story+"
+    ]
+  },
+  {
+    "normalized": "collapse",
+    "titles": [
+      "Collapse",
+      "Collapse!"
+    ]
+  },
+  {
+    "normalized": "cook serve forever",
+    "titles": [
+      "Cook Serve Forever",
+      "Cook, Serve, Forever"
+    ]
+  },
+  {
+    "normalized": "crash n burn",
+    "titles": [
+      "Crash 'n Burn",
+      "Crash 'n' Burn"
+    ]
+  },
+  {
+    "normalized": "crookz the big heist",
+    "titles": [
+      "Crookz - The Big Heist",
+      "Crookz: The Big Heist"
+    ]
+  },
+  {
+    "normalized": "dirt 3 complete edition",
+    "titles": [
+      "Dirt 3 Complete Edition",
+      "Dirt 3: Complete Edition"
+    ]
+  },
+  {
+    "normalized": "don t bite me bro",
+    "titles": [
+      "Don't Bite Me Bro!",
+      "Don't Bite Me Bro! +"
+    ]
+  },
+  {
+    "normalized": "dune",
+    "titles": [
+      "Dune",
+      "Dune!"
+    ]
+  },
+  {
+    "normalized": "echoes",
+    "titles": [
+      "Echoes",
+      "Echoes+"
+    ]
+  },
+  {
+    "normalized": "ef the first tale",
+    "titles": [
+      "ef - the first tale.",
+      "Ef: The First Tale"
+    ]
+  },
+  {
+    "normalized": "expelled",
+    "titles": [
+      "Expelled",
+      "Expelled!"
+    ]
+  },
+  {
+    "normalized": "final fantasy xii the zodiac age",
+    "titles": [
+      "Final Fantasy XII The Zodiac Age",
+      "Final Fantasy XII: The Zodiac Age"
+    ]
+  },
+  {
+    "normalized": "flock",
+    "titles": [
+      "Flock",
+      "Flock!"
+    ]
+  },
+  {
+    "normalized": "forget me not annie",
+    "titles": [
+      "Forget Me Not Annie",
+      "Forget Me Not, Annie"
+    ]
+  },
+  {
+    "normalized": "games and girls",
+    "titles": [
+      "Games and Girls",
+      "Games&Girls"
+    ]
+  },
+  {
+    "normalized": "guacamelee super turbo championship edition",
+    "titles": [
+      "Guacamelee! Super Turbo Championship Edition",
+      "Guacamelee!: Super Turbo Championship Edition"
+    ]
+  },
+  {
+    "normalized": "guilty gear strive",
+    "titles": [
+      "Guilty Gear -Strive-",
+      "Guilty Gear Strive"
+    ]
+  },
+  {
+    "normalized": "hardball",
+    "titles": [
+      "HardBall",
+      "HardBall!"
+    ]
+  },
+  {
+    "normalized": "heart s medicine season one",
+    "titles": [
+      "Heart's Medicine - Season One",
+      "Heart's Medicine: Season One"
+    ]
+  },
+  {
+    "normalized": "heart s medicine time to heal",
+    "titles": [
+      "Heart's Medicine - Time to Heal",
+      "Heart's Medicine: Time to Heal"
+    ]
+  },
+  {
+    "normalized": "heroes of might and magic v",
+    "titles": [
+      "Heroes of Might & Magic V",
+      "Heroes of Might and Magic V"
+    ]
+  },
+  {
+    "normalized": "higurashi when they cry hou",
+    "titles": [
+      "Higurashi When They Cry Hou",
+      "Higurashi When They Cry Hou+"
+    ]
+  },
+  {
+    "normalized": "homeworld remastered collection",
+    "titles": [
+      "Homeworld Remastered Collection",
+      "Homeworld: Remastered Collection"
+    ]
+  },
+  {
+    "normalized": "horizon forbidden west complete edition",
+    "titles": [
+      "Horizon Forbidden West - Complete Edition",
+      "Horizon Forbidden West Complete Edition"
+    ]
+  },
+  {
+    "normalized": "ittle dew 2",
+    "titles": [
+      "Ittle Dew 2",
+      "Ittle Dew 2+"
+    ]
+  },
+  {
+    "normalized": "j stars victory vs",
+    "titles": [
+      "J-Stars Victory VS",
+      "J-Stars Victory VS+"
+    ]
+  },
+  {
+    "normalized": "juiced",
+    "titles": [
+      "Juiced",
+      "Juiced!"
+    ]
+  },
+  {
+    "normalized": "kingdom rush vengeance",
+    "titles": [
+      "Kingdom Rush Vengeance",
+      "Kingdom Rush: Vengeance"
+    ]
+  },
+  {
+    "normalized": "lethis path of progress",
+    "titles": [
+      "Lethis - Path of Progress",
+      "Lethis: Path of Progress"
+    ]
+  },
+  {
+    "normalized": "love",
+    "titles": [
+      "LOVE",
+      "Love+"
+    ]
+  },
+  {
+    "normalized": "mark of the ninja remastered",
+    "titles": [
+      "Mark of the Ninja Remastered",
+      "Mark of the Ninja: Remastered"
+    ]
+  },
+  {
+    "normalized": "mars war logs",
+    "titles": [
+      "Mars War Logs",
+      "Mars: War Logs"
+    ]
+  },
+  {
+    "normalized": "mass effect andromeda",
+    "titles": [
+      "Mass Effect Andromeda",
+      "Mass Effect: Andromeda"
+    ]
+  },
+  {
+    "normalized": "metrico",
+    "titles": [
+      "Metrico",
+      "Metrico+"
+    ]
+  },
+  {
+    "normalized": "miner dig deep",
+    "titles": [
+      "Miner Dig Deep",
+      "Miner: Dig Deep"
+    ]
+  },
+  {
+    "normalized": "mirror s edge catalyst",
+    "titles": [
+      "Mirror's Edge Catalyst",
+      "Mirror's Edge: Catalyst"
+    ]
+  },
+  {
+    "normalized": "mojo",
+    "titles": [
+      "Mojo",
+      "Mojo!"
+    ]
+  },
+  {
+    "normalized": "mr hopp s playhouse",
+    "titles": [
+      "Mr Hopp's Playhouse",
+      "Mr. Hopp's Playhouse"
+    ]
+  },
+  {
+    "normalized": "n",
+    "titles": [
+      "N",
+      "N+",
+      "N++"
+    ]
+  },
+  {
+    "normalized": "need for speed heat",
+    "titles": [
+      "Need for Speed Heat",
+      "Need for Speed: Heat"
+    ]
+  },
+  {
+    "normalized": "need for speed rivals",
+    "titles": [
+      "Need for Speed Rivals",
+      "Need for Speed: Rivals"
+    ]
+  },
+  {
+    "normalized": "never give up",
+    "titles": [
+      "Never Give Up",
+      "Never Give Up!"
+    ]
+  },
+  {
+    "normalized": "ni no kuni wrath of the white witch remastered",
+    "titles": [
+      "Ni no Kuni Wrath of the White Witch Remastered",
+      "Ni no Kuni: Wrath of the White Witch Remastered"
+    ]
+  },
+  {
+    "normalized": "nothing",
+    "titles": [
+      "Nothing",
+      "Nothing!"
+    ]
+  },
+  {
+    "normalized": "oh deer",
+    "titles": [
+      "Oh Deer",
+      "Oh, Deer!"
+    ]
+  },
+  {
+    "normalized": "one",
+    "titles": [
+      "One",
+      "ONE."
+    ]
+  },
+  {
+    "normalized": "ord",
+    "titles": [
+      "Ord",
+      "Ord."
+    ]
+  },
+  {
+    "normalized": "overcooked",
+    "titles": [
+      "Overcooked",
+      "Overcooked!"
+    ]
+  },
+  {
+    "normalized": "overcooked 2",
+    "titles": [
+      "Overcooked 2",
+      "Overcooked! 2"
+    ]
+  },
+  {
+    "normalized": "pac man museum",
+    "titles": [
+      "Pac-Man Museum",
+      "Pac-Man Museum+"
+    ]
+  },
+  {
+    "normalized": "painkiller hell and damnation",
+    "titles": [
+      "Painkiller Hell & Damnation",
+      "Painkiller: Hell & Damnation"
+    ]
+  },
+  {
+    "normalized": "phantasy star online 2 new genesis",
+    "titles": [
+      "Phantasy Star Online 2 New Genesis",
+      "Phantasy Star Online 2: New Genesis"
+    ]
+  },
+  {
+    "normalized": "picross s",
+    "titles": [
+      "Picross S",
+      "Picross S+"
+    ]
+  },
+  {
+    "normalized": "pipes",
+    "titles": [
+      "Pipes",
+      "Pipes!"
+    ]
+  },
+  {
+    "normalized": "red riding hood star crossed lovers",
+    "titles": [
+      "Red Riding Hood - Star Crossed Lovers",
+      "Red Riding Hood: Star Crossed Lovers"
+    ]
+  },
+  {
+    "normalized": "resident evil 4 separate ways",
+    "titles": [
+      "Resident Evil 4 - Separate Ways",
+      "Resident Evil 4: Separate Ways"
+    ]
+  },
+  {
+    "normalized": "resident evil revelations",
+    "titles": [
+      "Resident Evil Revelations",
+      "Resident Evil: Revelations"
+    ]
+  },
+  {
+    "normalized": "resident evil revelations 2",
+    "titles": [
+      "Resident Evil Revelations 2",
+      "Resident Evil: Revelations 2"
+    ]
+  },
+  {
+    "normalized": "return",
+    "titles": [
+      "Return",
+      "Return."
+    ]
+  },
+  {
+    "normalized": "rewrite",
+    "titles": [
+      "Rewrite",
+      "Rewrite+"
+    ]
+  },
+  {
+    "normalized": "salt and sacrifice",
+    "titles": [
+      "Salt & Sacrifice",
+      "Salt and Sacrifice"
+    ]
+  },
+  {
+    "normalized": "salt and sanctuary",
+    "titles": [
+      "Salt & Sanctuary",
+      "Salt and Sanctuary"
+    ]
+  },
+  {
+    "normalized": "sam and max save the world",
+    "titles": [
+      "Sam & Max Save the World",
+      "Sam & Max: Save the World"
+    ]
+  },
+  {
+    "normalized": "samurai shodown",
+    "titles": [
+      "Samurai Shodown",
+      "Samurai Shodown!"
+    ]
+  },
+  {
+    "normalized": "sandtrix",
+    "titles": [
+      "Sandtrix",
+      "Sandtrix+"
+    ]
+  },
+  {
+    "normalized": "shovel knight pocket dungeon",
+    "titles": [
+      "Shovel Knight Pocket Dungeon",
+      "Shovel Knight: Pocket Dungeon"
+    ]
+  },
+  {
+    "normalized": "simian interface",
+    "titles": [
+      "simian.interface",
+      "simian.interface++"
+    ]
+  },
+  {
+    "normalized": "simplz zoo",
+    "titles": [
+      "Simplz Zoo",
+      "Simplz: Zoo"
+    ]
+  },
+  {
+    "normalized": "skate",
+    "titles": [
+      "Skate",
+      "skate."
+    ]
+  },
+  {
+    "normalized": "sorcery",
+    "titles": [
+      "Sorcery",
+      "Sorcery!"
+    ]
+  },
+  {
+    "normalized": "texas hold em",
+    "titles": [
+      "Texas Hold 'em",
+      "Texas Hold'em"
+    ]
+  },
+  {
+    "normalized": "the binding of isaac afterbirth",
+    "titles": [
+      "The Binding of Isaac: Afterbirth",
+      "The Binding of Isaac: Afterbirth+"
+    ]
+  },
+  {
+    "normalized": "the rumble fish",
+    "titles": [
+      "The Rumble Fish",
+      "The Rumble Fish+"
+    ]
+  },
+  {
+    "normalized": "them and us",
+    "titles": [
+      "Them & Us",
+      "Them and Us"
+    ]
+  },
+  {
+    "normalized": "titan quest anniversary edition",
+    "titles": [
+      "Titan Quest Anniversary Edition",
+      "Titan Quest: Anniversary Edition"
+    ]
+  },
+  {
+    "normalized": "wanted",
+    "titles": [
+      "Wanted",
+      "Wanted!"
+    ]
+  },
+  {
+    "normalized": "warhammer 40 000 inquisitor martyr",
+    "titles": [
+      "Warhammer 40,000: Inquisitor - Martyr",
+      "Warhammer 40,000: Inquisitor – Martyr"
+    ]
+  },
+  {
+    "normalized": "warhammer end times vermintide",
+    "titles": [
+      "Warhammer: End Times - Vermintide",
+      "Warhammer: End Times – Vermintide"
+    ]
+  },
+  {
+    "normalized": "who wants to be a millionaire",
+    "titles": [
+      "Who Wants To Be A Millionaire",
+      "Who Wants to Be a Millionaire?"
+    ]
+  },
+  {
+    "normalized": "wild 9",
+    "titles": [
+      "Wild 9",
+      "Wild-9"
+    ]
+  },
+  {
+    "normalized": "world of tanks blitz",
+    "titles": [
+      "World of Tanks Blitz",
+      "World of Tanks: Blitz"
+    ]
+  },
+  {
+    "normalized": "worms reloaded",
+    "titles": [
+      "Worms Reloaded",
+      "Worms: Reloaded"
+    ]
+  },
+  {
+    "normalized": "xuan yuan sword vii",
+    "titles": [
+      "Xuan Yuan Sword VII",
+      "Xuan-Yuan Sword VII"
+    ]
+  },
+  {
+    "normalized": "ys memories of celceta",
+    "titles": [
+      "Ys Memories of Celceta",
+      "Ys: Memories of Celceta"
+    ]
+  }
+]

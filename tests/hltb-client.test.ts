@@ -25,7 +25,6 @@ describe('HltbClient', () => {
       mainStory: 2400,
       mainPlusExtras: 3420,
       completionist: 3480,
-      imageUrl: 'https://howlongtobeat.com/games/155183_Trails.jpg',
     });
     expect(result?.completionist).not.toBe(276);
     expect(fetchMock.mock.calls[0]?.[0]).toContain('/api/bleed/init?t=1000');
@@ -67,7 +66,6 @@ describe('HltbClient', () => {
       mainStory: 930,
       mainPlusExtras: 1170,
       completionist: 1740,
-      imageUrl: 'https://howlongtobeat.com/games/129922_CRYMACHINA.jpg',
     });
   });
 

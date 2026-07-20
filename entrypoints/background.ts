@@ -16,7 +16,7 @@ async function handleMessage(message: unknown): Promise<RuntimeResponse> {
   try {
     switch (message.type) {
       case 'GET_GAME_TIMES':
-        return await service.getGameTimes(message.appId, message.title);
+        return await service.getGameTimes(message.appId, message.title, message.client);
       case 'GET_SETTINGS':
         return { ok: true, settings: await getSettings() };
       case 'UPDATE_SETTINGS':

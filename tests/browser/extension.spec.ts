@@ -33,8 +33,8 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
       chrome: { storage: { local: { set(value: Record<string, unknown>): Promise<void> } } };
     }).chrome;
     await extensionApi.storage.local.set({
-      'game:v3:3375780:trails in the sky 1st chapter': {
-        schema: 3,
+      'game:v4:3375780:trails in the sky 1st chapter': {
+        schema: 4,
         data: {
           appId: '3375780',
           requestedTitle: 'Trails in the Sky 1st Chapter',
@@ -43,8 +43,7 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
           mainPlusExtras: 3420,
           completionist: 3480,
           hltbUrl: 'https://howlongtobeat.com/game/155183',
-          imageUrl: null,
-          fetchedAt: Date.now(),
+          updatedAt: Date.now(),
         },
       },
     });
@@ -52,7 +51,7 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   const page = await context.newPage();
   await page.route('https://store.steampowered.com/app/3375780/Trails_in_the_Sky_1st_Chapter/', (route) => route.fulfill({
     contentType: 'text/html',
-    body: '<!doctype html><html><head><meta property="og:title" content="Wrong title on Steam"></head><body><div class="apphub_AppName">Trails in the Sky 1st Chapter</div><main><div class="game_area_purchase"></div></main><aside class="rightcol"></aside></body></html>',
+    body: '<!doctype html><html><head><meta property="og:title" content="Wrong title on Steam"><meta property="og:image" content="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/header.jpg"></head><body><div class="apphub_AppName">Trails in the Sky 1st Chapter</div><main><div class="game_area_purchase"></div></main><aside class="rightcol"></aside></body></html>',
   }));
   await page.goto('https://store.steampowered.com/app/3375780/Trails_in_the_Sky_1st_Chapter/');
   const widget = page.locator('#hltb-for-steam-unofficial');

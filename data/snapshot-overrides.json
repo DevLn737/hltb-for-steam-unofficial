@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "origin": "Legacy HLTB snapshot from k4sr4/hltbsteam commit e705d102 with manually verified corrections",
+  "entries": [
+    {
+      "appId": "3375780",
+      "title": "Trails in the Sky 1st Chapter",
+      "mainStory": 2400,
+      "mainPlusExtras": 3420,
+      "completionist": 3480,
+      "updatedAt": "2026-07-20"
+    },
+    {
+      "appId": "2258500",
+      "title": "CRYMACHINA",
+      "mainStory": 930,
+      "mainPlusExtras": 1170,
+      "completionist": 1740,
+      "updatedAt": "2026-07-20"
+    },
+    {
+      "appId": "2680010",
+      "title": "The First Berserker: Khazan",
+      "mainStory": 2040,
+      "mainPlusExtras": 2820,
+      "completionist": 3480,
+      "updatedAt": "2026-07-20"
+    },
+    {
+      "appId": "3639650",
+      "title": "Kotama and Academy Citadel",
+      "mainStory": 600,
+      "mainPlusExtras": 990,
+      "completionist": 1140,
+      "updatedAt": "2026-07-20"
+    }
+  ]
+}

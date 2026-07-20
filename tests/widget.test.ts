@@ -22,17 +22,33 @@ describe('Steam widget', () => {
     renderResult(host, {
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
-      imageUrl: 'https://howlongtobeat.com/games/155183_Trails.jpg',
-      source: 'network', fetchedAt: Date.UTC(2026, 6, 18), stale: false,
-    }, DEFAULT_SETTINGS, 'en');
+      source: 'network', updatedAt: Date.UTC(2026, 6, 18), stale: false,
+    }, DEFAULT_SETTINGS, 'en', 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/header.jpg');
     expect(host.shadowRoot?.textContent).toContain('40 Hours');
     expect(host.shadowRoot?.textContent).toContain('57 Hours');
     expect(host.shadowRoot?.textContent).toContain('58 Hours');
     expect(host.shadowRoot?.textContent).not.toContain('4.6');
     expect(host.shadowRoot?.querySelector('a')?.href).toBe('https://howlongtobeat.com/game/155183');
-    expect(host.shadowRoot?.querySelector('img')?.src).toBe('https://howlongtobeat.com/games/155183_Trails.jpg');
+    expect(host.shadowRoot?.querySelector('img')?.src).toContain('steamstatic.com');
     expect(host.shadowRoot?.querySelector('.cover-backdrop')).not.toBeNull();
     expect(host.shadowRoot?.querySelector('.time-mainStory')).not.toBeNull();
+  });
+
+  it('labels snapshot data and removes failed Steam artwork without a placeholder', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderResult(host, {
+      appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
+      mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
+      hltbUrl: 'https://howlongtobeat.com/?q=CRYMACHINA', source: 'snapshot',
+      updatedAt: Date.UTC(2026, 6, 20), stale: false,
+    }, DEFAULT_SETTINGS, 'ru', 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2258500/header.jpg');
+    expect(host.shadowRoot?.textContent).toContain('Локальный снимок');
+    const image = host.shadowRoot?.querySelector('img');
+    image?.dispatchEvent(new Event('error'));
+    expect(host.shadowRoot?.querySelector('.artwork')).toBeNull();
+    expect(host.shadowRoot?.querySelector('.result-card')?.classList).toContain('no-artwork');
+    expect(host.shadowRoot?.textContent).not.toContain('HowLongToBeatHowLongToBeat');
   });
 
   it('renders a safe search link for uncertain matches', () => {

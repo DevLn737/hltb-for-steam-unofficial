@@ -5,6 +5,7 @@ coverage/
 test-results/
 playwright-report/
 live-smoke/
+steam-debug-logs/
 dist/
 release/
 *.log

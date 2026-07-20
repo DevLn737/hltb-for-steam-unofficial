@@ -6,9 +6,9 @@ HLTB for Steam — Unofficial does not collect, sell, transmit, or analyze perso
 
 ## Data processed
 
-When a supported Steam game page is opened, the extension reads the public Steam App ID and game title from that page. The title is sent directly from the extension to HowLongToBeat to request completion-time information. HowLongToBeat processes that request under its own privacy policy.
+When a supported Steam game page is opened, the extension reads the public Steam App ID, game title, and artwork URL from that page. In Chrome and Firefox, the title is sent directly to HowLongToBeat to request current completion-time information. Inside Steam's embedded browser, lookup is performed against the packaged snapshot and the title is not sent to HowLongToBeat.
 
-Successful completion-time responses, the requested title, the Steam App ID, and extension preferences are stored locally through `chrome.storage.local`. Users can clear cached game data from the extension popup. This local data is not sent to the extension developer.
+Successful network completion-time responses, the requested title, the Steam App ID, and extension preferences are stored locally through `chrome.storage.local`. Steam artwork is displayed from its existing URL and is not stored by the extension. Users can clear cached game data from the extension popup. This local data is not sent to the extension developer.
 
 ## Permissions
 
@@ -18,4 +18,3 @@ Successful completion-time responses, the requested title, the Steam App ID, and
 - `declarativeNetRequestWithHostAccess`: applies required request headers only to the HLTB search endpoint.
 
 Questions or security reports can be opened through the repository's documented support channels.
-

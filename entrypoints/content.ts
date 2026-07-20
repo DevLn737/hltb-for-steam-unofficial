@@ -36,7 +36,12 @@ export default defineContentScript({
       let settings: ExtensionSettings;
       try {
         [lookup, settings] = await Promise.all([
-          send({ type: 'GET_GAME_TIMES', appId: page.appId, title: page.title }, 20_000),
+          send({
+            type: 'GET_GAME_TIMES',
+            appId: page.appId,
+            title: page.title,
+            client: navigator.userAgent.includes('Valve Steam Client') ? 'steam' : 'browser',
+          }, 20_000),
           send({ type: 'GET_SETTINGS' }, 3_000)
             .then((response) => isSettingsResponse(response) ? response.settings : DEFAULT_SETTINGS)
             .catch(() => DEFAULT_SETTINGS),
@@ -49,7 +54,7 @@ export default defineContentScript({
       if (!isLookupResult(lookup)) {
         renderError(host, 'service_error', page.title, locale);
       } else if (lookup.ok) {
-        renderResult(host, lookup.data, settings, locale);
+        renderResult(host, lookup.data, settings, locale, page.artworkUrl);
       } else {
         renderError(host, lookup.error, page.title, locale, lookup.diagnostic);
       }

@@ -1,6 +1,24 @@
 export interface SteamGamePage {
   appId: string;
   title: string;
+  artworkUrl: string | null;
+}
+
+const STEAM_IMAGE_HOSTS = [
+  'steamstatic.com',
+  'akamaihd.net',
+  'steampowered.com',
+];
+
+export function safeSteamArtworkUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value, 'https://store.steampowered.com/');
+    const allowed = url.protocol === 'https:' && STEAM_IMAGE_HOSTS.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`));
+    return allowed ? url.href : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface WidgetPlacement {
@@ -24,7 +42,11 @@ export function extractSteamGamePage(documentRef: Document = document, url = loc
   const slug = new URL(url).pathname.match(/\/app\/\d+\/([^/]+)/)?.[1];
   const fallbackTitle = slug ? decodeURIComponent(slug).replace(/_/g, ' ') : '';
   const title = cleanSteamTitle(domTitle || openGraphTitle || fallbackTitle);
-  return title ? { appId, title } : null;
+  const headerImage = documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.currentSrc
+    || documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.src;
+  const openGraphImage = documentRef.querySelector<HTMLMetaElement>('meta[property="og:image"]')?.content;
+  const artworkUrl = safeSteamArtworkUrl(headerImage || openGraphImage);
+  return title ? { appId, title, artworkUrl } : null;
 }
 
 export function findWidgetPlacement(documentRef: Document = document): WidgetPlacement | null {
