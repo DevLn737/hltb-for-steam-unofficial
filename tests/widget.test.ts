@@ -23,7 +23,9 @@ describe('Steam widget', () => {
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
       source: 'network', updatedAt: Date.UTC(2026, 6, 18), stale: false,
-    }, DEFAULT_SETTINGS, 'en', 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/header.jpg');
+    }, DEFAULT_SETTINGS, 'en',
+    'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3375780/library_600x900_2x.jpg',
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/header.jpg');
     expect(host.shadowRoot?.textContent).toContain('40 Hours');
     expect(host.shadowRoot?.textContent).toContain('57 Hours');
     expect(host.shadowRoot?.textContent).toContain('58 Hours');
@@ -34,7 +36,7 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.querySelector('.time-mainStory')).not.toBeNull();
   });
 
-  it('labels snapshot data and removes failed Steam artwork without a placeholder', () => {
+  it('shows only the snapshot update time and removes failed Steam artwork without a placeholder', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
@@ -42,8 +44,11 @@ describe('Steam widget', () => {
       mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
       hltbUrl: 'https://howlongtobeat.com/?q=CRYMACHINA', source: 'snapshot',
       updatedAt: Date.UTC(2026, 6, 20), stale: false,
-    }, DEFAULT_SETTINGS, 'ru', 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2258500/header.jpg');
-    expect(host.shadowRoot?.textContent).toContain('Локальный снимок');
+    }, DEFAULT_SETTINGS, 'ru',
+    'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2258500/library_600x900_2x.jpg',
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2258500/header.jpg');
+    expect(host.shadowRoot?.textContent).not.toContain('Локальный снимок');
+    expect(host.shadowRoot?.textContent).toContain('Обновлено');
     const image = host.shadowRoot?.querySelector('img');
     image?.dispatchEvent(new Event('error'));
     expect(host.shadowRoot?.querySelector('.artwork')).toBeNull();

@@ -61,4 +61,5 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   await expect(widget).toContainText('57 Hours');
   await expect(widget).toContainText('58 Hours');
   await expect(widget).not.toContainText('4.6');
+  await expect(widget).not.toContainText('Local snapshot');
 });

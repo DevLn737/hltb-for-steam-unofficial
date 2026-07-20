@@ -84,6 +84,7 @@ export function renderResult(
   settings: ExtensionSettings,
   locale = detectLocale(),
   steamArtworkUrl: string | null = null,
+  steamBackdropUrl: string | null = null,
 ): void {
   const documentRef = host.ownerDocument;
   const article = frame(host, 'result-card');
@@ -95,6 +96,7 @@ export function renderResult(
   const artwork = createElement(documentRef, 'figure', 'artwork');
   const pageUrl = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';
   const imageUrl = safeSteamArtworkUrl(steamArtworkUrl);
+  const backdropUrl = safeSteamArtworkUrl(steamBackdropUrl) ?? imageUrl;
 
   if (imageUrl) {
     const image = createElement(documentRef, 'img');
@@ -104,13 +106,12 @@ export function renderResult(
     image.addEventListener('error', () => {
       artwork.remove();
       article.classList.add('no-artwork');
-      article.style.removeProperty('--cover-image');
     }, { once: true });
     artwork.append(image);
-    article.style.setProperty('--cover-image', `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`);
   } else {
     article.classList.add('no-artwork');
   }
+  if (backdropUrl) article.style.setProperty('--cover-image', `url("${backdropUrl.replace(/["\\]/g, '\\$&')}")`);
 
   const content = createElement(documentRef, 'section', 'result-content');
   content.append(createElement(documentRef, 'h2', undefined, data.matchedTitle));
@@ -134,8 +135,6 @@ export function renderResult(
   const footer = createElement(documentRef, 'footer');
   if (data.source === 'cache') {
     footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
-  } else if (data.source === 'snapshot') {
-    footer.append(createElement(documentRef, 'span', 'badge', translate('snapshot', locale)));
   }
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
   footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));

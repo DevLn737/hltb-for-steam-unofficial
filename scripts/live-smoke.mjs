@@ -155,7 +155,9 @@ try {
   if (/temporarily unavailable|could not be loaded/i.test(text) || !text.includes('Open on HowLongToBeat')) {
     throw new Error(`The extension did not render a live HLTB result: ${text}`);
   }
-  if (userAgentMode === 'steam' && !text.includes('Local snapshot')) throw new Error(`Steam mode did not render snapshot data: ${text}`);
+  if (userAgentMode === 'steam' && (text.includes('Local snapshot') || !text.includes('Updated'))) {
+    throw new Error(`Steam mode did not render the date-only snapshot footer: ${text}`);
+  }
 } finally {
   await context.close();
 }

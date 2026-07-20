@@ -2,6 +2,7 @@ export interface SteamGamePage {
   appId: string;
   title: string;
   artworkUrl: string | null;
+  backdropUrl: string | null;
 }
 
 const STEAM_IMAGE_HOSTS = [
@@ -45,8 +46,9 @@ export function extractSteamGamePage(documentRef: Document = document, url = loc
   const headerImage = documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.currentSrc
     || documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.src;
   const openGraphImage = documentRef.querySelector<HTMLMetaElement>('meta[property="og:image"]')?.content;
-  const artworkUrl = safeSteamArtworkUrl(headerImage || openGraphImage);
-  return title ? { appId, title, artworkUrl } : null;
+  const artworkUrl = safeSteamArtworkUrl(`https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/library_600x900_2x.jpg`);
+  const backdropUrl = safeSteamArtworkUrl(headerImage || openGraphImage);
+  return title ? { appId, title, artworkUrl, backdropUrl } : null;
 }
 
 export function findWidgetPlacement(documentRef: Document = document): WidgetPlacement | null {

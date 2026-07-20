@@ -32,11 +32,10 @@ header span, .badge { color: #55b9f3; font-size: 10px; font-weight: 700; letter-
   transform: scale(1.08);
 }
 .card-shade { background: linear-gradient(90deg, rgba(18, 20, 24, .52), rgba(18, 20, 24, .82) 46%, rgba(18, 20, 24, .68)); }
-.no-artwork .cover-backdrop { display: none; }
 
-.result-layout { position: relative; display: grid; grid-template-columns: 142px minmax(0, 1fr); gap: 14px; min-height: 112px; padding: 11px; }
+.result-layout { position: relative; display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 14px; min-height: 120px; padding: 11px; }
 .no-artwork .result-layout { grid-template-columns: minmax(0, 1fr); }
-.artwork { width: 142px; height: 80px; margin: 3px 0 0; overflow: hidden; background: #23282c; border-radius: 3px; box-shadow: 0 7px 20px rgba(0, 0, 0, .42); }
+.artwork { width: 80px; height: 120px; margin: 0; overflow: hidden; background: #23282c; border-radius: 3px; box-shadow: 0 7px 20px rgba(0, 0, 0, .42); }
 .artwork img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .result-content { display: flex; min-width: 0; flex-direction: column; }
 .result-content h2 { margin: 1px 0 8px; overflow: hidden; color: #36aaf4; font-size: 18px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
@@ -60,8 +59,8 @@ a:hover { color: #fff; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 620px) {
-  .result-layout { grid-template-columns: 104px minmax(0, 1fr); gap: 10px; }
-  .artwork { width: 104px; height: 59px; }
+  .result-layout { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .artwork { width: 64px; height: 96px; }
   .result-content h2 { font-size: 17px; }
   .times { grid-template-columns: 1fr; gap: 4px; }
   .time { grid-template-columns: minmax(110px, 1fr) minmax(110px, 1fr); grid-template-rows: 32px; }
