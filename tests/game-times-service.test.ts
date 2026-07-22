@@ -92,6 +92,7 @@ describe('GameTimesService', () => {
       }
     }
     const snapshot = new StubSnapshot({
+      gameId: 124_771,
       matchedTitle: 'CRYMACHINA', mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
       updatedAt: Date.UTC(2026, 6, 20),
     });
@@ -103,6 +104,7 @@ describe('GameTimesService', () => {
 
   it('prefers a browser network result over the snapshot', async () => {
     const snapshot = new StubSnapshot({
+      gameId: 124_771,
       matchedTitle: 'CRYMACHINA', mainStory: 870, mainPlusExtras: 1164, completionist: 1704,
       updatedAt: Date.UTC(2025, 9, 23),
     });

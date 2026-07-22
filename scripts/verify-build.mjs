@@ -31,9 +31,9 @@ async function scan(directory) {
 }
 
 const files = await scan(root);
-const forbidden = files.find((file) => /fallback-data|scraper|coverage|\.backup/i.test(file));
+const forbidden = files.find((file) => /fallback-data|hltb_data|scraper|collision|coverage|\.backup|[\\/]_metadata[\\/]/i.test(file));
 if (forbidden) throw new Error(`Forbidden legacy artifact in build: ${forbidden}`);
 const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size))).reduce((sum, size) => sum + size, 0);
-if (totalBytes > 3_500_000) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
+if (totalBytes > 2_000_000) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
 
 console.log(`Verified ${files.length} packaged files (${totalBytes} bytes).`);

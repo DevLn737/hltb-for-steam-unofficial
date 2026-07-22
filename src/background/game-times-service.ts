@@ -84,7 +84,7 @@ export class GameTimesService {
   ): Promise<GameTimes | null> {
     let snapshot: SnapshotGameTimes | null = null;
     try {
-      snapshot = await this.snapshot.lookup(lookupTitle);
+      snapshot = await this.snapshot.lookup(appId, lookupTitle);
     } catch {
       // A packaged-data failure must not hide a usable browser cache or network diagnostic.
     }
@@ -95,7 +95,7 @@ export class GameTimesService {
       mainStory: snapshot.mainStory,
       mainPlusExtras: snapshot.mainPlusExtras,
       completionist: snapshot.completionist,
-      hltbUrl: `https://howlongtobeat.com/?q=${encodeURIComponent(snapshot.matchedTitle)}`,
+      hltbUrl: `https://howlongtobeat.com/game/${snapshot.gameId}`,
       source: 'snapshot',
       updatedAt: snapshot.updatedAt,
       stale: false,

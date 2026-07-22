@@ -1,0 +1,8198 @@
+{
+  "generatedAt": "2026-07-22",
+  "sourceSha256": "d204dd278a67f728aacaeea78ad725120e24f10126e171e0317fbcaaa3a4febe",
+  "titleCollisions": [
+    {
+      "normalized": "",
+      "games": [
+        {
+          "gameId": 117354,
+          "title": "◫"
+        },
+        {
+          "gameId": 159642,
+          "title": "|"
+        },
+        {
+          "gameId": 173796,
+          "title": "%"
+        }
+      ]
+    },
+    {
+      "normalized": "7days",
+      "games": [
+        {
+          "gameId": 45572,
+          "title": "7Days"
+        },
+        {
+          "gameId": 67978,
+          "title": "7Days"
+        }
+      ]
+    },
+    {
+      "normalized": "a dark room",
+      "games": [
+        {
+          "gameId": 11844,
+          "title": "A Dark Room"
+        },
+        {
+          "gameId": 164693,
+          "title": "A Dark Room"
+        }
+      ]
+    },
+    {
+      "normalized": "a twisted place",
+      "games": [
+        {
+          "gameId": 108696,
+          "title": "A Twisted Place"
+        },
+        {
+          "gameId": 175500,
+          "title": "A Twisted Place"
+        }
+      ]
+    },
+    {
+      "normalized": "above",
+      "games": [
+        {
+          "gameId": 45683,
+          "title": "Above"
+        },
+        {
+          "gameId": 152182,
+          "title": "Above"
+        }
+      ]
+    },
+    {
+      "normalized": "abyss",
+      "games": [
+        {
+          "gameId": 23099,
+          "title": "Abyss"
+        },
+        {
+          "gameId": 23936,
+          "title": "Abyss"
+        }
+      ]
+    },
+    {
+      "normalized": "acceptance",
+      "games": [
+        {
+          "gameId": 45440,
+          "title": "Acceptance"
+        },
+        {
+          "gameId": 143971,
+          "title": "Acceptance"
+        }
+      ]
+    },
+    {
+      "normalized": "adventures of lolo",
+      "games": [
+        {
+          "gameId": 223,
+          "title": "Adventures of Lolo"
+        },
+        {
+          "gameId": 185505,
+          "title": "Adventures of Lolo"
+        }
+      ]
+    },
+    {
+      "normalized": "after hours",
+      "games": [
+        {
+          "gameId": 64008,
+          "title": "After Hours"
+        },
+        {
+          "gameId": 82511,
+          "title": "after HOURS"
+        },
+        {
+          "gameId": 110071,
+          "title": "After Hours"
+        }
+      ]
+    },
+    {
+      "normalized": "after the fall",
+      "games": [
+        {
+          "gameId": 97302,
+          "title": "After the Fall"
+        },
+        {
+          "gameId": 131699,
+          "title": "After the Fall"
+        }
+      ]
+    },
+    {
+      "normalized": "agatha christie murder on the orient express",
+      "games": [
+        {
+          "gameId": 262,
+          "title": "Agatha Christie: Murder on the Orient Express"
+        },
+        {
+          "gameId": 128534,
+          "title": "Agatha Christie: Murder on the Orient Express"
+        }
+      ]
+    },
+    {
+      "normalized": "agatha christie the abc murders",
+      "games": [
+        {
+          "gameId": 263,
+          "title": "Agatha Christie: The ABC Murders"
+        },
+        {
+          "gameId": 33609,
+          "title": "Agatha Christie: The ABC Murders"
+        }
+      ]
+    },
+    {
+      "normalized": "agony",
+      "games": [
+        {
+          "gameId": 24645,
+          "title": "Agony"
+        },
+        {
+          "gameId": 56879,
+          "title": "Agony"
+        }
+      ]
+    },
+    {
+      "normalized": "air wars",
+      "games": [
+        {
+          "gameId": 82945,
+          "title": "Air Wars"
+        },
+        {
+          "gameId": 162493,
+          "title": "Air Wars"
+        }
+      ]
+    },
+    {
+      "normalized": "airwolf",
+      "games": [
+        {
+          "gameId": 306,
+          "title": "Airwolf"
+        },
+        {
+          "gameId": 169355,
+          "title": "Airwolf"
+        }
+      ]
+    },
+    {
+      "normalized": "akka arrh",
+      "games": [
+        {
+          "gameId": 118249,
+          "title": "Akka Arrh"
+        },
+        {
+          "gameId": 181256,
+          "title": "Akka Arrh"
+        }
+      ]
+    },
+    {
+      "normalized": "aladin and the enchanted lamp",
+      "games": [
+        {
+          "gameId": 83481,
+          "title": "Aladin And the Enchanted Lamp"
+        },
+        {
+          "gameId": 126256,
+          "title": "Aladin and the Enchanted Lamp"
+        }
+      ]
+    },
+    {
+      "normalized": "alcatraz",
+      "games": [
+        {
+          "gameId": 13974,
+          "title": "Alcatraz"
+        },
+        {
+          "gameId": 67113,
+          "title": "Alcatraz"
+        }
+      ]
+    },
+    {
+      "normalized": "alchemia",
+      "games": [
+        {
+          "gameId": 15721,
+          "title": "Alchemia"
+        },
+        {
+          "gameId": 73762,
+          "title": "Alchemia"
+        }
+      ]
+    },
+    {
+      "normalized": "alchemist s castle",
+      "games": [
+        {
+          "gameId": 51441,
+          "title": "Alchemist's Castle"
+        },
+        {
+          "gameId": 94035,
+          "title": "Alchemist's Castle"
+        }
+      ]
+    },
+    {
+      "normalized": "alchemy",
+      "games": [
+        {
+          "gameId": 12741,
+          "title": "Alchemy"
+        },
+        {
+          "gameId": 16083,
+          "title": "Alchemy"
+        }
+      ]
+    },
+    {
+      "normalized": "alex hunter lord of the mind",
+      "games": [
+        {
+          "gameId": 21151,
+          "title": "Alex Hunter: Lord Of The Mind"
+        },
+        {
+          "gameId": 26658,
+          "title": "Alex Hunter - Lord of the Mind"
+        }
+      ]
+    },
+    {
+      "normalized": "alien",
+      "games": [
+        {
+          "gameId": 22425,
+          "title": "Alien"
+        },
+        {
+          "gameId": 55380,
+          "title": "Alien"
+        }
+      ]
+    },
+    {
+      "normalized": "alien syndrome",
+      "games": [
+        {
+          "gameId": 369,
+          "title": "Alien Syndrome"
+        },
+        {
+          "gameId": 370,
+          "title": "Alien Syndrome"
+        }
+      ]
+    },
+    {
+      "normalized": "alive",
+      "games": [
+        {
+          "gameId": 55555,
+          "title": "Alive"
+        },
+        {
+          "gameId": 153335,
+          "title": "Alive"
+        }
+      ]
+    },
+    {
+      "normalized": "alone",
+      "games": [
+        {
+          "gameId": 36634,
+          "title": "ALONE..."
+        },
+        {
+          "gameId": 40649,
+          "title": "ALONE?"
+        },
+        {
+          "gameId": 74649,
+          "title": "Alone"
+        }
+      ]
+    },
+    {
+      "normalized": "alone in the dark",
+      "games": [
+        {
+          "gameId": 393,
+          "title": "Alone in the Dark"
+        },
+        {
+          "gameId": 394,
+          "title": "Alone in the Dark"
+        },
+        {
+          "gameId": 112498,
+          "title": "Alone in the Dark"
+        }
+      ]
+    },
+    {
+      "normalized": "alter ego",
+      "games": [
+        {
+          "gameId": 407,
+          "title": "Alter Ego"
+        },
+        {
+          "gameId": 408,
+          "title": "Alter Ego"
+        },
+        {
+          "gameId": 109155,
+          "title": "ALTER EGO"
+        },
+        {
+          "gameId": 139030,
+          "title": "Alter Ego"
+        }
+      ]
+    },
+    {
+      "normalized": "amaze",
+      "games": [
+        {
+          "gameId": 45638,
+          "title": "aMAZE"
+        },
+        {
+          "gameId": 145760,
+          "title": "AMAZE!"
+        }
+      ]
+    },
+    {
+      "normalized": "amerzone the explorer s legacy",
+      "games": [
+        {
+          "gameId": 434,
+          "title": "Amerzone: The Explorer's Legacy"
+        },
+        {
+          "gameId": 167368,
+          "title": "Amerzone: The Explorer's Legacy"
+        }
+      ]
+    },
+    {
+      "normalized": "amplitude",
+      "games": [
+        {
+          "gameId": 445,
+          "title": "Amplitude"
+        },
+        {
+          "gameId": 33508,
+          "title": "Amplitude"
+        }
+      ]
+    },
+    {
+      "normalized": "aquarium",
+      "games": [
+        {
+          "gameId": 131636,
+          "title": "Aquarium."
+        },
+        {
+          "gameId": 145550,
+          "title": "AQUARIUM"
+        }
+      ]
+    },
+    {
+      "normalized": "arcadia",
+      "games": [
+        {
+          "gameId": 551,
+          "title": "Arcadia"
+        },
+        {
+          "gameId": 73174,
+          "title": "Arcadia"
+        }
+      ]
+    },
+    {
+      "normalized": "archangel",
+      "games": [
+        {
+          "gameId": 20019,
+          "title": "Archangel"
+        },
+        {
+          "gameId": 56510,
+          "title": "Archangel"
+        }
+      ]
+    },
+    {
+      "normalized": "are you smarter than a 5th grader",
+      "games": [
+        {
+          "gameId": 563,
+          "title": "Are You Smarter Than a 5th Grader?"
+        },
+        {
+          "gameId": 31129,
+          "title": "Are You Smarter Than a 5th Grader?"
+        },
+        {
+          "gameId": 162268,
+          "title": "Are You Smarter Than a 5th Grader?"
+        }
+      ]
+    },
+    {
+      "normalized": "area 51",
+      "games": [
+        {
+          "gameId": 566,
+          "title": "Area 51"
+        },
+        {
+          "gameId": 567,
+          "title": "Area 51"
+        }
+      ]
+    },
+    {
+      "normalized": "ashen",
+      "games": [
+        {
+          "gameId": 26767,
+          "title": "Ashen"
+        },
+        {
+          "gameId": 90941,
+          "title": "Ashen"
+        }
+      ]
+    },
+    {
+      "normalized": "assault",
+      "games": [
+        {
+          "gameId": 36093,
+          "title": "Assault"
+        },
+        {
+          "gameId": 74530,
+          "title": "Assault"
+        }
+      ]
+    },
+    {
+      "normalized": "asterix",
+      "games": [
+        {
+          "gameId": 672,
+          "title": "Asterix"
+        },
+        {
+          "gameId": 26070,
+          "title": "Asterix"
+        },
+        {
+          "gameId": 41849,
+          "title": "Asterix"
+        },
+        {
+          "gameId": 41967,
+          "title": "Asterix"
+        }
+      ]
+    },
+    {
+      "normalized": "asteroids",
+      "games": [
+        {
+          "gameId": 676,
+          "title": "Asteroids"
+        },
+        {
+          "gameId": 32334,
+          "title": "Asteroids"
+        }
+      ]
+    },
+    {
+      "normalized": "atomic punk",
+      "games": [
+        {
+          "gameId": 713,
+          "title": "Atomic Punk"
+        },
+        {
+          "gameId": 182570,
+          "title": "Atomic Punk"
+        }
+      ]
+    },
+    {
+      "normalized": "autocraft",
+      "games": [
+        {
+          "gameId": 28074,
+          "title": "Autocraft"
+        },
+        {
+          "gameId": 137579,
+          "title": "Autocraft"
+        }
+      ]
+    },
+    {
+      "normalized": "avenger",
+      "games": [
+        {
+          "gameId": 14250,
+          "title": "Avenger"
+        },
+        {
+          "gameId": 84271,
+          "title": "Avenger"
+        }
+      ]
+    },
+    {
+      "normalized": "aventura copilului albastru s i ura t",
+      "games": [
+        {
+          "gameId": 88224,
+          "title": "Aventura Copilului Albastru și Urât"
+        },
+        {
+          "gameId": 101945,
+          "title": "Aventura Copilului Albastru și Urât"
+        }
+      ]
+    },
+    {
+      "normalized": "awake",
+      "games": [
+        {
+          "gameId": 64129,
+          "title": "AWAKE"
+        },
+        {
+          "gameId": 186370,
+          "title": "Awake"
+        }
+      ]
+    },
+    {
+      "normalized": "axis and allies",
+      "games": [
+        {
+          "gameId": 20660,
+          "title": "Axis & Allies"
+        },
+        {
+          "gameId": 47440,
+          "title": "Axis and Allies"
+        }
+      ]
+    },
+    {
+      "normalized": "baba is you",
+      "games": [
+        {
+          "gameId": 52538,
+          "title": "Baba Is You"
+        },
+        {
+          "gameId": 65604,
+          "title": "Baba Is You"
+        }
+      ]
+    },
+    {
+      "normalized": "back to bed",
+      "games": [
+        {
+          "gameId": 14500,
+          "title": "Back to Bed"
+        },
+        {
+          "gameId": 80245,
+          "title": "Back To Bed"
+        }
+      ]
+    },
+    {
+      "normalized": "banana",
+      "games": [
+        {
+          "gameId": 23371,
+          "title": "Banana"
+        },
+        {
+          "gameId": 152224,
+          "title": "Banana"
+        }
+      ]
+    },
+    {
+      "normalized": "barbarian",
+      "games": [
+        {
+          "gameId": 840,
+          "title": "Barbarian"
+        },
+        {
+          "gameId": 19658,
+          "title": "Barbarian"
+        }
+      ]
+    },
+    {
+      "normalized": "barbie",
+      "games": [
+        {
+          "gameId": 841,
+          "title": "Barbie"
+        },
+        {
+          "gameId": 75356,
+          "title": "Barbie"
+        }
+      ]
+    },
+    {
+      "normalized": "baroque",
+      "games": [
+        {
+          "gameId": 847,
+          "title": "Baroque"
+        },
+        {
+          "gameId": 55876,
+          "title": "Baroque"
+        }
+      ]
+    },
+    {
+      "normalized": "baseball",
+      "games": [
+        {
+          "gameId": 854,
+          "title": "Baseball"
+        },
+        {
+          "gameId": 73069,
+          "title": "Baseball"
+        }
+      ]
+    },
+    {
+      "normalized": "basketball",
+      "games": [
+        {
+          "gameId": 36100,
+          "title": "Basketball"
+        },
+        {
+          "gameId": 54865,
+          "title": "Basketball"
+        }
+      ]
+    },
+    {
+      "normalized": "battleship",
+      "games": [
+        {
+          "gameId": 951,
+          "title": "Battleship"
+        },
+        {
+          "gameId": 13458,
+          "title": "Battleship"
+        }
+      ]
+    },
+    {
+      "normalized": "battletech",
+      "games": [
+        {
+          "gameId": 956,
+          "title": "Battletech"
+        },
+        {
+          "gameId": 55977,
+          "title": "BattleTech"
+        }
+      ]
+    },
+    {
+      "normalized": "battletoads",
+      "games": [
+        {
+          "gameId": 957,
+          "title": "Battletoads"
+        },
+        {
+          "gameId": 959,
+          "title": "Battletoads"
+        },
+        {
+          "gameId": 80699,
+          "title": "Battletoads"
+        }
+      ]
+    },
+    {
+      "normalized": "battlezone",
+      "games": [
+        {
+          "gameId": 962,
+          "title": "Battlezone"
+        },
+        {
+          "gameId": 963,
+          "title": "Battlezone"
+        },
+        {
+          "gameId": 17321,
+          "title": "Battlezone"
+        },
+        {
+          "gameId": 40533,
+          "title": "Battlezone"
+        },
+        {
+          "gameId": 64366,
+          "title": "BattleZone"
+        }
+      ]
+    },
+    {
+      "normalized": "beauty and the beast",
+      "games": [
+        {
+          "gameId": 39785,
+          "title": "Beauty and the Beast"
+        },
+        {
+          "gameId": 120694,
+          "title": "Beauty and the Beast"
+        }
+      ]
+    },
+    {
+      "normalized": "beavis and butt head",
+      "games": [
+        {
+          "gameId": 990,
+          "title": "Beavis and Butt-head"
+        },
+        {
+          "gameId": 149728,
+          "title": "Beavis and Butt-head"
+        }
+      ]
+    },
+    {
+      "normalized": "beyond reality",
+      "games": [
+        {
+          "gameId": 34258,
+          "title": "Beyond Reality"
+        },
+        {
+          "gameId": 186428,
+          "title": "Beyond Reality"
+        }
+      ]
+    },
+    {
+      "normalized": "beyond shadowgate",
+      "games": [
+        {
+          "gameId": 22324,
+          "title": "Beyond Shadowgate"
+        },
+        {
+          "gameId": 157085,
+          "title": "Beyond Shadowgate"
+        }
+      ]
+    },
+    {
+      "normalized": "beyond the wall",
+      "games": [
+        {
+          "gameId": 56292,
+          "title": "Beyond the Wall"
+        },
+        {
+          "gameId": 127646,
+          "title": "Beyond the Wall"
+        }
+      ]
+    },
+    {
+      "normalized": "bigfoot",
+      "games": [
+        {
+          "gameId": 1038,
+          "title": "Bigfoot"
+        },
+        {
+          "gameId": 60633,
+          "title": "Bigfoot"
+        }
+      ]
+    },
+    {
+      "normalized": "biker mice from mars",
+      "games": [
+        {
+          "gameId": 1039,
+          "title": "Biker Mice from Mars"
+        },
+        {
+          "gameId": 1040,
+          "title": "Biker Mice from Mars"
+        }
+      ]
+    },
+    {
+      "normalized": "bionic commando",
+      "games": [
+        {
+          "gameId": 1058,
+          "title": "Bionic Commando"
+        },
+        {
+          "gameId": 22991,
+          "title": "Bionic Commando"
+        },
+        {
+          "gameId": 145498,
+          "title": "Bionic Commando"
+        }
+      ]
+    },
+    {
+      "normalized": "bird game",
+      "games": [
+        {
+          "gameId": 66874,
+          "title": "Bird Game"
+        },
+        {
+          "gameId": 170951,
+          "title": "Bird Game"
+        }
+      ]
+    },
+    {
+      "normalized": "bishoujo senshi sailor moon",
+      "games": [
+        {
+          "gameId": 1075,
+          "title": "Bishoujo Senshi Sailor Moon"
+        },
+        {
+          "gameId": 186170,
+          "title": "Bishoujo Senshi Sailor Moon"
+        }
+      ]
+    },
+    {
+      "normalized": "bishoujo senshi sailor moon s",
+      "games": [
+        {
+          "gameId": 1077,
+          "title": "Bishoujo Senshi Sailor Moon S"
+        },
+        {
+          "gameId": 133832,
+          "title": "Bishoujo Senshi Sailor Moon S"
+        }
+      ]
+    },
+    {
+      "normalized": "bit dungeon",
+      "games": [
+        {
+          "gameId": 38164,
+          "title": "bit Dungeon+"
+        },
+        {
+          "gameId": 70283,
+          "title": "bit Dungeon"
+        }
+      ]
+    },
+    {
+      "normalized": "black",
+      "games": [
+        {
+          "gameId": 1088,
+          "title": "Black"
+        },
+        {
+          "gameId": 62092,
+          "title": "Black"
+        }
+      ]
+    },
+    {
+      "normalized": "black hole",
+      "games": [
+        {
+          "gameId": 60839,
+          "title": "Black Hole"
+        },
+        {
+          "gameId": 98277,
+          "title": "Black Hole"
+        }
+      ]
+    },
+    {
+      "normalized": "black mirror",
+      "games": [
+        {
+          "gameId": 9786,
+          "title": "Black Mirror"
+        },
+        {
+          "gameId": 50921,
+          "title": "Black Mirror"
+        }
+      ]
+    },
+    {
+      "normalized": "blackjack",
+      "games": [
+        {
+          "gameId": 25459,
+          "title": "Blackjack"
+        },
+        {
+          "gameId": 54683,
+          "title": "Blackjack"
+        }
+      ]
+    },
+    {
+      "normalized": "blade runner",
+      "games": [
+        {
+          "gameId": 1121,
+          "title": "Blade Runner"
+        },
+        {
+          "gameId": 55643,
+          "title": "Blade Runner"
+        }
+      ]
+    },
+    {
+      "normalized": "bloom",
+      "games": [
+        {
+          "gameId": 99767,
+          "title": "Bloom"
+        },
+        {
+          "gameId": 107627,
+          "title": "Bloom"
+        }
+      ]
+    },
+    {
+      "normalized": "blue",
+      "games": [
+        {
+          "gameId": 54762,
+          "title": "blue."
+        },
+        {
+          "gameId": 69745,
+          "title": "Blue"
+        }
+      ]
+    },
+    {
+      "normalized": "blue lightning",
+      "games": [
+        {
+          "gameId": 1206,
+          "title": "Blue Lightning"
+        },
+        {
+          "gameId": 113483,
+          "title": "Blue Lightning"
+        }
+      ]
+    },
+    {
+      "normalized": "bomberman",
+      "games": [
+        {
+          "gameId": 1230,
+          "title": "Bomberman"
+        },
+        {
+          "gameId": 118723,
+          "title": "Bomberman"
+        }
+      ]
+    },
+    {
+      "normalized": "bomberman 64",
+      "games": [
+        {
+          "gameId": 1234,
+          "title": "Bomberman 64"
+        },
+        {
+          "gameId": 96068,
+          "title": "Bomberman 64"
+        }
+      ]
+    },
+    {
+      "normalized": "bomberman land",
+      "games": [
+        {
+          "gameId": 21127,
+          "title": "Bomberman Land"
+        },
+        {
+          "gameId": 21899,
+          "title": "Bomberman Land"
+        }
+      ]
+    },
+    {
+      "normalized": "bottle",
+      "games": [
+        {
+          "gameId": 39598,
+          "title": "Bottle"
+        },
+        {
+          "gameId": 144067,
+          "title": "Bottle"
+        }
+      ]
+    },
+    {
+      "normalized": "boxing",
+      "games": [
+        {
+          "gameId": 12782,
+          "title": "Boxing"
+        },
+        {
+          "gameId": 82929,
+          "title": "Boxing"
+        }
+      ]
+    },
+    {
+      "normalized": "brain out",
+      "games": [
+        {
+          "gameId": 46069,
+          "title": "BRAIN / OUT"
+        },
+        {
+          "gameId": 91657,
+          "title": "Brain Out"
+        }
+      ]
+    },
+    {
+      "normalized": "brave soul",
+      "games": [
+        {
+          "gameId": 17832,
+          "title": "Brave Soul"
+        },
+        {
+          "gameId": 174342,
+          "title": "Brave Soul"
+        }
+      ]
+    },
+    {
+      "normalized": "breakout",
+      "games": [
+        {
+          "gameId": 1314,
+          "title": "Breakout"
+        },
+        {
+          "gameId": 19125,
+          "title": "Breakout"
+        }
+      ]
+    },
+    {
+      "normalized": "breakthru",
+      "games": [
+        {
+          "gameId": 1316,
+          "title": "BreakThru"
+        },
+        {
+          "gameId": 30470,
+          "title": "BreakThru!"
+        }
+      ]
+    },
+    {
+      "normalized": "bridge",
+      "games": [
+        {
+          "gameId": 60460,
+          "title": "Bridge!"
+        },
+        {
+          "gameId": 79043,
+          "title": "Bridge"
+        }
+      ]
+    },
+    {
+      "normalized": "brute force",
+      "games": [
+        {
+          "gameId": 1348,
+          "title": "Brute Force"
+        },
+        {
+          "gameId": 155258,
+          "title": "Brute Force"
+        }
+      ]
+    },
+    {
+      "normalized": "buffy the vampire slayer",
+      "games": [
+        {
+          "gameId": 1364,
+          "title": "Buffy the Vampire Slayer"
+        },
+        {
+          "gameId": 23034,
+          "title": "Buffy the Vampire Slayer"
+        }
+      ]
+    },
+    {
+      "normalized": "cabela s big game hunter",
+      "games": [
+        {
+          "gameId": 1442,
+          "title": "Cabela's Big Game Hunter"
+        },
+        {
+          "gameId": 20628,
+          "title": "Cabela's Big Game Hunter"
+        }
+      ]
+    },
+    {
+      "normalized": "cabela s outdoor adventures",
+      "games": [
+        {
+          "gameId": 16906,
+          "title": "Cabela's Outdoor Adventures"
+        },
+        {
+          "gameId": 18178,
+          "title": "Cabela's Outdoor Adventures"
+        }
+      ]
+    },
+    {
+      "normalized": "cabin fever",
+      "games": [
+        {
+          "gameId": 97370,
+          "title": "Cabin Fever"
+        },
+        {
+          "gameId": 177337,
+          "title": "Cabin Fever!!!"
+        }
+      ]
+    },
+    {
+      "normalized": "cannons defenders",
+      "games": [
+        {
+          "gameId": 46305,
+          "title": "Cannons Defenders"
+        },
+        {
+          "gameId": 47980,
+          "title": "Cannons-Defenders"
+        }
+      ]
+    },
+    {
+      "normalized": "captain tsubasa",
+      "games": [
+        {
+          "gameId": 27720,
+          "title": "Captain Tsubasa"
+        },
+        {
+          "gameId": 116943,
+          "title": "Captain Tsubasa"
+        }
+      ]
+    },
+    {
+      "normalized": "captive",
+      "games": [
+        {
+          "gameId": 17949,
+          "title": "Captive"
+        },
+        {
+          "gameId": 63744,
+          "title": "Captive"
+        }
+      ]
+    },
+    {
+      "normalized": "carcassonne",
+      "games": [
+        {
+          "gameId": 1525,
+          "title": "Carcassonne"
+        },
+        {
+          "gameId": 19544,
+          "title": "Carcassonne"
+        }
+      ]
+    },
+    {
+      "normalized": "carnival",
+      "games": [
+        {
+          "gameId": 1541,
+          "title": "Carnival"
+        },
+        {
+          "gameId": 173345,
+          "title": "Carnival"
+        }
+      ]
+    },
+    {
+      "normalized": "cars",
+      "games": [
+        {
+          "gameId": 1546,
+          "title": "Cars"
+        },
+        {
+          "gameId": 148535,
+          "title": "CARS"
+        }
+      ]
+    },
+    {
+      "normalized": "castle of illusion starring mickey mouse",
+      "games": [
+        {
+          "gameId": 1559,
+          "title": "Castle of Illusion Starring Mickey Mouse"
+        },
+        {
+          "gameId": 13771,
+          "title": "Castle of Illusion Starring Mickey Mouse"
+        }
+      ]
+    },
+    {
+      "normalized": "castlevania",
+      "games": [
+        {
+          "gameId": 1568,
+          "title": "Castlevania"
+        },
+        {
+          "gameId": 1569,
+          "title": "Castlevania"
+        }
+      ]
+    },
+    {
+      "normalized": "catch me",
+      "games": [
+        {
+          "gameId": 171592,
+          "title": "Catch Me"
+        },
+        {
+          "gameId": 179418,
+          "title": "Catch Me!"
+        }
+      ]
+    },
+    {
+      "normalized": "cats",
+      "games": [
+        {
+          "gameId": 43689,
+          "title": "CATS!"
+        },
+        {
+          "gameId": 151666,
+          "title": "Cats"
+        }
+      ]
+    },
+    {
+      "normalized": "catwoman",
+      "games": [
+        {
+          "gameId": 1612,
+          "title": "Catwoman"
+        },
+        {
+          "gameId": 75071,
+          "title": "Catwoman"
+        }
+      ]
+    },
+    {
+      "normalized": "cauldron",
+      "games": [
+        {
+          "gameId": 37237,
+          "title": "Cauldron"
+        },
+        {
+          "gameId": 170155,
+          "title": "Cauldron"
+        }
+      ]
+    },
+    {
+      "normalized": "causality",
+      "games": [
+        {
+          "gameId": 1613,
+          "title": "Causality"
+        },
+        {
+          "gameId": 117586,
+          "title": "Causality"
+        }
+      ]
+    },
+    {
+      "normalized": "cave crawler",
+      "games": [
+        {
+          "gameId": 103308,
+          "title": "Cave Crawler"
+        },
+        {
+          "gameId": 127364,
+          "title": "Cave Crawler"
+        }
+      ]
+    },
+    {
+      "normalized": "cave story",
+      "games": [
+        {
+          "gameId": 1616,
+          "title": "Cave Story"
+        },
+        {
+          "gameId": 1618,
+          "title": "Cave Story+"
+        }
+      ]
+    },
+    {
+      "normalized": "centipede",
+      "games": [
+        {
+          "gameId": 1624,
+          "title": "Centipede"
+        },
+        {
+          "gameId": 32364,
+          "title": "Centipede"
+        }
+      ]
+    },
+    {
+      "normalized": "chasm",
+      "games": [
+        {
+          "gameId": 20079,
+          "title": "Chasm"
+        },
+        {
+          "gameId": 99096,
+          "title": "Chasm"
+        }
+      ]
+    },
+    {
+      "normalized": "checkered flag",
+      "games": [
+        {
+          "gameId": 1659,
+          "title": "Checkered Flag"
+        },
+        {
+          "gameId": 116174,
+          "title": "Checkered Flag"
+        }
+      ]
+    },
+    {
+      "normalized": "checkers",
+      "games": [
+        {
+          "gameId": 36149,
+          "title": "Checkers"
+        },
+        {
+          "gameId": 163628,
+          "title": "Checkers"
+        }
+      ]
+    },
+    {
+      "normalized": "clock tower",
+      "games": [
+        {
+          "gameId": 1753,
+          "title": "Clock Tower"
+        },
+        {
+          "gameId": 1754,
+          "title": "Clock Tower"
+        }
+      ]
+    },
+    {
+      "normalized": "clue",
+      "games": [
+        {
+          "gameId": 15947,
+          "title": "Clue"
+        },
+        {
+          "gameId": 29110,
+          "title": "Clue"
+        }
+      ]
+    },
+    {
+      "normalized": "colin mcrae rally",
+      "games": [
+        {
+          "gameId": 1798,
+          "title": "Colin McRae Rally"
+        },
+        {
+          "gameId": 32167,
+          "title": "Colin McRae Rally"
+        }
+      ]
+    },
+    {
+      "normalized": "collapse",
+      "games": [
+        {
+          "gameId": 1805,
+          "title": "Collapse"
+        },
+        {
+          "gameId": 25889,
+          "title": "Collapse!"
+        }
+      ]
+    },
+    {
+      "normalized": "coloring book",
+      "games": [
+        {
+          "gameId": 71530,
+          "title": "Coloring Book"
+        },
+        {
+          "gameId": 178161,
+          "title": "Coloring Book"
+        }
+      ]
+    },
+    {
+      "normalized": "conan",
+      "games": [
+        {
+          "gameId": 1879,
+          "title": "Conan"
+        },
+        {
+          "gameId": 22126,
+          "title": "Conan"
+        },
+        {
+          "gameId": 55647,
+          "title": "Conan"
+        }
+      ]
+    },
+    {
+      "normalized": "constructor",
+      "games": [
+        {
+          "gameId": 1905,
+          "title": "Constructor"
+        },
+        {
+          "gameId": 46515,
+          "title": "Constructor"
+        }
+      ]
+    },
+    {
+      "normalized": "contact",
+      "games": [
+        {
+          "gameId": 1906,
+          "title": "Contact"
+        },
+        {
+          "gameId": 110938,
+          "title": "Contact"
+        }
+      ]
+    },
+    {
+      "normalized": "cook serve forever",
+      "games": [
+        {
+          "gameId": 106609,
+          "title": "Cook Serve Forever"
+        },
+        {
+          "gameId": 173089,
+          "title": "Cook, Serve, Forever"
+        }
+      ]
+    },
+    {
+      "normalized": "corpse party",
+      "games": [
+        {
+          "gameId": 1935,
+          "title": "Corpse Party"
+        },
+        {
+          "gameId": 98773,
+          "title": "Corpse Party"
+        }
+      ]
+    },
+    {
+      "normalized": "counter strike",
+      "games": [
+        {
+          "gameId": 1953,
+          "title": "Counter-Strike"
+        },
+        {
+          "gameId": 1954,
+          "title": "Counter-Strike"
+        }
+      ]
+    },
+    {
+      "normalized": "crash n burn",
+      "games": [
+        {
+          "gameId": 22038,
+          "title": "Crash 'n Burn"
+        },
+        {
+          "gameId": 31573,
+          "title": "Crash 'n' Burn"
+        }
+      ]
+    },
+    {
+      "normalized": "crawl",
+      "games": [
+        {
+          "gameId": 21168,
+          "title": "Crawl"
+        },
+        {
+          "gameId": 152563,
+          "title": "Crawl"
+        }
+      ]
+    },
+    {
+      "normalized": "crime city",
+      "games": [
+        {
+          "gameId": 15156,
+          "title": "Crime City"
+        },
+        {
+          "gameId": 81443,
+          "title": "Crime City"
+        }
+      ]
+    },
+    {
+      "normalized": "crossfire",
+      "games": [
+        {
+          "gameId": 23471,
+          "title": "CrossFire"
+        },
+        {
+          "gameId": 27517,
+          "title": "Crossfire"
+        }
+      ]
+    },
+    {
+      "normalized": "curse",
+      "games": [
+        {
+          "gameId": 23652,
+          "title": "Curse"
+        },
+        {
+          "gameId": 41451,
+          "title": "CURSE"
+        }
+      ]
+    },
+    {
+      "normalized": "cursed",
+      "games": [
+        {
+          "gameId": 38243,
+          "title": "Cursed"
+        },
+        {
+          "gameId": 130194,
+          "title": "Cursed"
+        }
+      ]
+    },
+    {
+      "normalized": "custom robo",
+      "games": [
+        {
+          "gameId": 2109,
+          "title": "Custom Robo"
+        },
+        {
+          "gameId": 97159,
+          "title": "Custom Robo"
+        }
+      ]
+    },
+    {
+      "normalized": "cuties",
+      "games": [
+        {
+          "gameId": 38168,
+          "title": "Cuties"
+        },
+        {
+          "gameId": 139668,
+          "title": "Cuties"
+        }
+      ]
+    },
+    {
+      "normalized": "cycle",
+      "games": [
+        {
+          "gameId": 116589,
+          "title": "(Cycle)"
+        },
+        {
+          "gameId": 158015,
+          "title": "Cycle"
+        }
+      ]
+    },
+    {
+      "normalized": "cypher",
+      "games": [
+        {
+          "gameId": 2133,
+          "title": "Cypher"
+        },
+        {
+          "gameId": 57671,
+          "title": "Cypher"
+        }
+      ]
+    },
+    {
+      "normalized": "dance dance revolution",
+      "games": [
+        {
+          "gameId": 2156,
+          "title": "Dance Dance Revolution"
+        },
+        {
+          "gameId": 2157,
+          "title": "Dance Dance Revolution"
+        }
+      ]
+    },
+    {
+      "normalized": "days of thunder",
+      "games": [
+        {
+          "gameId": 16052,
+          "title": "Days of Thunder"
+        },
+        {
+          "gameId": 28717,
+          "title": "Days of Thunder"
+        }
+      ]
+    },
+    {
+      "normalized": "dead forest",
+      "games": [
+        {
+          "gameId": 61199,
+          "title": "Dead Forest"
+        },
+        {
+          "gameId": 148909,
+          "title": "Dead Forest"
+        }
+      ]
+    },
+    {
+      "normalized": "dead space",
+      "games": [
+        {
+          "gameId": 2333,
+          "title": "Dead Space"
+        },
+        {
+          "gameId": 95927,
+          "title": "Dead Space"
+        }
+      ]
+    },
+    {
+      "normalized": "deadly tide",
+      "games": [
+        {
+          "gameId": 46079,
+          "title": "Deadly Tide"
+        },
+        {
+          "gameId": 126640,
+          "title": "Deadly Tide"
+        }
+      ]
+    },
+    {
+      "normalized": "death rally",
+      "games": [
+        {
+          "gameId": 2366,
+          "title": "Death Rally"
+        },
+        {
+          "gameId": 2367,
+          "title": "Death Rally"
+        }
+      ]
+    },
+    {
+      "normalized": "deep blue",
+      "games": [
+        {
+          "gameId": 22252,
+          "title": "Deep Blue"
+        },
+        {
+          "gameId": 51988,
+          "title": "Deep Blue"
+        }
+      ]
+    },
+    {
+      "normalized": "deep sleep",
+      "games": [
+        {
+          "gameId": 2389,
+          "title": "Deep Sleep"
+        },
+        {
+          "gameId": 96152,
+          "title": "Deep Sleep"
+        }
+      ]
+    },
+    {
+      "normalized": "defender",
+      "games": [
+        {
+          "gameId": 2404,
+          "title": "Defender"
+        },
+        {
+          "gameId": 2405,
+          "title": "Defender"
+        }
+      ]
+    },
+    {
+      "normalized": "defiance",
+      "games": [
+        {
+          "gameId": 2414,
+          "title": "Defiance"
+        },
+        {
+          "gameId": 130984,
+          "title": "Defiance"
+        }
+      ]
+    },
+    {
+      "normalized": "delirium",
+      "games": [
+        {
+          "gameId": 50535,
+          "title": "Delirium"
+        },
+        {
+          "gameId": 129608,
+          "title": "Delirium"
+        }
+      ]
+    },
+    {
+      "normalized": "delta force",
+      "games": [
+        {
+          "gameId": 2420,
+          "title": "Delta Force"
+        },
+        {
+          "gameId": 134437,
+          "title": "Delta Force"
+        }
+      ]
+    },
+    {
+      "normalized": "demon s souls",
+      "games": [
+        {
+          "gameId": 2439,
+          "title": "Demon's Souls"
+        },
+        {
+          "gameId": 82153,
+          "title": "Demon's Souls"
+        }
+      ]
+    },
+    {
+      "normalized": "desktop defender",
+      "games": [
+        {
+          "gameId": 175929,
+          "title": "Desktop Defender"
+        },
+        {
+          "gameId": 177446,
+          "title": "Desktop Defender"
+        }
+      ]
+    },
+    {
+      "normalized": "destroy all humans",
+      "games": [
+        {
+          "gameId": 2475,
+          "title": "Destroy All Humans!"
+        },
+        {
+          "gameId": 68042,
+          "title": "Destroy All Humans!"
+        }
+      ]
+    },
+    {
+      "normalized": "detective grimoire",
+      "games": [
+        {
+          "gameId": 15869,
+          "title": "Detective Grimoire"
+        },
+        {
+          "gameId": 113243,
+          "title": "Detective Grimoire"
+        }
+      ]
+    },
+    {
+      "normalized": "deus vult",
+      "games": [
+        {
+          "gameId": 21020,
+          "title": "Deus Vult"
+        },
+        {
+          "gameId": 67391,
+          "title": "Deus Vult"
+        }
+      ]
+    },
+    {
+      "normalized": "die hard",
+      "games": [
+        {
+          "gameId": 24354,
+          "title": "Die Hard"
+        },
+        {
+          "gameId": 53636,
+          "title": "Die Hard"
+        }
+      ]
+    },
+    {
+      "normalized": "disc room",
+      "games": [
+        {
+          "gameId": 39120,
+          "title": "Disc Room"
+        },
+        {
+          "gameId": 84473,
+          "title": "Disc Room"
+        }
+      ]
+    },
+    {
+      "normalized": "disney s aladdin",
+      "games": [
+        {
+          "gameId": 2608,
+          "title": "Disney's Aladdin"
+        },
+        {
+          "gameId": 48265,
+          "title": "Disney's Aladdin"
+        }
+      ]
+    },
+    {
+      "normalized": "don t bite me bro",
+      "games": [
+        {
+          "gameId": 60108,
+          "title": "Don't Bite Me Bro!"
+        },
+        {
+          "gameId": 62557,
+          "title": "Don't Bite Me Bro! +"
+        }
+      ]
+    },
+    {
+      "normalized": "donkey kong",
+      "games": [
+        {
+          "gameId": 2681,
+          "title": "Donkey Kong"
+        },
+        {
+          "gameId": 2682,
+          "title": "Donkey Kong"
+        }
+      ]
+    },
+    {
+      "normalized": "doom",
+      "games": [
+        {
+          "gameId": 2701,
+          "title": "Doom"
+        },
+        {
+          "gameId": 2708,
+          "title": "Doom"
+        }
+      ]
+    },
+    {
+      "normalized": "double dragon",
+      "games": [
+        {
+          "gameId": 2722,
+          "title": "Double Dragon"
+        },
+        {
+          "gameId": 22101,
+          "title": "Double Dragon"
+        }
+      ]
+    },
+    {
+      "normalized": "dr seuss the cat in the hat",
+      "games": [
+        {
+          "gameId": 2746,
+          "title": "Dr. Seuss' The Cat in the Hat"
+        },
+        {
+          "gameId": 170090,
+          "title": "Dr. Seuss' The Cat in the Hat"
+        }
+      ]
+    },
+    {
+      "normalized": "dragon knight",
+      "games": [
+        {
+          "gameId": 18422,
+          "title": "Dragon Knight"
+        },
+        {
+          "gameId": 69514,
+          "title": "Dragon Knight"
+        }
+      ]
+    },
+    {
+      "normalized": "dragon rage",
+      "games": [
+        {
+          "gameId": 21428,
+          "title": "Dragon Rage"
+        },
+        {
+          "gameId": 68627,
+          "title": "Dragon Rage"
+        }
+      ]
+    },
+    {
+      "normalized": "dream",
+      "games": [
+        {
+          "gameId": 15892,
+          "title": "Dream"
+        },
+        {
+          "gameId": 124094,
+          "title": "Dream"
+        }
+      ]
+    },
+    {
+      "normalized": "dreamworks penguins of madagascar",
+      "games": [
+        {
+          "gameId": 21658,
+          "title": "DreamWorks Penguins of Madagascar"
+        },
+        {
+          "gameId": 131208,
+          "title": "DreamWorks Penguins of Madagascar"
+        }
+      ]
+    },
+    {
+      "normalized": "driftwood",
+      "games": [
+        {
+          "gameId": 41144,
+          "title": "Driftwood"
+        },
+        {
+          "gameId": 172042,
+          "title": "Driftwood"
+        }
+      ]
+    },
+    {
+      "normalized": "duet",
+      "games": [
+        {
+          "gameId": 20365,
+          "title": "Duet"
+        },
+        {
+          "gameId": 167677,
+          "title": "DUET"
+        }
+      ]
+    },
+    {
+      "normalized": "dune",
+      "games": [
+        {
+          "gameId": 2935,
+          "title": "Dune"
+        },
+        {
+          "gameId": 84747,
+          "title": "Dune!"
+        }
+      ]
+    },
+    {
+      "normalized": "dungeon explorer",
+      "games": [
+        {
+          "gameId": 2941,
+          "title": "Dungeon Explorer"
+        },
+        {
+          "gameId": 99820,
+          "title": "Dungeon Explorer"
+        }
+      ]
+    },
+    {
+      "normalized": "dynasty warriors",
+      "games": [
+        {
+          "gameId": 2994,
+          "title": "Dynasty Warriors"
+        },
+        {
+          "gameId": 48401,
+          "title": "Dynasty Warriors"
+        }
+      ]
+    },
+    {
+      "normalized": "e t the extra terrestrial",
+      "games": [
+        {
+          "gameId": 3019,
+          "title": "E.T. the Extra-Terrestrial"
+        },
+        {
+          "gameId": 78883,
+          "title": "E.T. The Extra-Terrestrial"
+        }
+      ]
+    },
+    {
+      "normalized": "echo",
+      "games": [
+        {
+          "gameId": 49192,
+          "title": "ECHO"
+        },
+        {
+          "gameId": 102532,
+          "title": "Echo"
+        }
+      ]
+    },
+    {
+      "normalized": "echoes",
+      "games": [
+        {
+          "gameId": 14040,
+          "title": "Echoes"
+        },
+        {
+          "gameId": 23827,
+          "title": "Echoes+"
+        },
+        {
+          "gameId": 176955,
+          "title": "Echoes"
+        }
+      ]
+    },
+    {
+      "normalized": "egg",
+      "games": [
+        {
+          "gameId": 145257,
+          "title": "EGG"
+        },
+        {
+          "gameId": 153116,
+          "title": "Egg"
+        },
+        {
+          "gameId": 176726,
+          "title": "Egg"
+        }
+      ]
+    },
+    {
+      "normalized": "elevator action",
+      "games": [
+        {
+          "gameId": 3082,
+          "title": "Elevator Action"
+        },
+        {
+          "gameId": 64032,
+          "title": "Elevator Action"
+        }
+      ]
+    },
+    {
+      "normalized": "equinox",
+      "games": [
+        {
+          "gameId": 3143,
+          "title": "Equinox"
+        },
+        {
+          "gameId": 155876,
+          "title": "Equinox"
+        }
+      ]
+    },
+    {
+      "normalized": "exile",
+      "games": [
+        {
+          "gameId": 3265,
+          "title": "Exile"
+        },
+        {
+          "gameId": 19146,
+          "title": "Exile"
+        }
+      ]
+    },
+    {
+      "normalized": "expelled",
+      "games": [
+        {
+          "gameId": 50964,
+          "title": "Expelled"
+        },
+        {
+          "gameId": 165115,
+          "title": "Expelled!"
+        }
+      ]
+    },
+    {
+      "normalized": "extermination",
+      "games": [
+        {
+          "gameId": 3273,
+          "title": "Extermination"
+        },
+        {
+          "gameId": 73222,
+          "title": "Extermination"
+        }
+      ]
+    },
+    {
+      "normalized": "fable",
+      "games": [
+        {
+          "gameId": 3311,
+          "title": "Fable"
+        },
+        {
+          "gameId": 17171,
+          "title": "Fable"
+        }
+      ]
+    },
+    {
+      "normalized": "factory balls",
+      "games": [
+        {
+          "gameId": 101776,
+          "title": "Factory Balls"
+        },
+        {
+          "gameId": 179306,
+          "title": "Factory Balls"
+        }
+      ]
+    },
+    {
+      "normalized": "family feud",
+      "games": [
+        {
+          "gameId": 3359,
+          "title": "Family Feud"
+        },
+        {
+          "gameId": 109908,
+          "title": "Family Feud"
+        }
+      ]
+    },
+    {
+      "normalized": "fantastic four",
+      "games": [
+        {
+          "gameId": 3366,
+          "title": "Fantastic Four"
+        },
+        {
+          "gameId": 3367,
+          "title": "Fantastic Four"
+        }
+      ]
+    },
+    {
+      "normalized": "far space",
+      "games": [
+        {
+          "gameId": 46820,
+          "title": "Far Space"
+        },
+        {
+          "gameId": 49278,
+          "title": "Far Space"
+        }
+      ]
+    },
+    {
+      "normalized": "fast food simulator",
+      "games": [
+        {
+          "gameId": 160715,
+          "title": "Fast Food Simulator"
+        },
+        {
+          "gameId": 171028,
+          "title": "Fast Food Simulator"
+        }
+      ]
+    },
+    {
+      "normalized": "felix the cat",
+      "games": [
+        {
+          "gameId": 3428,
+          "title": "Felix the Cat"
+        },
+        {
+          "gameId": 144147,
+          "title": "Felix the Cat"
+        }
+      ]
+    },
+    {
+      "normalized": "fifa street",
+      "games": [
+        {
+          "gameId": 3458,
+          "title": "FIFA Street"
+        },
+        {
+          "gameId": 28616,
+          "title": "FIFA Street"
+        }
+      ]
+    },
+    {
+      "normalized": "final fantasy iii",
+      "games": [
+        {
+          "gameId": 3497,
+          "title": "Final Fantasy III"
+        },
+        {
+          "gameId": 94537,
+          "title": "Final Fantasy III"
+        }
+      ]
+    },
+    {
+      "normalized": "final fantasy xiv",
+      "games": [
+        {
+          "gameId": 12654,
+          "title": "Final Fantasy XIV"
+        },
+        {
+          "gameId": 120442,
+          "title": "Final Fantasy XIV"
+        }
+      ]
+    },
+    {
+      "normalized": "fire ungh s quest",
+      "games": [
+        {
+          "gameId": 26005,
+          "title": "Fire: Ungh's Quest"
+        },
+        {
+          "gameId": 46334,
+          "title": "Fire: Ungh's Quest"
+        }
+      ]
+    },
+    {
+      "normalized": "fishy",
+      "games": [
+        {
+          "gameId": 73054,
+          "title": "Fishy"
+        },
+        {
+          "gameId": 174825,
+          "title": "! Fishy !"
+        }
+      ]
+    },
+    {
+      "normalized": "fist of the north star",
+      "games": [
+        {
+          "gameId": 3578,
+          "title": "Fist of the North Star"
+        },
+        {
+          "gameId": 15931,
+          "title": "Fist of the North Star"
+        }
+      ]
+    },
+    {
+      "normalized": "flashback",
+      "games": [
+        {
+          "gameId": 3585,
+          "title": "Flashback"
+        },
+        {
+          "gameId": 13776,
+          "title": "Flashback"
+        },
+        {
+          "gameId": 131997,
+          "title": "Flashback"
+        }
+      ]
+    },
+    {
+      "normalized": "flock",
+      "games": [
+        {
+          "gameId": 3603,
+          "title": "Flock!"
+        },
+        {
+          "gameId": 130996,
+          "title": "Flock"
+        }
+      ]
+    },
+    {
+      "normalized": "flow",
+      "games": [
+        {
+          "gameId": 3607,
+          "title": "flOw"
+        },
+        {
+          "gameId": 15979,
+          "title": ".flow"
+        }
+      ]
+    },
+    {
+      "normalized": "flying hero",
+      "games": [
+        {
+          "gameId": 31268,
+          "title": "Flying Hero"
+        },
+        {
+          "gameId": 81222,
+          "title": "Flying Hero"
+        }
+      ]
+    },
+    {
+      "normalized": "flywrench",
+      "games": [
+        {
+          "gameId": 3620,
+          "title": "Flywrench"
+        },
+        {
+          "gameId": 32039,
+          "title": "Flywrench"
+        }
+      ]
+    },
+    {
+      "normalized": "football",
+      "games": [
+        {
+          "gameId": 50716,
+          "title": "Football"
+        },
+        {
+          "gameId": 79483,
+          "title": "Football"
+        }
+      ]
+    },
+    {
+      "normalized": "forget me not annie",
+      "games": [
+        {
+          "gameId": 3643,
+          "title": "Forget Me Not, Annie"
+        },
+        {
+          "gameId": 20280,
+          "title": "Forget Me Not Annie"
+        }
+      ]
+    },
+    {
+      "normalized": "forza motorsport",
+      "games": [
+        {
+          "gameId": 3662,
+          "title": "Forza Motorsport"
+        },
+        {
+          "gameId": 109240,
+          "title": "Forza Motorsport"
+        }
+      ]
+    },
+    {
+      "normalized": "freedom force",
+      "games": [
+        {
+          "gameId": 3694,
+          "title": "Freedom Force"
+        },
+        {
+          "gameId": 56782,
+          "title": "Freedom Force"
+        }
+      ]
+    },
+    {
+      "normalized": "friendly fire",
+      "games": [
+        {
+          "gameId": 85084,
+          "title": "Friendly Fire"
+        },
+        {
+          "gameId": 131562,
+          "title": "Friendly Fire"
+        },
+        {
+          "gameId": 131564,
+          "title": "Friendly Fire"
+        }
+      ]
+    },
+    {
+      "normalized": "frogger",
+      "games": [
+        {
+          "gameId": 3714,
+          "title": "Frogger"
+        },
+        {
+          "gameId": 3715,
+          "title": "Frogger"
+        }
+      ]
+    },
+    {
+      "normalized": "frost",
+      "games": [
+        {
+          "gameId": 45118,
+          "title": "Frost"
+        },
+        {
+          "gameId": 69753,
+          "title": "Frost"
+        }
+      ]
+    },
+    {
+      "normalized": "fuse",
+      "games": [
+        {
+          "gameId": 3759,
+          "title": "Fuse"
+        },
+        {
+          "gameId": 184137,
+          "title": "Fuse"
+        }
+      ]
+    },
+    {
+      "normalized": "games and girls",
+      "games": [
+        {
+          "gameId": 48051,
+          "title": "Games&Girls"
+        },
+        {
+          "gameId": 120579,
+          "title": "Games and Girls"
+        }
+      ]
+    },
+    {
+      "normalized": "garfield",
+      "games": [
+        {
+          "gameId": 18685,
+          "title": "Garfield"
+        },
+        {
+          "gameId": 97160,
+          "title": "Garfield"
+        }
+      ]
+    },
+    {
+      "normalized": "gauntlet",
+      "games": [
+        {
+          "gameId": 3854,
+          "title": "Gauntlet"
+        },
+        {
+          "gameId": 21100,
+          "title": "Gauntlet"
+        }
+      ]
+    },
+    {
+      "normalized": "gem smashers",
+      "games": [
+        {
+          "gameId": 3873,
+          "title": "Gem Smashers"
+        },
+        {
+          "gameId": 92435,
+          "title": "Gem Smashers"
+        }
+      ]
+    },
+    {
+      "normalized": "ghost in the shell stand alone complex",
+      "games": [
+        {
+          "gameId": 3909,
+          "title": "Ghost in the Shell: Stand Alone Complex"
+        },
+        {
+          "gameId": 20571,
+          "title": "Ghost in the Shell: Stand Alone Complex"
+        }
+      ]
+    },
+    {
+      "normalized": "ghostbusters",
+      "games": [
+        {
+          "gameId": 3917,
+          "title": "Ghostbusters"
+        },
+        {
+          "gameId": 41359,
+          "title": "Ghostbusters"
+        }
+      ]
+    },
+    {
+      "normalized": "gift",
+      "games": [
+        {
+          "gameId": 3932,
+          "title": "Gift"
+        },
+        {
+          "gameId": 132135,
+          "title": "Gift"
+        }
+      ]
+    },
+    {
+      "normalized": "glass",
+      "games": [
+        {
+          "gameId": 73935,
+          "title": "Glass"
+        },
+        {
+          "gameId": 116652,
+          "title": "GLASS"
+        }
+      ]
+    },
+    {
+      "normalized": "go go ackman",
+      "games": [
+        {
+          "gameId": 3958,
+          "title": "Go! Go! Ackman"
+        },
+        {
+          "gameId": 86219,
+          "title": "Go! Go! Ackman"
+        }
+      ]
+    },
+    {
+      "normalized": "god of war",
+      "games": [
+        {
+          "gameId": 3974,
+          "title": "God of War"
+        },
+        {
+          "gameId": 38050,
+          "title": "God of War"
+        }
+      ]
+    },
+    {
+      "normalized": "godzilla",
+      "games": [
+        {
+          "gameId": 3988,
+          "title": "Godzilla"
+        },
+        {
+          "gameId": 28498,
+          "title": "Godzilla"
+        },
+        {
+          "gameId": 117917,
+          "title": "Godzilla"
+        }
+      ]
+    },
+    {
+      "normalized": "goldeneye 007",
+      "games": [
+        {
+          "gameId": 4003,
+          "title": "GoldenEye 007"
+        },
+        {
+          "gameId": 4004,
+          "title": "GoldenEye 007"
+        }
+      ]
+    },
+    {
+      "normalized": "golem",
+      "games": [
+        {
+          "gameId": 56715,
+          "title": "Golem"
+        },
+        {
+          "gameId": 76834,
+          "title": "Golem"
+        }
+      ]
+    },
+    {
+      "normalized": "golf",
+      "games": [
+        {
+          "gameId": 4007,
+          "title": "Golf"
+        },
+        {
+          "gameId": 19635,
+          "title": "Golf"
+        },
+        {
+          "gameId": 88730,
+          "title": "Golf"
+        },
+        {
+          "gameId": 100844,
+          "title": "Golf+"
+        }
+      ]
+    },
+    {
+      "normalized": "goodnight",
+      "games": [
+        {
+          "gameId": 87066,
+          "title": "Goodnight"
+        },
+        {
+          "gameId": 149377,
+          "title": "goodnight"
+        }
+      ]
+    },
+    {
+      "normalized": "gran turismo",
+      "games": [
+        {
+          "gameId": 4044,
+          "title": "Gran Turismo"
+        },
+        {
+          "gameId": 18142,
+          "title": "Gran Turismo"
+        }
+      ]
+    },
+    {
+      "normalized": "graveyard shift",
+      "games": [
+        {
+          "gameId": 41075,
+          "title": "Graveyard Shift"
+        },
+        {
+          "gameId": 145907,
+          "title": "Graveyard Shift"
+        }
+      ]
+    },
+    {
+      "normalized": "green",
+      "games": [
+        {
+          "gameId": 74954,
+          "title": "GREEN"
+        },
+        {
+          "gameId": 81230,
+          "title": "Green"
+        }
+      ]
+    },
+    {
+      "normalized": "gunpey",
+      "games": [
+        {
+          "gameId": 4212,
+          "title": "Gunpey"
+        },
+        {
+          "gameId": 105836,
+          "title": "Gunpey"
+        }
+      ]
+    },
+    {
+      "normalized": "halloween",
+      "games": [
+        {
+          "gameId": 4261,
+          "title": "Halloween"
+        },
+        {
+          "gameId": 176770,
+          "title": "Halloween"
+        }
+      ]
+    },
+    {
+      "normalized": "halloween puzzle",
+      "games": [
+        {
+          "gameId": 139781,
+          "title": "Halloween Puzzle"
+        },
+        {
+          "gameId": 140277,
+          "title": "Halloween Puzzle"
+        }
+      ]
+    },
+    {
+      "normalized": "harbinger",
+      "games": [
+        {
+          "gameId": 4295,
+          "title": "Harbinger"
+        },
+        {
+          "gameId": 157873,
+          "title": "Harbinger"
+        }
+      ]
+    },
+    {
+      "normalized": "hardball",
+      "games": [
+        {
+          "gameId": 49169,
+          "title": "HardBall"
+        },
+        {
+          "gameId": 115004,
+          "title": "HardBall!"
+        }
+      ]
+    },
+    {
+      "normalized": "harry potter and the prisoner of azkaban",
+      "games": [
+        {
+          "gameId": 4316,
+          "title": "Harry Potter and the Prisoner of Azkaban"
+        },
+        {
+          "gameId": 186082,
+          "title": "Harry Potter and the Prisoner of Azkaban"
+        }
+      ]
+    },
+    {
+      "normalized": "haunted house",
+      "games": [
+        {
+          "gameId": 14366,
+          "title": "Haunted House"
+        },
+        {
+          "gameId": 28857,
+          "title": "Haunted House"
+        },
+        {
+          "gameId": 130855,
+          "title": "Haunted House"
+        }
+      ]
+    },
+    {
+      "normalized": "heart s medicine season one",
+      "games": [
+        {
+          "gameId": 49633,
+          "title": "Heart's Medicine: Season One"
+        },
+        {
+          "gameId": 81084,
+          "title": "Heart's Medicine - Season One"
+        }
+      ]
+    },
+    {
+      "normalized": "heart s medicine time to heal",
+      "games": [
+        {
+          "gameId": 40155,
+          "title": "Heart's Medicine: Time to Heal"
+        },
+        {
+          "gameId": 51903,
+          "title": "Heart's Medicine - Time to Heal"
+        }
+      ]
+    },
+    {
+      "normalized": "hentai waifu",
+      "games": [
+        {
+          "gameId": 68962,
+          "title": "Hentai Waifu"
+        },
+        {
+          "gameId": 172907,
+          "title": "Hentai Waifu"
+        }
+      ]
+    },
+    {
+      "normalized": "hollywood squares",
+      "games": [
+        {
+          "gameId": 49827,
+          "title": "Hollywood Squares"
+        },
+        {
+          "gameId": 119963,
+          "title": "Hollywood Squares"
+        }
+      ]
+    },
+    {
+      "normalized": "home",
+      "games": [
+        {
+          "gameId": 4490,
+          "title": "Home"
+        },
+        {
+          "gameId": 68124,
+          "title": "HOME"
+        },
+        {
+          "gameId": 104288,
+          "title": "Home"
+        }
+      ]
+    },
+    {
+      "normalized": "home alone",
+      "games": [
+        {
+          "gameId": 4492,
+          "title": "Home Alone"
+        },
+        {
+          "gameId": 30677,
+          "title": "Home Alone"
+        }
+      ]
+    },
+    {
+      "normalized": "homebound",
+      "games": [
+        {
+          "gameId": 60350,
+          "title": "Homebound"
+        },
+        {
+          "gameId": 97832,
+          "title": "Homebound"
+        }
+      ]
+    },
+    {
+      "normalized": "hook",
+      "games": [
+        {
+          "gameId": 4500,
+          "title": "Hook"
+        },
+        {
+          "gameId": 13749,
+          "title": "Hook"
+        },
+        {
+          "gameId": 27667,
+          "title": "Hook"
+        },
+        {
+          "gameId": 174897,
+          "title": "Hook"
+        }
+      ]
+    },
+    {
+      "normalized": "howl",
+      "games": [
+        {
+          "gameId": 108355,
+          "title": "Howl"
+        },
+        {
+          "gameId": 140766,
+          "title": "Howl"
+        }
+      ]
+    },
+    {
+      "normalized": "hyper rally",
+      "games": [
+        {
+          "gameId": 96972,
+          "title": "Hyper Rally"
+        },
+        {
+          "gameId": 154160,
+          "title": "Hyper Rally"
+        }
+      ]
+    },
+    {
+      "normalized": "ice hockey",
+      "games": [
+        {
+          "gameId": 4594,
+          "title": "Ice Hockey"
+        },
+        {
+          "gameId": 4595,
+          "title": "Ice Hockey"
+        }
+      ]
+    },
+    {
+      "normalized": "idol hands",
+      "games": [
+        {
+          "gameId": 33107,
+          "title": "Idol Hands"
+        },
+        {
+          "gameId": 113689,
+          "title": "Idol Hands"
+        }
+      ]
+    },
+    {
+      "normalized": "inari",
+      "games": [
+        {
+          "gameId": 160242,
+          "title": "Inari"
+        },
+        {
+          "gameId": 167335,
+          "title": "Inari"
+        }
+      ]
+    },
+    {
+      "normalized": "incantation",
+      "games": [
+        {
+          "gameId": 23725,
+          "title": "Incantation"
+        },
+        {
+          "gameId": 160069,
+          "title": "Incantation"
+        }
+      ]
+    },
+    {
+      "normalized": "indiana jones and the last crusade",
+      "games": [
+        {
+          "gameId": 4668,
+          "title": "Indiana Jones and the Last Crusade"
+        },
+        {
+          "gameId": 81618,
+          "title": "Indiana Jones and the Last Crusade"
+        },
+        {
+          "gameId": 108241,
+          "title": "Indiana Jones and the Last Crusade"
+        }
+      ]
+    },
+    {
+      "normalized": "indy 500",
+      "games": [
+        {
+          "gameId": 12784,
+          "title": "Indy 500"
+        },
+        {
+          "gameId": 35817,
+          "title": "Indy 500"
+        }
+      ]
+    },
+    {
+      "normalized": "infinity",
+      "games": [
+        {
+          "gameId": 97574,
+          "title": "Infinity"
+        },
+        {
+          "gameId": 179799,
+          "title": "Infinity"
+        }
+      ]
+    },
+    {
+      "normalized": "instinct",
+      "games": [
+        {
+          "gameId": 13960,
+          "title": "Instinct"
+        },
+        {
+          "gameId": 60598,
+          "title": "Instinct"
+        },
+        {
+          "gameId": 139968,
+          "title": "Instinct"
+        }
+      ]
+    },
+    {
+      "normalized": "ittle dew 2",
+      "games": [
+        {
+          "gameId": 41392,
+          "title": "Ittle Dew 2"
+        },
+        {
+          "gameId": 50671,
+          "title": "Ittle Dew 2+"
+        }
+      ]
+    },
+    {
+      "normalized": "j stars victory vs",
+      "games": [
+        {
+          "gameId": 24263,
+          "title": "J-Stars Victory VS"
+        },
+        {
+          "gameId": 27273,
+          "title": "J-Stars Victory VS+"
+        }
+      ]
+    },
+    {
+      "normalized": "jackal",
+      "games": [
+        {
+          "gameId": 4782,
+          "title": "Jackal"
+        },
+        {
+          "gameId": 170368,
+          "title": "Jackal"
+        }
+      ]
+    },
+    {
+      "normalized": "james bond 007",
+      "games": [
+        {
+          "gameId": 4805,
+          "title": "James Bond 007"
+        },
+        {
+          "gameId": 57746,
+          "title": "James Bond 007"
+        }
+      ]
+    },
+    {
+      "normalized": "jawbreaker",
+      "games": [
+        {
+          "gameId": 56149,
+          "title": "Jawbreaker"
+        },
+        {
+          "gameId": 150033,
+          "title": "Jawbreaker"
+        }
+      ]
+    },
+    {
+      "normalized": "jeopardy",
+      "games": [
+        {
+          "gameId": 4824,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 4825,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 15874,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 17318,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 68224,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 71534,
+          "title": "Jeopardy!"
+        },
+        {
+          "gameId": 76238,
+          "title": "Jeopardy!"
+        }
+      ]
+    },
+    {
+      "normalized": "journey to the center of the earth",
+      "games": [
+        {
+          "gameId": 4872,
+          "title": "Journey to the Center of the Earth"
+        },
+        {
+          "gameId": 13001,
+          "title": "Journey to the Center of the Earth"
+        }
+      ]
+    },
+    {
+      "normalized": "judge dredd",
+      "games": [
+        {
+          "gameId": 4879,
+          "title": "Judge Dredd"
+        },
+        {
+          "gameId": 43879,
+          "title": "Judge Dredd"
+        },
+        {
+          "gameId": 137752,
+          "title": "Judge Dredd"
+        }
+      ]
+    },
+    {
+      "normalized": "judgment",
+      "games": [
+        {
+          "gameId": 60754,
+          "title": "Judgment"
+        },
+        {
+          "gameId": 186152,
+          "title": "Judgment"
+        }
+      ]
+    },
+    {
+      "normalized": "juiced",
+      "games": [
+        {
+          "gameId": 12379,
+          "title": "Juiced"
+        },
+        {
+          "gameId": 78949,
+          "title": "Juiced!"
+        }
+      ]
+    },
+    {
+      "normalized": "kamen rider",
+      "games": [
+        {
+          "gameId": 44575,
+          "title": "Kamen Rider"
+        },
+        {
+          "gameId": 68663,
+          "title": "Kamen Rider"
+        }
+      ]
+    },
+    {
+      "normalized": "kao the kangaroo",
+      "games": [
+        {
+          "gameId": 18698,
+          "title": "Kao the Kangaroo"
+        },
+        {
+          "gameId": 103354,
+          "title": "Kao the Kangaroo"
+        }
+      ]
+    },
+    {
+      "normalized": "karateka",
+      "games": [
+        {
+          "gameId": 4934,
+          "title": "Karateka"
+        },
+        {
+          "gameId": 4935,
+          "title": "Karateka"
+        }
+      ]
+    },
+    {
+      "normalized": "killer instinct",
+      "games": [
+        {
+          "gameId": 4979,
+          "title": "Killer Instinct"
+        },
+        {
+          "gameId": 14350,
+          "title": "Killer Instinct"
+        }
+      ]
+    },
+    {
+      "normalized": "killing time",
+      "games": [
+        {
+          "gameId": 18919,
+          "title": "Killing Time"
+        },
+        {
+          "gameId": 77645,
+          "title": "Killing Time"
+        }
+      ]
+    },
+    {
+      "normalized": "kintsugi",
+      "games": [
+        {
+          "gameId": 79397,
+          "title": "Kintsugi"
+        },
+        {
+          "gameId": 184854,
+          "title": "Kintsugi"
+        }
+      ]
+    },
+    {
+      "normalized": "labyrinth",
+      "games": [
+        {
+          "gameId": 5156,
+          "title": "Labyrinth"
+        },
+        {
+          "gameId": 122233,
+          "title": "Labyrinth"
+        },
+        {
+          "gameId": 146115,
+          "title": "Labyrinth"
+        }
+      ]
+    },
+    {
+      "normalized": "last knight",
+      "games": [
+        {
+          "gameId": 14449,
+          "title": "Last Knight"
+        },
+        {
+          "gameId": 85705,
+          "title": "Last Knight"
+        }
+      ]
+    },
+    {
+      "normalized": "last resort",
+      "games": [
+        {
+          "gameId": 5192,
+          "title": "Last Resort"
+        },
+        {
+          "gameId": 144706,
+          "title": "Last Resort"
+        }
+      ]
+    },
+    {
+      "normalized": "last train home",
+      "games": [
+        {
+          "gameId": 129989,
+          "title": "Last Train Home"
+        },
+        {
+          "gameId": 153004,
+          "title": "Last Train Home"
+        }
+      ]
+    },
+    {
+      "normalized": "later",
+      "games": [
+        {
+          "gameId": 170004,
+          "title": "LATER"
+        },
+        {
+          "gameId": 177070,
+          "title": "Later"
+        }
+      ]
+    },
+    {
+      "normalized": "layers of fear",
+      "games": [
+        {
+          "gameId": 29851,
+          "title": "Layers of Fear"
+        },
+        {
+          "gameId": 109372,
+          "title": "Layers of Fear"
+        }
+      ]
+    },
+    {
+      "normalized": "legend",
+      "games": [
+        {
+          "gameId": 5222,
+          "title": "Legend"
+        },
+        {
+          "gameId": 33540,
+          "title": "Legend"
+        }
+      ]
+    },
+    {
+      "normalized": "legion",
+      "games": [
+        {
+          "gameId": 22314,
+          "title": "Legion"
+        },
+        {
+          "gameId": 81362,
+          "title": "Legion"
+        }
+      ]
+    },
+    {
+      "normalized": "lemmings",
+      "games": [
+        {
+          "gameId": 5277,
+          "title": "Lemmings"
+        },
+        {
+          "gameId": 31807,
+          "title": "Lemmings"
+        }
+      ]
+    },
+    {
+      "normalized": "liberation",
+      "games": [
+        {
+          "gameId": 28092,
+          "title": "Liberation"
+        },
+        {
+          "gameId": 81365,
+          "title": "Liberation"
+        }
+      ]
+    },
+    {
+      "normalized": "lifeline",
+      "games": [
+        {
+          "gameId": 5295,
+          "title": "Lifeline"
+        },
+        {
+          "gameId": 31505,
+          "title": "Lifeline"
+        }
+      ]
+    },
+    {
+      "normalized": "light",
+      "games": [
+        {
+          "gameId": 15580,
+          "title": "Light"
+        },
+        {
+          "gameId": 90895,
+          "title": "LIGHT"
+        }
+      ]
+    },
+    {
+      "normalized": "lighthouse keeper",
+      "games": [
+        {
+          "gameId": 85522,
+          "title": "Lighthouse Keeper"
+        },
+        {
+          "gameId": 124885,
+          "title": "Lighthouse Keeper"
+        }
+      ]
+    },
+    {
+      "normalized": "lingo",
+      "games": [
+        {
+          "gameId": 55480,
+          "title": "Lingo"
+        },
+        {
+          "gameId": 131021,
+          "title": "Lingo"
+        }
+      ]
+    },
+    {
+      "normalized": "littlebigplanet",
+      "games": [
+        {
+          "gameId": 5334,
+          "title": "LittleBigPlanet"
+        },
+        {
+          "gameId": 5335,
+          "title": "LittleBigPlanet"
+        }
+      ]
+    },
+    {
+      "normalized": "live a live",
+      "games": [
+        {
+          "gameId": 5343,
+          "title": "Live A Live"
+        },
+        {
+          "gameId": 103830,
+          "title": "Live A Live"
+        }
+      ]
+    },
+    {
+      "normalized": "lode runner",
+      "games": [
+        {
+          "gameId": 5355,
+          "title": "Lode Runner"
+        },
+        {
+          "gameId": 56850,
+          "title": "Lode Runner"
+        }
+      ]
+    },
+    {
+      "normalized": "long time no see",
+      "games": [
+        {
+          "gameId": 87116,
+          "title": "Long Time No See"
+        },
+        {
+          "gameId": 139677,
+          "title": "Long Time No See"
+        }
+      ]
+    },
+    {
+      "normalized": "loop",
+      "games": [
+        {
+          "gameId": 86335,
+          "title": "Loop"
+        },
+        {
+          "gameId": 142038,
+          "title": "Loop"
+        }
+      ]
+    },
+    {
+      "normalized": "lords of the fallen",
+      "games": [
+        {
+          "gameId": 21618,
+          "title": "Lords of the Fallen"
+        },
+        {
+          "gameId": 112684,
+          "title": "Lords of the Fallen"
+        }
+      ]
+    },
+    {
+      "normalized": "lost in transit",
+      "games": [
+        {
+          "gameId": 74891,
+          "title": "Lost in Transit"
+        },
+        {
+          "gameId": 183894,
+          "title": "LOST IN TRANSIT"
+        }
+      ]
+    },
+    {
+      "normalized": "love",
+      "games": [
+        {
+          "gameId": 5404,
+          "title": "LOVE"
+        },
+        {
+          "gameId": 5406,
+          "title": "Love+"
+        }
+      ]
+    },
+    {
+      "normalized": "lucid",
+      "games": [
+        {
+          "gameId": 5413,
+          "title": "Lucid"
+        },
+        {
+          "gameId": 174726,
+          "title": "LUCID"
+        }
+      ]
+    },
+    {
+      "normalized": "luna",
+      "games": [
+        {
+          "gameId": 50860,
+          "title": "Luna"
+        },
+        {
+          "gameId": 108073,
+          "title": "LUNA"
+        },
+        {
+          "gameId": 174956,
+          "title": "LUNA"
+        }
+      ]
+    },
+    {
+      "normalized": "lust epidemic",
+      "games": [
+        {
+          "gameId": 77458,
+          "title": "Lust Epidemic"
+        },
+        {
+          "gameId": 157322,
+          "title": "Lust Epidemic"
+        }
+      ]
+    },
+    {
+      "normalized": "m i a missing in action",
+      "games": [
+        {
+          "gameId": 5468,
+          "title": "M.I.A.: Missing in Action"
+        },
+        {
+          "gameId": 21043,
+          "title": "M.I.A.: Missing In Action"
+        }
+      ]
+    },
+    {
+      "normalized": "mad max",
+      "games": [
+        {
+          "gameId": 17610,
+          "title": "Mad Max"
+        },
+        {
+          "gameId": 21318,
+          "title": "Mad Max"
+        }
+      ]
+    },
+    {
+      "normalized": "madden nfl 25",
+      "games": [
+        {
+          "gameId": 12653,
+          "title": "Madden NFL 25"
+        },
+        {
+          "gameId": 155701,
+          "title": "Madden NFL 25"
+        }
+      ]
+    },
+    {
+      "normalized": "magic garden",
+      "games": [
+        {
+          "gameId": 157518,
+          "title": "Magic Garden"
+        },
+        {
+          "gameId": 175813,
+          "title": "Magic Garden"
+        }
+      ]
+    },
+    {
+      "normalized": "magic knight rayearth",
+      "games": [
+        {
+          "gameId": 5526,
+          "title": "Magic Knight Rayearth"
+        },
+        {
+          "gameId": 77281,
+          "title": "Magic Knight Rayearth"
+        }
+      ]
+    },
+    {
+      "normalized": "magical taruruuto kun",
+      "games": [
+        {
+          "gameId": 30062,
+          "title": "Magical * Taruruuto-kun"
+        },
+        {
+          "gameId": 75140,
+          "title": "Magical * Taruruuto-kun"
+        }
+      ]
+    },
+    {
+      "normalized": "mahjong",
+      "games": [
+        {
+          "gameId": 43836,
+          "title": "Mahjong"
+        },
+        {
+          "gameId": 117952,
+          "title": "Mahjong"
+        }
+      ]
+    },
+    {
+      "normalized": "mahou kishi rayearth",
+      "games": [
+        {
+          "gameId": 5527,
+          "title": "Mahou Kishi Rayearth"
+        },
+        {
+          "gameId": 104858,
+          "title": "Mahou Kishi Rayearth"
+        }
+      ]
+    },
+    {
+      "normalized": "major league baseball",
+      "games": [
+        {
+          "gameId": 5579,
+          "title": "Major League Baseball"
+        },
+        {
+          "gameId": 79094,
+          "title": "Major League Baseball"
+        }
+      ]
+    },
+    {
+      "normalized": "marathon",
+      "games": [
+        {
+          "gameId": 5609,
+          "title": "Marathon"
+        },
+        {
+          "gameId": 129237,
+          "title": "Marathon"
+        }
+      ]
+    },
+    {
+      "normalized": "mario vs donkey kong",
+      "games": [
+        {
+          "gameId": 5660,
+          "title": "Mario vs. Donkey Kong"
+        },
+        {
+          "gameId": 137869,
+          "title": "Mario vs. Donkey Kong"
+        }
+      ]
+    },
+    {
+      "normalized": "master of magic",
+      "games": [
+        {
+          "gameId": 5723,
+          "title": "Master of Magic"
+        },
+        {
+          "gameId": 27500,
+          "title": "Master of Magic"
+        },
+        {
+          "gameId": 121047,
+          "title": "Master of Magic"
+        }
+      ]
+    },
+    {
+      "normalized": "master of orion",
+      "games": [
+        {
+          "gameId": 5725,
+          "title": "Master of Orion"
+        },
+        {
+          "gameId": 36737,
+          "title": "Master of Orion"
+        }
+      ]
+    },
+    {
+      "normalized": "medal of honor",
+      "games": [
+        {
+          "gameId": 5775,
+          "title": "Medal of Honor"
+        },
+        {
+          "gameId": 5776,
+          "title": "Medal of Honor"
+        }
+      ]
+    },
+    {
+      "normalized": "medievil",
+      "games": [
+        {
+          "gameId": 5796,
+          "title": "MediEvil"
+        },
+        {
+          "gameId": 65969,
+          "title": "MediEvil"
+        }
+      ]
+    },
+    {
+      "normalized": "melancholy love",
+      "games": [
+        {
+          "gameId": 91412,
+          "title": "Melancholy Love"
+        },
+        {
+          "gameId": 138011,
+          "title": "Melancholy Love"
+        }
+      ]
+    },
+    {
+      "normalized": "melody",
+      "games": [
+        {
+          "gameId": 53778,
+          "title": "Melody"
+        },
+        {
+          "gameId": 132744,
+          "title": "Melody"
+        }
+      ]
+    },
+    {
+      "normalized": "memento",
+      "games": [
+        {
+          "gameId": 39415,
+          "title": "Memento"
+        },
+        {
+          "gameId": 126442,
+          "title": "Memento"
+        }
+      ]
+    },
+    {
+      "normalized": "memento mori",
+      "games": [
+        {
+          "gameId": 5878,
+          "title": "Memento Mori"
+        },
+        {
+          "gameId": 21004,
+          "title": "Memento Mori"
+        },
+        {
+          "gameId": 155496,
+          "title": "Memento Mori"
+        }
+      ]
+    },
+    {
+      "normalized": "memoir",
+      "games": [
+        {
+          "gameId": 56392,
+          "title": "Memoir"
+        },
+        {
+          "gameId": 123957,
+          "title": "Memoir"
+        }
+      ]
+    },
+    {
+      "normalized": "menace",
+      "games": [
+        {
+          "gameId": 58931,
+          "title": "Menace"
+        },
+        {
+          "gameId": 181687,
+          "title": "Menace"
+        }
+      ]
+    },
+    {
+      "normalized": "metal gear solid",
+      "games": [
+        {
+          "gameId": 5908,
+          "title": "Metal Gear Solid"
+        },
+        {
+          "gameId": 5909,
+          "title": "Metal Gear Solid"
+        }
+      ]
+    },
+    {
+      "normalized": "metrico",
+      "games": [
+        {
+          "gameId": 20232,
+          "title": "Metrico"
+        },
+        {
+          "gameId": 39052,
+          "title": "Metrico+"
+        }
+      ]
+    },
+    {
+      "normalized": "micro machines",
+      "games": [
+        {
+          "gameId": 5984,
+          "title": "Micro Machines"
+        },
+        {
+          "gameId": 117320,
+          "title": "Micro Machines"
+        }
+      ]
+    },
+    {
+      "normalized": "microsoft flight simulator",
+      "games": [
+        {
+          "gameId": 70960,
+          "title": "Microsoft Flight Simulator"
+        },
+        {
+          "gameId": 115712,
+          "title": "Microsoft Flight Simulator"
+        }
+      ]
+    },
+    {
+      "normalized": "miner dig deep",
+      "games": [
+        {
+          "gameId": 6067,
+          "title": "Miner Dig Deep"
+        },
+        {
+          "gameId": 92178,
+          "title": "Miner: Dig Deep"
+        }
+      ]
+    },
+    {
+      "normalized": "miniatures",
+      "games": [
+        {
+          "gameId": 159381,
+          "title": "Miniatures"
+        },
+        {
+          "gameId": 160712,
+          "title": "Miniatures"
+        }
+      ]
+    },
+    {
+      "normalized": "minotaur",
+      "games": [
+        {
+          "gameId": 77501,
+          "title": "Minotaur"
+        },
+        {
+          "gameId": 139680,
+          "title": "Minotaur"
+        }
+      ]
+    },
+    {
+      "normalized": "missile command",
+      "games": [
+        {
+          "gameId": 6087,
+          "title": "Missile Command"
+        },
+        {
+          "gameId": 28438,
+          "title": "Missile Command"
+        }
+      ]
+    },
+    {
+      "normalized": "mission impossible",
+      "games": [
+        {
+          "gameId": 6093,
+          "title": "Mission: Impossible"
+        },
+        {
+          "gameId": 6094,
+          "title": "Mission: Impossible"
+        }
+      ]
+    },
+    {
+      "normalized": "mist",
+      "games": [
+        {
+          "gameId": 99505,
+          "title": "MIST"
+        },
+        {
+          "gameId": 149957,
+          "title": "Mist"
+        }
+      ]
+    },
+    {
+      "normalized": "mojo",
+      "games": [
+        {
+          "gameId": 6126,
+          "title": "Mojo!"
+        },
+        {
+          "gameId": 152354,
+          "title": "Mojo"
+        }
+      ]
+    },
+    {
+      "normalized": "monkey magic",
+      "games": [
+        {
+          "gameId": 24080,
+          "title": "Monkey Magic"
+        },
+        {
+          "gameId": 53118,
+          "title": "Monkey Magic"
+        }
+      ]
+    },
+    {
+      "normalized": "monopoly",
+      "games": [
+        {
+          "gameId": 6138,
+          "title": "Monopoly"
+        },
+        {
+          "gameId": 6139,
+          "title": "Monopoly"
+        },
+        {
+          "gameId": 15937,
+          "title": "Monopoly"
+        },
+        {
+          "gameId": 24610,
+          "title": "Monopoly"
+        },
+        {
+          "gameId": 32195,
+          "title": "Monopoly"
+        },
+        {
+          "gameId": 152108,
+          "title": "MONOPOLY"
+        },
+        {
+          "gameId": 160070,
+          "title": "Monopoly"
+        }
+      ]
+    },
+    {
+      "normalized": "monster truck madness",
+      "games": [
+        {
+          "gameId": 24465,
+          "title": "Monster Truck Madness"
+        },
+        {
+          "gameId": 82810,
+          "title": "Monster Truck Madness"
+        }
+      ]
+    },
+    {
+      "normalized": "monuments of mars",
+      "games": [
+        {
+          "gameId": 26999,
+          "title": "Monuments of Mars"
+        },
+        {
+          "gameId": 98161,
+          "title": "Monuments of Mars"
+        }
+      ]
+    },
+    {
+      "normalized": "moon river",
+      "games": [
+        {
+          "gameId": 72001,
+          "title": "Moon River"
+        },
+        {
+          "gameId": 187759,
+          "title": "Moon River"
+        }
+      ]
+    },
+    {
+      "normalized": "mortal kombat",
+      "games": [
+        {
+          "gameId": 6201,
+          "title": "Mortal Kombat"
+        },
+        {
+          "gameId": 6202,
+          "title": "Mortal Kombat"
+        }
+      ]
+    },
+    {
+      "normalized": "motocross madness",
+      "games": [
+        {
+          "gameId": 6224,
+          "title": "Motocross Madness"
+        },
+        {
+          "gameId": 20229,
+          "title": "Motocross Madness"
+        }
+      ]
+    },
+    {
+      "normalized": "mr hopp s playhouse",
+      "games": [
+        {
+          "gameId": 75009,
+          "title": "Mr. Hopp's Playhouse"
+        },
+        {
+          "gameId": 88007,
+          "title": "Mr Hopp's Playhouse"
+        }
+      ]
+    },
+    {
+      "normalized": "myst",
+      "games": [
+        {
+          "gameId": 6308,
+          "title": "Myst"
+        },
+        {
+          "gameId": 97062,
+          "title": "Myst"
+        }
+      ]
+    },
+    {
+      "normalized": "myths of the world chinese healer",
+      "games": [
+        {
+          "gameId": 40655,
+          "title": "Myths of the World: Chinese Healer"
+        },
+        {
+          "gameId": 53566,
+          "title": "Myths of the World: Chinese Healer"
+        }
+      ]
+    },
+    {
+      "normalized": "n",
+      "games": [
+        {
+          "gameId": 6335,
+          "title": "N+"
+        },
+        {
+          "gameId": 17200,
+          "title": "N"
+        },
+        {
+          "gameId": 26340,
+          "title": "N++"
+        }
+      ]
+    },
+    {
+      "normalized": "namco museum",
+      "games": [
+        {
+          "gameId": 58064,
+          "title": "Namco Museum"
+        },
+        {
+          "gameId": 81014,
+          "title": "Namco Museum"
+        }
+      ]
+    },
+    {
+      "normalized": "narc",
+      "games": [
+        {
+          "gameId": 11989,
+          "title": "Narc"
+        },
+        {
+          "gameId": 20955,
+          "title": "Narc"
+        }
+      ]
+    },
+    {
+      "normalized": "nba jam",
+      "games": [
+        {
+          "gameId": 6436,
+          "title": "NBA Jam"
+        },
+        {
+          "gameId": 6437,
+          "title": "NBA Jam"
+        }
+      ]
+    },
+    {
+      "normalized": "need for speed most wanted",
+      "games": [
+        {
+          "gameId": 6477,
+          "title": "Need for Speed: Most Wanted"
+        },
+        {
+          "gameId": 6478,
+          "title": "Need for Speed: Most Wanted"
+        }
+      ]
+    },
+    {
+      "normalized": "never give up",
+      "games": [
+        {
+          "gameId": 46085,
+          "title": "Never Give Up!"
+        },
+        {
+          "gameId": 73154,
+          "title": "Never Give Up"
+        }
+      ]
+    },
+    {
+      "normalized": "nevertales shattered image",
+      "games": [
+        {
+          "gameId": 54378,
+          "title": "Nevertales: Shattered Image"
+        },
+        {
+          "gameId": 75361,
+          "title": "Nevertales: Shattered Image"
+        }
+      ]
+    },
+    {
+      "normalized": "nfl blitz",
+      "games": [
+        {
+          "gameId": 6548,
+          "title": "NFL Blitz"
+        },
+        {
+          "gameId": 6549,
+          "title": "NFL Blitz"
+        }
+      ]
+    },
+    {
+      "normalized": "nfl football",
+      "games": [
+        {
+          "gameId": 11819,
+          "title": "NFL Football"
+        },
+        {
+          "gameId": 40292,
+          "title": "NFL Football"
+        }
+      ]
+    },
+    {
+      "normalized": "nhl hockey",
+      "games": [
+        {
+          "gameId": 19383,
+          "title": "NHL Hockey"
+        },
+        {
+          "gameId": 79063,
+          "title": "NHL Hockey"
+        }
+      ]
+    },
+    {
+      "normalized": "night shift",
+      "games": [
+        {
+          "gameId": 6593,
+          "title": "Night Shift"
+        },
+        {
+          "gameId": 78858,
+          "title": "NIGHT SHIFT"
+        }
+      ]
+    },
+    {
+      "normalized": "night watch",
+      "games": [
+        {
+          "gameId": 33557,
+          "title": "Night Watch"
+        },
+        {
+          "gameId": 139681,
+          "title": "Night Watch"
+        }
+      ]
+    },
+    {
+      "normalized": "nightmare house",
+      "games": [
+        {
+          "gameId": 14029,
+          "title": "Nightmare House"
+        },
+        {
+          "gameId": 149231,
+          "title": "Nightmare House"
+        }
+      ]
+    },
+    {
+      "normalized": "nightshade",
+      "games": [
+        {
+          "gameId": 6603,
+          "title": "Nightshade"
+        },
+        {
+          "gameId": 6604,
+          "title": "Nightshade"
+        },
+        {
+          "gameId": 47019,
+          "title": "Nightshade"
+        }
+      ]
+    },
+    {
+      "normalized": "ninja gaiden",
+      "games": [
+        {
+          "gameId": 6619,
+          "title": "Ninja Gaiden"
+        },
+        {
+          "gameId": 6621,
+          "title": "Ninja Gaiden"
+        },
+        {
+          "gameId": 13419,
+          "title": "Ninja Gaiden"
+        },
+        {
+          "gameId": 22663,
+          "title": "Ninja Gaiden"
+        }
+      ]
+    },
+    {
+      "normalized": "no rest for the wicked",
+      "games": [
+        {
+          "gameId": 132280,
+          "title": "No Rest for the Wicked"
+        },
+        {
+          "gameId": 141835,
+          "title": "No Rest for the Wicked"
+        }
+      ]
+    },
+    {
+      "normalized": "nostalgia",
+      "games": [
+        {
+          "gameId": 6675,
+          "title": "Nostalgia"
+        },
+        {
+          "gameId": 144358,
+          "title": "Nostalgia"
+        }
+      ]
+    },
+    {
+      "normalized": "nothing",
+      "games": [
+        {
+          "gameId": 72081,
+          "title": "Nothing!"
+        },
+        {
+          "gameId": 75377,
+          "title": "Nothing"
+        }
+      ]
+    },
+    {
+      "normalized": "nuts",
+      "games": [
+        {
+          "gameId": 36401,
+          "title": "Nuts"
+        },
+        {
+          "gameId": 83325,
+          "title": "Nuts"
+        },
+        {
+          "gameId": 93350,
+          "title": "NUTS"
+        }
+      ]
+    },
+    {
+      "normalized": "off",
+      "games": [
+        {
+          "gameId": 11869,
+          "title": "OFF"
+        },
+        {
+          "gameId": 162784,
+          "title": "OFF"
+        }
+      ]
+    },
+    {
+      "normalized": "off the wall",
+      "games": [
+        {
+          "gameId": 15094,
+          "title": "Off the Wall"
+        },
+        {
+          "gameId": 90257,
+          "title": "Off the Wall"
+        }
+      ]
+    },
+    {
+      "normalized": "oh deer",
+      "games": [
+        {
+          "gameId": 43411,
+          "title": "Oh, Deer!"
+        },
+        {
+          "gameId": 148070,
+          "title": "Oh Deer"
+        }
+      ]
+    },
+    {
+      "normalized": "oh edo towns",
+      "games": [
+        {
+          "gameId": 80443,
+          "title": "Oh!Edo Towns"
+        },
+        {
+          "gameId": 107103,
+          "title": "Oh! Edo Towns"
+        }
+      ]
+    },
+    {
+      "normalized": "old world",
+      "games": [
+        {
+          "gameId": 94731,
+          "title": "Old World"
+        },
+        {
+          "gameId": 113973,
+          "title": "Old World"
+        }
+      ]
+    },
+    {
+      "normalized": "once in a lifetime",
+      "games": [
+        {
+          "gameId": 100158,
+          "title": "Once in a Lifetime"
+        },
+        {
+          "gameId": 103819,
+          "title": "Once in a Lifetime"
+        }
+      ]
+    },
+    {
+      "normalized": "one",
+      "games": [
+        {
+          "gameId": 6737,
+          "title": "One"
+        },
+        {
+          "gameId": 97630,
+          "title": "One"
+        },
+        {
+          "gameId": 129497,
+          "title": "ONE."
+        }
+      ]
+    },
+    {
+      "normalized": "onlyfuck ruru s adventures",
+      "games": [
+        {
+          "gameId": 104231,
+          "title": "OnlyFuck - RuRu's Adventures"
+        },
+        {
+          "gameId": 111658,
+          "title": "OnlyFuck - RuRu's Adventures"
+        }
+      ]
+    },
+    {
+      "normalized": "ord",
+      "games": [
+        {
+          "gameId": 80468,
+          "title": "Ord."
+        },
+        {
+          "gameId": 92930,
+          "title": "Ord"
+        }
+      ]
+    },
+    {
+      "normalized": "out of sight",
+      "games": [
+        {
+          "gameId": 90290,
+          "title": "Out of Sight"
+        },
+        {
+          "gameId": 165850,
+          "title": "Out of Sight"
+        }
+      ]
+    },
+    {
+      "normalized": "outlive",
+      "games": [
+        {
+          "gameId": 29724,
+          "title": "Outlive"
+        },
+        {
+          "gameId": 145675,
+          "title": "Outlive"
+        }
+      ]
+    },
+    {
+      "normalized": "overboard",
+      "games": [
+        {
+          "gameId": 93626,
+          "title": "Overboard!"
+        },
+        {
+          "gameId": 114553,
+          "title": "Overboard"
+        }
+      ]
+    },
+    {
+      "normalized": "overlord",
+      "games": [
+        {
+          "gameId": 6848,
+          "title": "Overlord"
+        },
+        {
+          "gameId": 6849,
+          "title": "Overlord"
+        }
+      ]
+    },
+    {
+      "normalized": "overwatch",
+      "games": [
+        {
+          "gameId": 31590,
+          "title": "Overwatch"
+        },
+        {
+          "gameId": 94137,
+          "title": "Overwatch"
+        }
+      ]
+    },
+    {
+      "normalized": "pac man museum",
+      "games": [
+        {
+          "gameId": 19682,
+          "title": "Pac-Man Museum"
+        },
+        {
+          "gameId": 105129,
+          "title": "Pac-Man Museum+"
+        }
+      ]
+    },
+    {
+      "normalized": "painkiller",
+      "games": [
+        {
+          "gameId": 6871,
+          "title": "Painkiller"
+        },
+        {
+          "gameId": 165506,
+          "title": "Painkiller"
+        }
+      ]
+    },
+    {
+      "normalized": "paradise",
+      "games": [
+        {
+          "gameId": 15104,
+          "title": "Paradise"
+        },
+        {
+          "gameId": 153945,
+          "title": "Paradise"
+        }
+      ]
+    },
+    {
+      "normalized": "parasol henbee",
+      "games": [
+        {
+          "gameId": 76986,
+          "title": "Parasol Henbee"
+        },
+        {
+          "gameId": 86231,
+          "title": "Parasol Henbee"
+        }
+      ]
+    },
+    {
+      "normalized": "parodius",
+      "games": [
+        {
+          "gameId": 6929,
+          "title": "Parodius"
+        },
+        {
+          "gameId": 76959,
+          "title": "Parodius"
+        }
+      ]
+    },
+    {
+      "normalized": "penny racers",
+      "games": [
+        {
+          "gameId": 23608,
+          "title": "Penny Racers"
+        },
+        {
+          "gameId": 113297,
+          "title": "Penny Racers"
+        }
+      ]
+    },
+    {
+      "normalized": "perfect world",
+      "games": [
+        {
+          "gameId": 26688,
+          "title": "Perfect World"
+        },
+        {
+          "gameId": 152365,
+          "title": "Perfect World"
+        }
+      ]
+    },
+    {
+      "normalized": "picross s",
+      "games": [
+        {
+          "gameId": 49451,
+          "title": "Picross S"
+        },
+        {
+          "gameId": 138180,
+          "title": "Picross S+"
+        }
+      ]
+    },
+    {
+      "normalized": "piece by piece",
+      "games": [
+        {
+          "gameId": 160528,
+          "title": "Piece by Piece"
+        },
+        {
+          "gameId": 182767,
+          "title": "Piece by Piece"
+        }
+      ]
+    },
+    {
+      "normalized": "pinball",
+      "games": [
+        {
+          "gameId": 7048,
+          "title": "Pinball"
+        },
+        {
+          "gameId": 79098,
+          "title": "Pinball"
+        }
+      ]
+    },
+    {
+      "normalized": "pinball fx",
+      "games": [
+        {
+          "gameId": 20283,
+          "title": "Pinball FX"
+        },
+        {
+          "gameId": 124300,
+          "title": "Pinball FX"
+        }
+      ]
+    },
+    {
+      "normalized": "pink",
+      "games": [
+        {
+          "gameId": 90709,
+          "title": "Pink"
+        },
+        {
+          "gameId": 98501,
+          "title": "Pink"
+        }
+      ]
+    },
+    {
+      "normalized": "pipe dream",
+      "games": [
+        {
+          "gameId": 7059,
+          "title": "Pipe Dream"
+        },
+        {
+          "gameId": 102941,
+          "title": "Pipe Dream"
+        }
+      ]
+    },
+    {
+      "normalized": "pipes",
+      "games": [
+        {
+          "gameId": 56085,
+          "title": "Pipes!"
+        },
+        {
+          "gameId": 148335,
+          "title": "Pipes"
+        }
+      ]
+    },
+    {
+      "normalized": "pitfall",
+      "games": [
+        {
+          "gameId": 7075,
+          "title": "Pitfall!"
+        },
+        {
+          "gameId": 24618,
+          "title": "Pitfall!"
+        }
+      ]
+    },
+    {
+      "normalized": "poke mon picross",
+      "games": [
+        {
+          "gameId": 32398,
+          "title": "Pokémon Picross"
+        },
+        {
+          "gameId": 125129,
+          "title": "Pokémon Picross"
+        }
+      ]
+    },
+    {
+      "normalized": "poker face paul s solitaire",
+      "games": [
+        {
+          "gameId": 40586,
+          "title": "Poker Face Paul's Solitaire"
+        },
+        {
+          "gameId": 111344,
+          "title": "Poker Face Paul's Solitaire"
+        }
+      ]
+    },
+    {
+      "normalized": "popeye",
+      "games": [
+        {
+          "gameId": 7218,
+          "title": "Popeye"
+        },
+        {
+          "gameId": 90250,
+          "title": "Popeye"
+        },
+        {
+          "gameId": 110453,
+          "title": "Popeye"
+        }
+      ]
+    },
+    {
+      "normalized": "pretentious game",
+      "games": [
+        {
+          "gameId": 7275,
+          "title": "Pretentious Game"
+        },
+        {
+          "gameId": 20337,
+          "title": "Pretentious Game"
+        }
+      ]
+    },
+    {
+      "normalized": "prey",
+      "games": [
+        {
+          "gameId": 7278,
+          "title": "Prey"
+        },
+        {
+          "gameId": 44590,
+          "title": "Prey"
+        }
+      ]
+    },
+    {
+      "normalized": "prince of persia",
+      "games": [
+        {
+          "gameId": 7287,
+          "title": "Prince of Persia"
+        },
+        {
+          "gameId": 7288,
+          "title": "Prince of Persia"
+        }
+      ]
+    },
+    {
+      "normalized": "protocol",
+      "games": [
+        {
+          "gameId": 30039,
+          "title": "Protocol"
+        },
+        {
+          "gameId": 64689,
+          "title": "Protocol"
+        }
+      ]
+    },
+    {
+      "normalized": "psychosis",
+      "games": [
+        {
+          "gameId": 15256,
+          "title": "Psychosis"
+        },
+        {
+          "gameId": 22281,
+          "title": "Psychosis"
+        }
+      ]
+    },
+    {
+      "normalized": "pumpking",
+      "games": [
+        {
+          "gameId": 74701,
+          "title": "Pumpking"
+        },
+        {
+          "gameId": 92658,
+          "title": "Pumpking"
+        }
+      ]
+    },
+    {
+      "normalized": "punch out",
+      "games": [
+        {
+          "gameId": 7390,
+          "title": "Punch-Out!!"
+        },
+        {
+          "gameId": 106715,
+          "title": "Punch-Out!!"
+        }
+      ]
+    },
+    {
+      "normalized": "puyo puyo",
+      "games": [
+        {
+          "gameId": 9411,
+          "title": "Puyo Puyo"
+        },
+        {
+          "gameId": 83379,
+          "title": "Puyo Puyo"
+        }
+      ]
+    },
+    {
+      "normalized": "q bert",
+      "games": [
+        {
+          "gameId": 7438,
+          "title": "Q*bert"
+        },
+        {
+          "gameId": 7440,
+          "title": "Q*bert"
+        }
+      ]
+    },
+    {
+      "normalized": "quarantine",
+      "games": [
+        {
+          "gameId": 7471,
+          "title": "Quarantine"
+        },
+        {
+          "gameId": 61000,
+          "title": "Quarantine"
+        }
+      ]
+    },
+    {
+      "normalized": "quartet",
+      "games": [
+        {
+          "gameId": 40418,
+          "title": "Quartet"
+        },
+        {
+          "gameId": 168899,
+          "title": "Quartet"
+        }
+      ]
+    },
+    {
+      "normalized": "rabbit",
+      "games": [
+        {
+          "gameId": 73122,
+          "title": "Rabbit"
+        },
+        {
+          "gameId": 157796,
+          "title": "RABBIT"
+        }
+      ]
+    },
+    {
+      "normalized": "rambo",
+      "games": [
+        {
+          "gameId": 7563,
+          "title": "Rambo"
+        },
+        {
+          "gameId": 157904,
+          "title": "Rambo"
+        }
+      ]
+    },
+    {
+      "normalized": "ratchet and clank",
+      "games": [
+        {
+          "gameId": 7585,
+          "title": "Ratchet & Clank"
+        },
+        {
+          "gameId": 35859,
+          "title": "Ratchet & Clank"
+        }
+      ]
+    },
+    {
+      "normalized": "rats",
+      "games": [
+        {
+          "gameId": 85884,
+          "title": "Rats!"
+        },
+        {
+          "gameId": 113190,
+          "title": "Rats!"
+        }
+      ]
+    },
+    {
+      "normalized": "reality",
+      "games": [
+        {
+          "gameId": 45043,
+          "title": "Reality"
+        },
+        {
+          "gameId": 91796,
+          "title": "Reality"
+        },
+        {
+          "gameId": 105162,
+          "title": "Reality"
+        }
+      ]
+    },
+    {
+      "normalized": "realms of arkania blade of destiny",
+      "games": [
+        {
+          "gameId": 7655,
+          "title": "Realms of Arkania: Blade of Destiny"
+        },
+        {
+          "gameId": 20082,
+          "title": "Realms of Arkania: Blade of Destiny"
+        }
+      ]
+    },
+    {
+      "normalized": "realms of arkania star trail",
+      "games": [
+        {
+          "gameId": 7657,
+          "title": "Realms of Arkania: Star Trail"
+        },
+        {
+          "gameId": 50665,
+          "title": "Realms of Arkania: Star Trail"
+        }
+      ]
+    },
+    {
+      "normalized": "red",
+      "games": [
+        {
+          "gameId": 42975,
+          "title": "Red"
+        },
+        {
+          "gameId": 53974,
+          "title": "Red"
+        },
+        {
+          "gameId": 64122,
+          "title": "red"
+        }
+      ]
+    },
+    {
+      "normalized": "red baron",
+      "games": [
+        {
+          "gameId": 7674,
+          "title": "Red Baron"
+        },
+        {
+          "gameId": 74578,
+          "title": "Red Baron"
+        }
+      ]
+    },
+    {
+      "normalized": "red riding hood star crossed lovers",
+      "games": [
+        {
+          "gameId": 52405,
+          "title": "Red Riding Hood: Star Crossed Lovers"
+        },
+        {
+          "gameId": 56632,
+          "title": "Red Riding Hood - Star Crossed Lovers"
+        }
+      ]
+    },
+    {
+      "normalized": "resident evil",
+      "games": [
+        {
+          "gameId": 7716,
+          "title": "Resident Evil"
+        },
+        {
+          "gameId": 7717,
+          "title": "Resident Evil"
+        }
+      ]
+    },
+    {
+      "normalized": "resident evil 2",
+      "games": [
+        {
+          "gameId": 7718,
+          "title": "Resident Evil 2"
+        },
+        {
+          "gameId": 57479,
+          "title": "Resident Evil 2"
+        }
+      ]
+    },
+    {
+      "normalized": "resident evil 4",
+      "games": [
+        {
+          "gameId": 7720,
+          "title": "Resident Evil 4"
+        },
+        {
+          "gameId": 108881,
+          "title": "Resident Evil 4"
+        }
+      ]
+    },
+    {
+      "normalized": "resident evil 4 separate ways",
+      "games": [
+        {
+          "gameId": 66855,
+          "title": "Resident Evil 4: Separate Ways"
+        },
+        {
+          "gameId": 137868,
+          "title": "Resident Evil 4 - Separate Ways"
+        }
+      ]
+    },
+    {
+      "normalized": "return",
+      "games": [
+        {
+          "gameId": 60612,
+          "title": "Return."
+        },
+        {
+          "gameId": 74414,
+          "title": "Return"
+        }
+      ]
+    },
+    {
+      "normalized": "reverie",
+      "games": [
+        {
+          "gameId": 52014,
+          "title": "Reverie"
+        },
+        {
+          "gameId": 68816,
+          "title": "Reverie"
+        }
+      ]
+    },
+    {
+      "normalized": "rewrite",
+      "games": [
+        {
+          "gameId": 7783,
+          "title": "Rewrite"
+        },
+        {
+          "gameId": 102509,
+          "title": "Rewrite+"
+        }
+      ]
+    },
+    {
+      "normalized": "ridge racer",
+      "games": [
+        {
+          "gameId": 7804,
+          "title": "Ridge Racer"
+        },
+        {
+          "gameId": 7805,
+          "title": "Ridge Racer"
+        },
+        {
+          "gameId": 15701,
+          "title": "Ridge Racer"
+        }
+      ]
+    },
+    {
+      "normalized": "ridge racer 2",
+      "games": [
+        {
+          "gameId": 39722,
+          "title": "Ridge Racer 2"
+        },
+        {
+          "gameId": 138264,
+          "title": "Ridge Racer 2"
+        }
+      ]
+    },
+    {
+      "normalized": "rinse and repeat",
+      "games": [
+        {
+          "gameId": 145095,
+          "title": "Rinse and Repeat"
+        },
+        {
+          "gameId": 156085,
+          "title": "Rinse & Repeat"
+        }
+      ]
+    },
+    {
+      "normalized": "riven",
+      "games": [
+        {
+          "gameId": 7853,
+          "title": "Riven"
+        },
+        {
+          "gameId": 147284,
+          "title": "Riven"
+        }
+      ]
+    },
+    {
+      "normalized": "road rash",
+      "games": [
+        {
+          "gameId": 7862,
+          "title": "Road Rash"
+        },
+        {
+          "gameId": 7863,
+          "title": "Road Rash"
+        }
+      ]
+    },
+    {
+      "normalized": "robocop",
+      "games": [
+        {
+          "gameId": 7885,
+          "title": "RoboCop"
+        },
+        {
+          "gameId": 24149,
+          "title": "RoboCop"
+        }
+      ]
+    },
+    {
+      "normalized": "rocky",
+      "games": [
+        {
+          "gameId": 7934,
+          "title": "Rocky"
+        },
+        {
+          "gameId": 13164,
+          "title": "Rocky"
+        }
+      ]
+    },
+    {
+      "normalized": "rogue trooper",
+      "games": [
+        {
+          "gameId": 7949,
+          "title": "Rogue Trooper"
+        },
+        {
+          "gameId": 156639,
+          "title": "Rogue Trooper"
+        }
+      ]
+    },
+    {
+      "normalized": "root",
+      "games": [
+        {
+          "gameId": 31947,
+          "title": "ROOT"
+        },
+        {
+          "gameId": 83850,
+          "title": "Root"
+        }
+      ]
+    },
+    {
+      "normalized": "rudolph the red nosed reindeer",
+      "games": [
+        {
+          "gameId": 7996,
+          "title": "Rudolph the Red-Nosed Reindeer"
+        },
+        {
+          "gameId": 171531,
+          "title": "Rudolph the Red-Nosed Reindeer"
+        }
+      ]
+    },
+    {
+      "normalized": "runescape",
+      "games": [
+        {
+          "gameId": 8024,
+          "title": "RuneScape"
+        },
+        {
+          "gameId": 123997,
+          "title": "RuneScape"
+        }
+      ]
+    },
+    {
+      "normalized": "saboteur",
+      "games": [
+        {
+          "gameId": 39439,
+          "title": "Saboteur"
+        },
+        {
+          "gameId": 118254,
+          "title": "Saboteur"
+        }
+      ]
+    },
+    {
+      "normalized": "sabre wulf",
+      "games": [
+        {
+          "gameId": 8044,
+          "title": "Sabre Wulf"
+        },
+        {
+          "gameId": 28921,
+          "title": "Sabre Wulf"
+        }
+      ]
+    },
+    {
+      "normalized": "saints row",
+      "games": [
+        {
+          "gameId": 8071,
+          "title": "Saints Row"
+        },
+        {
+          "gameId": 97314,
+          "title": "Saints Row"
+        }
+      ]
+    },
+    {
+      "normalized": "samurai deeper kyo",
+      "games": [
+        {
+          "gameId": 78222,
+          "title": "Samurai Deeper Kyo"
+        },
+        {
+          "gameId": 106894,
+          "title": "Samurai Deeper Kyo"
+        }
+      ]
+    },
+    {
+      "normalized": "samurai shodown",
+      "games": [
+        {
+          "gameId": 8127,
+          "title": "Samurai Shodown"
+        },
+        {
+          "gameId": 66254,
+          "title": "Samurai Shodown"
+        },
+        {
+          "gameId": 76437,
+          "title": "Samurai Shodown!"
+        }
+      ]
+    },
+    {
+      "normalized": "sandtrix",
+      "games": [
+        {
+          "gameId": 132321,
+          "title": "Sandtrix+"
+        },
+        {
+          "gameId": 141342,
+          "title": "Sandtrix"
+        }
+      ]
+    },
+    {
+      "normalized": "saturnalia",
+      "games": [
+        {
+          "gameId": 90043,
+          "title": "Saturnalia"
+        },
+        {
+          "gameId": 115294,
+          "title": "Saturnalia"
+        }
+      ]
+    },
+    {
+      "normalized": "scooby doo",
+      "games": [
+        {
+          "gameId": 8177,
+          "title": "Scooby-Doo"
+        },
+        {
+          "gameId": 97896,
+          "title": "Scooby-Doo"
+        }
+      ]
+    },
+    {
+      "normalized": "scorch",
+      "games": [
+        {
+          "gameId": 52126,
+          "title": "Scorch"
+        },
+        {
+          "gameId": 93423,
+          "title": "Scorch"
+        }
+      ]
+    },
+    {
+      "normalized": "scrabble",
+      "games": [
+        {
+          "gameId": 15115,
+          "title": "Scrabble"
+        },
+        {
+          "gameId": 36142,
+          "title": "Scrabble"
+        }
+      ]
+    },
+    {
+      "normalized": "screamer",
+      "games": [
+        {
+          "gameId": 8191,
+          "title": "Screamer"
+        },
+        {
+          "gameId": 160623,
+          "title": "Screamer"
+        }
+      ]
+    },
+    {
+      "normalized": "secret of mana",
+      "games": [
+        {
+          "gameId": 8212,
+          "title": "Secret of Mana"
+        },
+        {
+          "gameId": 52497,
+          "title": "Secret of Mana"
+        }
+      ]
+    },
+    {
+      "normalized": "sector zero",
+      "games": [
+        {
+          "gameId": 34408,
+          "title": "Sector Zero"
+        },
+        {
+          "gameId": 181622,
+          "title": "Sector Zero"
+        }
+      ]
+    },
+    {
+      "normalized": "seed of life",
+      "games": [
+        {
+          "gameId": 96803,
+          "title": "Seed of Life"
+        },
+        {
+          "gameId": 109636,
+          "title": "Seed of Life"
+        }
+      ]
+    },
+    {
+      "normalized": "seen",
+      "games": [
+        {
+          "gameId": 41619,
+          "title": "Seen"
+        },
+        {
+          "gameId": 86641,
+          "title": "Seen"
+        }
+      ]
+    },
+    {
+      "normalized": "self",
+      "games": [
+        {
+          "gameId": 77739,
+          "title": "SELF"
+        },
+        {
+          "gameId": 89463,
+          "title": "SELF"
+        }
+      ]
+    },
+    {
+      "normalized": "sengoku",
+      "games": [
+        {
+          "gameId": 8296,
+          "title": "Sengoku"
+        },
+        {
+          "gameId": 18245,
+          "title": "Sengoku"
+        }
+      ]
+    },
+    {
+      "normalized": "shadow of the beast",
+      "games": [
+        {
+          "gameId": 8347,
+          "title": "Shadow of the Beast"
+        },
+        {
+          "gameId": 38191,
+          "title": "Shadow of the Beast"
+        }
+      ]
+    },
+    {
+      "normalized": "shadow of the colossus",
+      "games": [
+        {
+          "gameId": 8348,
+          "title": "Shadow of the Colossus"
+        },
+        {
+          "gameId": 52731,
+          "title": "Shadow of the Colossus"
+        }
+      ]
+    },
+    {
+      "normalized": "shadow warrior",
+      "games": [
+        {
+          "gameId": 8351,
+          "title": "Shadow Warrior"
+        },
+        {
+          "gameId": 8352,
+          "title": "Shadow Warrior"
+        }
+      ]
+    },
+    {
+      "normalized": "shadowgate",
+      "games": [
+        {
+          "gameId": 8356,
+          "title": "Shadowgate"
+        },
+        {
+          "gameId": 20745,
+          "title": "Shadowgate"
+        }
+      ]
+    },
+    {
+      "normalized": "shadowrun",
+      "games": [
+        {
+          "gameId": 8363,
+          "title": "Shadowrun"
+        },
+        {
+          "gameId": 8364,
+          "title": "Shadowrun"
+        },
+        {
+          "gameId": 8365,
+          "title": "Shadowrun"
+        }
+      ]
+    },
+    {
+      "normalized": "sheep",
+      "games": [
+        {
+          "gameId": 27051,
+          "title": "Sheep"
+        },
+        {
+          "gameId": 157694,
+          "title": "Sheep"
+        }
+      ]
+    },
+    {
+      "normalized": "shepherd s crossing",
+      "games": [
+        {
+          "gameId": 32194,
+          "title": "Shepherd's Crossing"
+        },
+        {
+          "gameId": 136375,
+          "title": "Shepherd's Crossing"
+        }
+      ]
+    },
+    {
+      "normalized": "sherlock holmes the awakened",
+      "games": [
+        {
+          "gameId": 8407,
+          "title": "Sherlock Holmes: The Awakened"
+        },
+        {
+          "gameId": 8408,
+          "title": "Sherlock Holmes: The Awakened"
+        }
+      ]
+    },
+    {
+      "normalized": "shift",
+      "games": [
+        {
+          "gameId": 8415,
+          "title": "SHIFT"
+        },
+        {
+          "gameId": 40679,
+          "title": "Shift"
+        }
+      ]
+    },
+    {
+      "normalized": "shinobi",
+      "games": [
+        {
+          "gameId": 8465,
+          "title": "Shinobi"
+        },
+        {
+          "gameId": 8466,
+          "title": "Shinobi"
+        },
+        {
+          "gameId": 8467,
+          "title": "Shinobi"
+        }
+      ]
+    },
+    {
+      "normalized": "shutter",
+      "games": [
+        {
+          "gameId": 24409,
+          "title": "Shutter"
+        },
+        {
+          "gameId": 147247,
+          "title": "Shutter"
+        }
+      ]
+    },
+    {
+      "normalized": "sid meier s pirates",
+      "games": [
+        {
+          "gameId": 8515,
+          "title": "Sid Meier's Pirates!"
+        },
+        {
+          "gameId": 8516,
+          "title": "Sid Meier's Pirates!"
+        }
+      ]
+    },
+    {
+      "normalized": "silent hill 2",
+      "games": [
+        {
+          "gameId": 8523,
+          "title": "Silent Hill 2"
+        },
+        {
+          "gameId": 114905,
+          "title": "Silent Hill 2"
+        }
+      ]
+    },
+    {
+      "normalized": "silicon dreams",
+      "games": [
+        {
+          "gameId": 59050,
+          "title": "Silicon Dreams"
+        },
+        {
+          "gameId": 92279,
+          "title": "Silicon Dreams"
+        }
+      ]
+    },
+    {
+      "normalized": "simcity",
+      "games": [
+        {
+          "gameId": 8555,
+          "title": "SimCity"
+        },
+        {
+          "gameId": 8556,
+          "title": "SimCity"
+        }
+      ]
+    },
+    {
+      "normalized": "simian interface",
+      "games": [
+        {
+          "gameId": 8565,
+          "title": "simian.interface"
+        },
+        {
+          "gameId": 39575,
+          "title": "simian.interface++"
+        }
+      ]
+    },
+    {
+      "normalized": "simplz zoo",
+      "games": [
+        {
+          "gameId": 8571,
+          "title": "Simplz: Zoo"
+        },
+        {
+          "gameId": 31432,
+          "title": "Simplz Zoo"
+        }
+      ]
+    },
+    {
+      "normalized": "singstar",
+      "games": [
+        {
+          "gameId": 19559,
+          "title": "SingStar"
+        },
+        {
+          "gameId": 88136,
+          "title": "Singstar"
+        }
+      ]
+    },
+    {
+      "normalized": "skate",
+      "games": [
+        {
+          "gameId": 8597,
+          "title": "Skate"
+        },
+        {
+          "gameId": 114694,
+          "title": "skate."
+        }
+      ]
+    },
+    {
+      "normalized": "sled storm",
+      "games": [
+        {
+          "gameId": 8636,
+          "title": "Sled Storm"
+        },
+        {
+          "gameId": 8637,
+          "title": "Sled Storm"
+        }
+      ]
+    },
+    {
+      "normalized": "snafu",
+      "games": [
+        {
+          "gameId": 72545,
+          "title": "Snafu"
+        },
+        {
+          "gameId": 126732,
+          "title": "Snafu"
+        }
+      ]
+    },
+    {
+      "normalized": "snapshot",
+      "games": [
+        {
+          "gameId": 8673,
+          "title": "Snapshot"
+        },
+        {
+          "gameId": 124420,
+          "title": "Snapshot"
+        }
+      ]
+    },
+    {
+      "normalized": "snow",
+      "games": [
+        {
+          "gameId": 17530,
+          "title": "SNOW"
+        },
+        {
+          "gameId": 119324,
+          "title": "Snow"
+        }
+      ]
+    },
+    {
+      "normalized": "solitaire",
+      "games": [
+        {
+          "gameId": 8730,
+          "title": "Solitaire"
+        },
+        {
+          "gameId": 8731,
+          "title": "Solitaire"
+        },
+        {
+          "gameId": 56584,
+          "title": "Solitaire"
+        },
+        {
+          "gameId": 77583,
+          "title": "Solitaire"
+        }
+      ]
+    },
+    {
+      "normalized": "sonic the hedgehog",
+      "games": [
+        {
+          "gameId": 8784,
+          "title": "Sonic the Hedgehog"
+        },
+        {
+          "gameId": 8785,
+          "title": "Sonic the Hedgehog"
+        }
+      ]
+    },
+    {
+      "normalized": "sorcery",
+      "games": [
+        {
+          "gameId": 8807,
+          "title": "Sorcery"
+        },
+        {
+          "gameId": 18895,
+          "title": "Sorcery!"
+        },
+        {
+          "gameId": 60902,
+          "title": "Sorcery"
+        }
+      ]
+    },
+    {
+      "normalized": "sort the court",
+      "games": [
+        {
+          "gameId": 42530,
+          "title": "Sort the Court"
+        },
+        {
+          "gameId": 143231,
+          "title": "Sort the Court!"
+        }
+      ]
+    },
+    {
+      "normalized": "sos",
+      "games": [
+        {
+          "gameId": 19436,
+          "title": "SOS"
+        },
+        {
+          "gameId": 52940,
+          "title": "SOS"
+        }
+      ]
+    },
+    {
+      "normalized": "soulcaster",
+      "games": [
+        {
+          "gameId": 8827,
+          "title": "Soulcaster"
+        },
+        {
+          "gameId": 83476,
+          "title": "Soulcaster"
+        }
+      ]
+    },
+    {
+      "normalized": "soup",
+      "games": [
+        {
+          "gameId": 173021,
+          "title": "SOUP"
+        },
+        {
+          "gameId": 187891,
+          "title": "Soup"
+        }
+      ]
+    },
+    {
+      "normalized": "space rogue",
+      "games": [
+        {
+          "gameId": 27230,
+          "title": "Space Rogue"
+        },
+        {
+          "gameId": 40000,
+          "title": "Space Rogue"
+        }
+      ]
+    },
+    {
+      "normalized": "speed racer",
+      "games": [
+        {
+          "gameId": 83910,
+          "title": "Speed Racer"
+        },
+        {
+          "gameId": 145541,
+          "title": "Speed Racer"
+        }
+      ]
+    },
+    {
+      "normalized": "spider man",
+      "games": [
+        {
+          "gameId": 8938,
+          "title": "Spider-Man"
+        },
+        {
+          "gameId": 8939,
+          "title": "Spider-Man"
+        },
+        {
+          "gameId": 18824,
+          "title": "Spider-Man"
+        },
+        {
+          "gameId": 20908,
+          "title": "Spider-Man"
+        }
+      ]
+    },
+    {
+      "normalized": "splatterhouse",
+      "games": [
+        {
+          "gameId": 8969,
+          "title": "Splatterhouse"
+        },
+        {
+          "gameId": 8970,
+          "title": "Splatterhouse"
+        }
+      ]
+    },
+    {
+      "normalized": "split",
+      "games": [
+        {
+          "gameId": 41816,
+          "title": "Split"
+        },
+        {
+          "gameId": 123281,
+          "title": "Split"
+        }
+      ]
+    },
+    {
+      "normalized": "sprout",
+      "games": [
+        {
+          "gameId": 52704,
+          "title": "Sprout"
+        },
+        {
+          "gameId": 96524,
+          "title": "-SPROUT-"
+        }
+      ]
+    },
+    {
+      "normalized": "spy hunter",
+      "games": [
+        {
+          "gameId": 8997,
+          "title": "Spy Hunter"
+        },
+        {
+          "gameId": 8998,
+          "title": "Spy Hunter"
+        },
+        {
+          "gameId": 15700,
+          "title": "Spy Hunter"
+        }
+      ]
+    },
+    {
+      "normalized": "spy vs spy",
+      "games": [
+        {
+          "gameId": 9001,
+          "title": "Spy vs. Spy"
+        },
+        {
+          "gameId": 21855,
+          "title": "Spy vs. Spy"
+        }
+      ]
+    },
+    {
+      "normalized": "squares",
+      "games": [
+        {
+          "gameId": 28240,
+          "title": "Squares"
+        },
+        {
+          "gameId": 59099,
+          "title": "Squares"
+        }
+      ]
+    },
+    {
+      "normalized": "ssx",
+      "games": [
+        {
+          "gameId": 9016,
+          "title": "SSX"
+        },
+        {
+          "gameId": 9017,
+          "title": "SSX"
+        }
+      ]
+    },
+    {
+      "normalized": "star command",
+      "games": [
+        {
+          "gameId": 9029,
+          "title": "Star Command"
+        },
+        {
+          "gameId": 27473,
+          "title": "Star Command"
+        }
+      ]
+    },
+    {
+      "normalized": "star force",
+      "games": [
+        {
+          "gameId": 9034,
+          "title": "Star Force"
+        },
+        {
+          "gameId": 29956,
+          "title": "Star Force"
+        }
+      ]
+    },
+    {
+      "normalized": "star fox",
+      "games": [
+        {
+          "gameId": 9035,
+          "title": "Star Fox"
+        },
+        {
+          "gameId": 185593,
+          "title": "Star Fox"
+        }
+      ]
+    },
+    {
+      "normalized": "star soldier",
+      "games": [
+        {
+          "gameId": 17055,
+          "title": "Star Soldier"
+        },
+        {
+          "gameId": 75534,
+          "title": "Star Soldier"
+        }
+      ]
+    },
+    {
+      "normalized": "star trek voyager across the unknown",
+      "games": [
+        {
+          "gameId": 173000,
+          "title": "Star Trek Voyager: Across the Unknown"
+        },
+        {
+          "gameId": 182280,
+          "title": "Star Trek: Voyager - Across the Unknown"
+        }
+      ]
+    },
+    {
+      "normalized": "star wars",
+      "games": [
+        {
+          "gameId": 9069,
+          "title": "Star Wars"
+        },
+        {
+          "gameId": 9070,
+          "title": "Star Wars"
+        },
+        {
+          "gameId": 82009,
+          "title": "Star Wars"
+        }
+      ]
+    },
+    {
+      "normalized": "star wars battlefront",
+      "games": [
+        {
+          "gameId": 9097,
+          "title": "Star Wars: Battlefront"
+        },
+        {
+          "gameId": 29358,
+          "title": "Star Wars: Battlefront"
+        }
+      ]
+    },
+    {
+      "normalized": "star wars battlefront ii",
+      "games": [
+        {
+          "gameId": 9098,
+          "title": "Star Wars: Battlefront II"
+        },
+        {
+          "gameId": 45153,
+          "title": "Star Wars: Battlefront II"
+        }
+      ]
+    },
+    {
+      "normalized": "stardrop",
+      "games": [
+        {
+          "gameId": 51267,
+          "title": "Stardrop"
+        },
+        {
+          "gameId": 159196,
+          "title": "Stardrop"
+        }
+      ]
+    },
+    {
+      "normalized": "stargate",
+      "games": [
+        {
+          "gameId": 9163,
+          "title": "Stargate"
+        },
+        {
+          "gameId": 9164,
+          "title": "Stargate"
+        }
+      ]
+    },
+    {
+      "normalized": "starhawk",
+      "games": [
+        {
+          "gameId": 9166,
+          "title": "Starhawk"
+        },
+        {
+          "gameId": 33934,
+          "title": "StarHawk"
+        },
+        {
+          "gameId": 131333,
+          "title": "Starhawk"
+        }
+      ]
+    },
+    {
+      "normalized": "street racer",
+      "games": [
+        {
+          "gameId": 9250,
+          "title": "Street Racer"
+        },
+        {
+          "gameId": 50813,
+          "title": "Street Racer"
+        }
+      ]
+    },
+    {
+      "normalized": "strider",
+      "games": [
+        {
+          "gameId": 9261,
+          "title": "Strider"
+        },
+        {
+          "gameId": 16794,
+          "title": "Strider"
+        }
+      ]
+    },
+    {
+      "normalized": "subject",
+      "games": [
+        {
+          "gameId": 38032,
+          "title": "Subject"
+        },
+        {
+          "gameId": 157024,
+          "title": "[SUBJECT]"
+        }
+      ]
+    },
+    {
+      "normalized": "sudoku",
+      "games": [
+        {
+          "gameId": 50148,
+          "title": "SUDOKU"
+        },
+        {
+          "gameId": 65370,
+          "title": "Sudoku"
+        }
+      ]
+    },
+    {
+      "normalized": "super dimension fortress macross",
+      "games": [
+        {
+          "gameId": 18807,
+          "title": "Super Dimension Fortress Macross"
+        },
+        {
+          "gameId": 22204,
+          "title": "Super Dimension Fortress Macross"
+        }
+      ]
+    },
+    {
+      "normalized": "super punch out",
+      "games": [
+        {
+          "gameId": 9410,
+          "title": "Super Punch-Out!!"
+        },
+        {
+          "gameId": 158586,
+          "title": "Super Punch-Out!!"
+        }
+      ]
+    },
+    {
+      "normalized": "super tennis",
+      "games": [
+        {
+          "gameId": 9467,
+          "title": "Super Tennis"
+        },
+        {
+          "gameId": 158518,
+          "title": "Super Tennis"
+        }
+      ]
+    },
+    {
+      "normalized": "superman",
+      "games": [
+        {
+          "gameId": 9476,
+          "title": "Superman"
+        },
+        {
+          "gameId": 18823,
+          "title": "Superman"
+        },
+        {
+          "gameId": 68111,
+          "title": "Superman"
+        }
+      ]
+    },
+    {
+      "normalized": "superman the man of steel",
+      "games": [
+        {
+          "gameId": 15679,
+          "title": "Superman: The Man of Steel"
+        },
+        {
+          "gameId": 31185,
+          "title": "Superman: The Man of Steel"
+        }
+      ]
+    },
+    {
+      "normalized": "swan song",
+      "games": [
+        {
+          "gameId": 61293,
+          "title": "Swan Song"
+        },
+        {
+          "gameId": 184721,
+          "title": "Swan Song"
+        }
+      ]
+    },
+    {
+      "normalized": "switchblade",
+      "games": [
+        {
+          "gameId": 62895,
+          "title": "Switchblade"
+        },
+        {
+          "gameId": 83896,
+          "title": "Switchblade"
+        }
+      ]
+    },
+    {
+      "normalized": "sword and fairy",
+      "games": [
+        {
+          "gameId": 31498,
+          "title": "Sword and Fairy"
+        },
+        {
+          "gameId": 76695,
+          "title": "Sword and Fairy"
+        }
+      ]
+    },
+    {
+      "normalized": "symphonia",
+      "games": [
+        {
+          "gameId": 95524,
+          "title": "Symphonia"
+        },
+        {
+          "gameId": 134813,
+          "title": "Symphonia"
+        }
+      ]
+    },
+    {
+      "normalized": "syndicate",
+      "games": [
+        {
+          "gameId": 9533,
+          "title": "Syndicate"
+        },
+        {
+          "gameId": 9534,
+          "title": "Syndicate"
+        }
+      ]
+    },
+    {
+      "normalized": "synergy",
+      "games": [
+        {
+          "gameId": 19833,
+          "title": "Synergy"
+        },
+        {
+          "gameId": 140571,
+          "title": "Synergy"
+        }
+      ]
+    },
+    {
+      "normalized": "system shock",
+      "games": [
+        {
+          "gameId": 9547,
+          "title": "System Shock"
+        },
+        {
+          "gameId": 74181,
+          "title": "System Shock"
+        }
+      ]
+    },
+    {
+      "normalized": "table tennis",
+      "games": [
+        {
+          "gameId": 9557,
+          "title": "Table Tennis"
+        },
+        {
+          "gameId": 50906,
+          "title": "Table Tennis"
+        }
+      ]
+    },
+    {
+      "normalized": "tactics ogre let us cling together",
+      "games": [
+        {
+          "gameId": 9560,
+          "title": "Tactics Ogre: Let Us Cling Together"
+        },
+        {
+          "gameId": 9561,
+          "title": "Tactics Ogre: Let Us Cling Together"
+        }
+      ]
+    },
+    {
+      "normalized": "tak and the power of juju",
+      "games": [
+        {
+          "gameId": 9577,
+          "title": "Tak and the Power of Juju"
+        },
+        {
+          "gameId": 188531,
+          "title": "Tak and the Power of Juju"
+        }
+      ]
+    },
+    {
+      "normalized": "tales of destiny",
+      "games": [
+        {
+          "gameId": 9581,
+          "title": "Tales of Destiny"
+        },
+        {
+          "gameId": 9582,
+          "title": "Tales of Destiny"
+        }
+      ]
+    },
+    {
+      "normalized": "teenage mutant ninja turtles",
+      "games": [
+        {
+          "gameId": 9646,
+          "title": "Teenage Mutant Ninja Turtles"
+        },
+        {
+          "gameId": 9647,
+          "title": "Teenage Mutant Ninja Turtles"
+        },
+        {
+          "gameId": 14364,
+          "title": "Teenage Mutant Ninja Turtles"
+        },
+        {
+          "gameId": 40429,
+          "title": "Teenage Mutant Ninja Turtles"
+        }
+      ]
+    },
+    {
+      "normalized": "tennis",
+      "games": [
+        {
+          "gameId": 9696,
+          "title": "Tennis"
+        },
+        {
+          "gameId": 46417,
+          "title": "Tennis"
+        },
+        {
+          "gameId": 79103,
+          "title": "Tennis"
+        }
+      ]
+    },
+    {
+      "normalized": "test drive",
+      "games": [
+        {
+          "gameId": 9707,
+          "title": "Test Drive"
+        },
+        {
+          "gameId": 25644,
+          "title": "Test Drive"
+        }
+      ]
+    },
+    {
+      "normalized": "tetris",
+      "games": [
+        {
+          "gameId": 9715,
+          "title": "Tetris"
+        },
+        {
+          "gameId": 55100,
+          "title": "Tetris"
+        },
+        {
+          "gameId": 63095,
+          "title": "Tetris"
+        },
+        {
+          "gameId": 88197,
+          "title": "Tetris"
+        },
+        {
+          "gameId": 120370,
+          "title": "Tetris"
+        },
+        {
+          "gameId": 150299,
+          "title": "Tetris"
+        }
+      ]
+    },
+    {
+      "normalized": "texas hold em",
+      "games": [
+        {
+          "gameId": 9733,
+          "title": "Texas Hold 'em"
+        },
+        {
+          "gameId": 28878,
+          "title": "Texas Hold'em"
+        }
+      ]
+    },
+    {
+      "normalized": "the amazing spider man",
+      "games": [
+        {
+          "gameId": 9759,
+          "title": "The Amazing Spider-Man"
+        },
+        {
+          "gameId": 48498,
+          "title": "The Amazing Spider-Man"
+        }
+      ]
+    },
+    {
+      "normalized": "the amazing spider man 2",
+      "games": [
+        {
+          "gameId": 15665,
+          "title": "The Amazing Spider-Man 2"
+        },
+        {
+          "gameId": 18090,
+          "title": "The Amazing Spider-Man 2"
+        }
+      ]
+    },
+    {
+      "normalized": "the bard s tale",
+      "games": [
+        {
+          "gameId": 9771,
+          "title": "The Bard's Tale"
+        },
+        {
+          "gameId": 9772,
+          "title": "The Bard's Tale"
+        }
+      ]
+    },
+    {
+      "normalized": "the binding of isaac afterbirth",
+      "games": [
+        {
+          "gameId": 31136,
+          "title": "The Binding of Isaac: Afterbirth"
+        },
+        {
+          "gameId": 42641,
+          "title": "The Binding of Isaac: Afterbirth+"
+        }
+      ]
+    },
+    {
+      "normalized": "the chronicles of emerland solitaire",
+      "games": [
+        {
+          "gameId": 29860,
+          "title": "The Chronicles of Emerland: Solitaire."
+        },
+        {
+          "gameId": 119572,
+          "title": "The Chronicles of Emerland Solitaire"
+        }
+      ]
+    },
+    {
+      "normalized": "the elevator",
+      "games": [
+        {
+          "gameId": 46355,
+          "title": "The Elevator"
+        },
+        {
+          "gameId": 99241,
+          "title": "The Elevator"
+        }
+      ]
+    },
+    {
+      "normalized": "the end",
+      "games": [
+        {
+          "gameId": 45681,
+          "title": "The End"
+        },
+        {
+          "gameId": 65145,
+          "title": "The End"
+        }
+      ]
+    },
+    {
+      "normalized": "the flash",
+      "games": [
+        {
+          "gameId": 9878,
+          "title": "The Flash"
+        },
+        {
+          "gameId": 51478,
+          "title": "The Flash"
+        }
+      ]
+    },
+    {
+      "normalized": "the flintstones",
+      "games": [
+        {
+          "gameId": 9879,
+          "title": "The Flintstones"
+        },
+        {
+          "gameId": 77368,
+          "title": "The Flintstones"
+        },
+        {
+          "gameId": 96916,
+          "title": "The Flintstones"
+        }
+      ]
+    },
+    {
+      "normalized": "the gap",
+      "games": [
+        {
+          "gameId": 121107,
+          "title": "The Gap"
+        },
+        {
+          "gameId": 127028,
+          "title": "The Gap"
+        },
+        {
+          "gameId": 152588,
+          "title": "The Gap"
+        }
+      ]
+    },
+    {
+      "normalized": "the gift",
+      "games": [
+        {
+          "gameId": 68398,
+          "title": "The Gift"
+        },
+        {
+          "gameId": 160657,
+          "title": "The Gift"
+        }
+      ]
+    },
+    {
+      "normalized": "the great escape",
+      "games": [
+        {
+          "gameId": 9901,
+          "title": "The Great Escape"
+        },
+        {
+          "gameId": 38144,
+          "title": "The Great Escape"
+        }
+      ]
+    },
+    {
+      "normalized": "the herbalist",
+      "games": [
+        {
+          "gameId": 42467,
+          "title": "The Herbalist"
+        },
+        {
+          "gameId": 148274,
+          "title": "The Herbalist"
+        }
+      ]
+    },
+    {
+      "normalized": "the hobbit",
+      "games": [
+        {
+          "gameId": 9925,
+          "title": "The Hobbit"
+        },
+        {
+          "gameId": 19318,
+          "title": "The Hobbit"
+        }
+      ]
+    },
+    {
+      "normalized": "the incredible hulk",
+      "games": [
+        {
+          "gameId": 9948,
+          "title": "The Incredible Hulk"
+        },
+        {
+          "gameId": 9949,
+          "title": "The Incredible Hulk"
+        },
+        {
+          "gameId": 89054,
+          "title": "The Incredible Hulk"
+        }
+      ]
+    },
+    {
+      "normalized": "the inquisitor",
+      "games": [
+        {
+          "gameId": 9956,
+          "title": "The Inquisitor"
+        },
+        {
+          "gameId": 94781,
+          "title": "The Inquisitor"
+        }
+      ]
+    },
+    {
+      "normalized": "the legend of zelda link s awakening",
+      "games": [
+        {
+          "gameId": 10032,
+          "title": "The Legend of Zelda: Link's Awakening"
+        },
+        {
+          "gameId": 66255,
+          "title": "The Legend of Zelda: Link's Awakening"
+        }
+      ]
+    },
+    {
+      "normalized": "the lost world jurassic park",
+      "games": [
+        {
+          "gameId": 10078,
+          "title": "The Lost World: Jurassic Park"
+        },
+        {
+          "gameId": 10079,
+          "title": "The Lost World: Jurassic Park"
+        },
+        {
+          "gameId": 10080,
+          "title": "The Lost World: Jurassic Park"
+        }
+      ]
+    },
+    {
+      "normalized": "the oregon trail",
+      "games": [
+        {
+          "gameId": 10123,
+          "title": "The Oregon Trail"
+        },
+        {
+          "gameId": 94596,
+          "title": "The Oregon Trail"
+        }
+      ]
+    },
+    {
+      "normalized": "the pagemaster",
+      "games": [
+        {
+          "gameId": 10126,
+          "title": "The Pagemaster"
+        },
+        {
+          "gameId": 115556,
+          "title": "The Pagemaster"
+        }
+      ]
+    },
+    {
+      "normalized": "the punisher",
+      "games": [
+        {
+          "gameId": 10139,
+          "title": "The Punisher"
+        },
+        {
+          "gameId": 10140,
+          "title": "The Punisher"
+        },
+        {
+          "gameId": 27883,
+          "title": "The Punisher"
+        }
+      ]
+    },
+    {
+      "normalized": "the real ghostbusters",
+      "games": [
+        {
+          "gameId": 24448,
+          "title": "The Real Ghostbusters"
+        },
+        {
+          "gameId": 82709,
+          "title": "The Real Ghostbusters"
+        }
+      ]
+    },
+    {
+      "normalized": "the revenge of shinobi",
+      "games": [
+        {
+          "gameId": 10149,
+          "title": "The Revenge of Shinobi"
+        },
+        {
+          "gameId": 13415,
+          "title": "The Revenge of Shinobi"
+        }
+      ]
+    },
+    {
+      "normalized": "the rumble fish",
+      "games": [
+        {
+          "gameId": 60048,
+          "title": "The Rumble Fish"
+        },
+        {
+          "gameId": 141550,
+          "title": "The Rumble Fish+"
+        }
+      ]
+    },
+    {
+      "normalized": "the sims",
+      "games": [
+        {
+          "gameId": 10185,
+          "title": "The Sims"
+        },
+        {
+          "gameId": 10186,
+          "title": "The Sims"
+        }
+      ]
+    },
+    {
+      "normalized": "the sims 3",
+      "games": [
+        {
+          "gameId": 10194,
+          "title": "The Sims 3"
+        },
+        {
+          "gameId": 10195,
+          "title": "The Sims 3"
+        }
+      ]
+    },
+    {
+      "normalized": "the smurfs",
+      "games": [
+        {
+          "gameId": 12178,
+          "title": "The Smurfs"
+        },
+        {
+          "gameId": 13041,
+          "title": "The Smurfs"
+        },
+        {
+          "gameId": 14781,
+          "title": "The Smurfs"
+        }
+      ]
+    },
+    {
+      "normalized": "the space between",
+      "games": [
+        {
+          "gameId": 71659,
+          "title": "The Space Between"
+        },
+        {
+          "gameId": 79939,
+          "title": "The Space Between"
+        }
+      ]
+    },
+    {
+      "normalized": "the stanley parable",
+      "games": [
+        {
+          "gameId": 10213,
+          "title": "The Stanley Parable"
+        },
+        {
+          "gameId": 14083,
+          "title": "The Stanley Parable"
+        }
+      ]
+    },
+    {
+      "normalized": "the tower",
+      "games": [
+        {
+          "gameId": 10233,
+          "title": "The Tower"
+        },
+        {
+          "gameId": 48064,
+          "title": "The Tower"
+        },
+        {
+          "gameId": 56754,
+          "title": "The Tower"
+        }
+      ]
+    },
+    {
+      "normalized": "the visitor",
+      "games": [
+        {
+          "gameId": 10247,
+          "title": "The Visitor"
+        },
+        {
+          "gameId": 90200,
+          "title": "The Visitor"
+        },
+        {
+          "gameId": 141114,
+          "title": "The Visitor"
+        }
+      ]
+    },
+    {
+      "normalized": "the watchmaker",
+      "games": [
+        {
+          "gameId": 16775,
+          "title": "The Watchmaker"
+        },
+        {
+          "gameId": 59415,
+          "title": "The Watchmaker"
+        }
+      ]
+    },
+    {
+      "normalized": "the witch s cauldron",
+      "games": [
+        {
+          "gameId": 55215,
+          "title": "The Witch's Cauldron"
+        },
+        {
+          "gameId": 153164,
+          "title": "The Witch's Cauldron"
+        }
+      ]
+    },
+    {
+      "normalized": "the witness",
+      "games": [
+        {
+          "gameId": 10273,
+          "title": "The Witness"
+        },
+        {
+          "gameId": 62638,
+          "title": "The Witness"
+        }
+      ]
+    },
+    {
+      "normalized": "them and us",
+      "games": [
+        {
+          "gameId": 67474,
+          "title": "Them & Us"
+        },
+        {
+          "gameId": 100067,
+          "title": "Them and Us"
+        }
+      ]
+    },
+    {
+      "normalized": "threshold",
+      "games": [
+        {
+          "gameId": 36491,
+          "title": "Threshold"
+        },
+        {
+          "gameId": 145745,
+          "title": "THRESHOLD"
+        }
+      ]
+    },
+    {
+      "normalized": "thunderbirds",
+      "games": [
+        {
+          "gameId": 36013,
+          "title": "Thunderbirds"
+        },
+        {
+          "gameId": 54183,
+          "title": "Thunderbirds"
+        }
+      ]
+    },
+    {
+      "normalized": "thundercats",
+      "games": [
+        {
+          "gameId": 21926,
+          "title": "ThunderCats"
+        },
+        {
+          "gameId": 91003,
+          "title": "ThunderCats"
+        }
+      ]
+    },
+    {
+      "normalized": "time thief",
+      "games": [
+        {
+          "gameId": 115869,
+          "title": "Time Thief"
+        },
+        {
+          "gameId": 161684,
+          "title": "Time Thief"
+        }
+      ]
+    },
+    {
+      "normalized": "time zone",
+      "games": [
+        {
+          "gameId": 19640,
+          "title": "Time Zone"
+        },
+        {
+          "gameId": 92565,
+          "title": "Time Zone"
+        }
+      ]
+    },
+    {
+      "normalized": "tin star",
+      "games": [
+        {
+          "gameId": 11679,
+          "title": "Tin Star"
+        },
+        {
+          "gameId": 33279,
+          "title": "Tin Star"
+        }
+      ]
+    },
+    {
+      "normalized": "to be or not to be",
+      "games": [
+        {
+          "gameId": 28629,
+          "title": "To Be or Not To Be"
+        },
+        {
+          "gameId": 143973,
+          "title": "To Be or Not To Be"
+        }
+      ]
+    },
+    {
+      "normalized": "to the core",
+      "games": [
+        {
+          "gameId": 132926,
+          "title": "To The Core"
+        },
+        {
+          "gameId": 147784,
+          "title": "To The Core"
+        }
+      ]
+    },
+    {
+      "normalized": "toki",
+      "games": [
+        {
+          "gameId": 10401,
+          "title": "Toki"
+        },
+        {
+          "gameId": 62769,
+          "title": "Toki"
+        }
+      ]
+    },
+    {
+      "normalized": "tokyo xtreme racer",
+      "games": [
+        {
+          "gameId": 10418,
+          "title": "Tokyo Xtreme Racer"
+        },
+        {
+          "gameId": 155709,
+          "title": "Tokyo Xtreme Racer"
+        }
+      ]
+    },
+    {
+      "normalized": "tom and jerry",
+      "games": [
+        {
+          "gameId": 10420,
+          "title": "Tom and Jerry"
+        },
+        {
+          "gameId": 15045,
+          "title": "Tom and Jerry"
+        }
+      ]
+    },
+    {
+      "normalized": "tom clancy s ghost recon",
+      "games": [
+        {
+          "gameId": 10425,
+          "title": "Tom Clancy's Ghost Recon"
+        },
+        {
+          "gameId": 48679,
+          "title": "Tom Clancy's Ghost Recon"
+        }
+      ]
+    },
+    {
+      "normalized": "tomb raider",
+      "games": [
+        {
+          "gameId": 10468,
+          "title": "Tomb Raider"
+        },
+        {
+          "gameId": 10469,
+          "title": "Tomb Raider"
+        },
+        {
+          "gameId": 157894,
+          "title": "Tomb Raider"
+        }
+      ]
+    },
+    {
+      "normalized": "total chaos",
+      "games": [
+        {
+          "gameId": 63973,
+          "title": "Total Chaos"
+        },
+        {
+          "gameId": 166129,
+          "title": "Total Chaos"
+        }
+      ]
+    },
+    {
+      "normalized": "track and field",
+      "games": [
+        {
+          "gameId": 10592,
+          "title": "Track & Field"
+        },
+        {
+          "gameId": 148098,
+          "title": "Track & Field"
+        }
+      ]
+    },
+    {
+      "normalized": "trackmania",
+      "games": [
+        {
+          "gameId": 15748,
+          "title": "TrackMania"
+        },
+        {
+          "gameId": 76075,
+          "title": "TrackMania"
+        }
+      ]
+    },
+    {
+      "normalized": "trackmania turbo",
+      "games": [
+        {
+          "gameId": 35764,
+          "title": "TrackMania Turbo"
+        },
+        {
+          "gameId": 144411,
+          "title": "TrackMania Turbo"
+        }
+      ]
+    },
+    {
+      "normalized": "transpose",
+      "games": [
+        {
+          "gameId": 64871,
+          "title": "Transpose"
+        },
+        {
+          "gameId": 111854,
+          "title": "Transpose"
+        }
+      ]
+    },
+    {
+      "normalized": "trauma",
+      "games": [
+        {
+          "gameId": 10620,
+          "title": "TRAUMA"
+        },
+        {
+          "gameId": 154996,
+          "title": "Trauma"
+        }
+      ]
+    },
+    {
+      "normalized": "trials of mana",
+      "games": [
+        {
+          "gameId": 8213,
+          "title": "Trials of Mana"
+        },
+        {
+          "gameId": 68244,
+          "title": "Trials of Mana"
+        }
+      ]
+    },
+    {
+      "normalized": "try again",
+      "games": [
+        {
+          "gameId": 131933,
+          "title": "TRY AGAIN"
+        },
+        {
+          "gameId": 132195,
+          "title": "TRY AGAIN"
+        }
+      ]
+    },
+    {
+      "normalized": "twisted metal",
+      "games": [
+        {
+          "gameId": 10720,
+          "title": "Twisted Metal"
+        },
+        {
+          "gameId": 10721,
+          "title": "Twisted Metal"
+        }
+      ]
+    },
+    {
+      "normalized": "uchuu no kishi tekkaman blade",
+      "games": [
+        {
+          "gameId": 15047,
+          "title": "Uchuu no Kishi: Tekkaman Blade"
+        },
+        {
+          "gameId": 86249,
+          "title": "Uchuu no Kishi: Tekkaman Blade"
+        }
+      ]
+    },
+    {
+      "normalized": "undefeated",
+      "games": [
+        {
+          "gameId": 23527,
+          "title": "Undefeated"
+        },
+        {
+          "gameId": 71131,
+          "title": "Undefeated"
+        }
+      ]
+    },
+    {
+      "normalized": "uninvited",
+      "games": [
+        {
+          "gameId": 13050,
+          "title": "Uninvited"
+        },
+        {
+          "gameId": 109151,
+          "title": "Uninvited"
+        }
+      ]
+    },
+    {
+      "normalized": "uno",
+      "games": [
+        {
+          "gameId": 10823,
+          "title": "Uno"
+        },
+        {
+          "gameId": 70239,
+          "title": "Uno"
+        }
+      ]
+    },
+    {
+      "normalized": "unreal tournament",
+      "games": [
+        {
+          "gameId": 10830,
+          "title": "Unreal Tournament"
+        },
+        {
+          "gameId": 46349,
+          "title": "Unreal Tournament"
+        }
+      ]
+    },
+    {
+      "normalized": "v rally championship edition",
+      "games": [
+        {
+          "gameId": 10863,
+          "title": "V-Rally Championship Edition"
+        },
+        {
+          "gameId": 10864,
+          "title": "V-Rally Championship Edition"
+        }
+      ]
+    },
+    {
+      "normalized": "vestige",
+      "games": [
+        {
+          "gameId": 96316,
+          "title": "VESTIGE"
+        },
+        {
+          "gameId": 132921,
+          "title": "Vestige"
+        }
+      ]
+    },
+    {
+      "normalized": "void",
+      "games": [
+        {
+          "gameId": 61959,
+          "title": "VOID"
+        },
+        {
+          "gameId": 105574,
+          "title": "VOID"
+        }
+      ]
+    },
+    {
+      "normalized": "wacky races",
+      "games": [
+        {
+          "gameId": 10993,
+          "title": "Wacky Races"
+        },
+        {
+          "gameId": 15767,
+          "title": "Wacky Races"
+        }
+      ]
+    },
+    {
+      "normalized": "wanderlust",
+      "games": [
+        {
+          "gameId": 52144,
+          "title": "Wanderlust"
+        },
+        {
+          "gameId": 114580,
+          "title": "WanderLust"
+        }
+      ]
+    },
+    {
+      "normalized": "warhawk",
+      "games": [
+        {
+          "gameId": 11059,
+          "title": "Warhawk"
+        },
+        {
+          "gameId": 11060,
+          "title": "Warhawk"
+        }
+      ]
+    },
+    {
+      "normalized": "warlords",
+      "games": [
+        {
+          "gameId": 11083,
+          "title": "Warlords"
+        },
+        {
+          "gameId": 18997,
+          "title": "Warlords"
+        },
+        {
+          "gameId": 45297,
+          "title": "Warlords"
+        }
+      ]
+    },
+    {
+      "normalized": "wheel of fortune",
+      "games": [
+        {
+          "gameId": 11131,
+          "title": "Wheel of Fortune"
+        },
+        {
+          "gameId": 15046,
+          "title": "Wheel of Fortune"
+        },
+        {
+          "gameId": 18903,
+          "title": "Wheel of Fortune"
+        },
+        {
+          "gameId": 20714,
+          "title": "Wheel of Fortune"
+        },
+        {
+          "gameId": 76716,
+          "title": "Wheel of Fortune"
+        }
+      ]
+    },
+    {
+      "normalized": "while waiting",
+      "games": [
+        {
+          "gameId": 84697,
+          "title": "While Waiting"
+        },
+        {
+          "gameId": 147875,
+          "title": "While Waiting"
+        }
+      ]
+    },
+    {
+      "normalized": "whispers",
+      "games": [
+        {
+          "gameId": 39879,
+          "title": "Whispers"
+        },
+        {
+          "gameId": 149476,
+          "title": "Whispers"
+        }
+      ]
+    },
+    {
+      "normalized": "who framed roger rabbit",
+      "games": [
+        {
+          "gameId": 17245,
+          "title": "Who Framed Roger Rabbit"
+        },
+        {
+          "gameId": 18140,
+          "title": "Who Framed Roger Rabbit"
+        }
+      ]
+    },
+    {
+      "normalized": "who wants to be a millionaire",
+      "games": [
+        {
+          "gameId": 11150,
+          "title": "Who Wants to Be a Millionaire?"
+        },
+        {
+          "gameId": 85368,
+          "title": "Who Wants To Be A Millionaire"
+        }
+      ]
+    },
+    {
+      "normalized": "who wants to be a millionaire 3rd edition",
+      "games": [
+        {
+          "gameId": 85995,
+          "title": "Who Wants To Be A Millionaire: 3rd Edition"
+        },
+        {
+          "gameId": 138515,
+          "title": "Who Wants To Be a Millionaire: 3rd Edition"
+        }
+      ]
+    },
+    {
+      "normalized": "wild 9",
+      "games": [
+        {
+          "gameId": 11162,
+          "title": "Wild 9"
+        },
+        {
+          "gameId": 89173,
+          "title": "Wild-9"
+        }
+      ]
+    },
+    {
+      "normalized": "willow",
+      "games": [
+        {
+          "gameId": 11180,
+          "title": "Willow"
+        },
+        {
+          "gameId": 78681,
+          "title": "Willow"
+        }
+      ]
+    },
+    {
+      "normalized": "wipeout 3",
+      "games": [
+        {
+          "gameId": 11212,
+          "title": "Wipeout 3"
+        },
+        {
+          "gameId": 12620,
+          "title": "Wipeout 3"
+        }
+      ]
+    },
+    {
+      "normalized": "wizardry proving grounds of the mad overlord",
+      "games": [
+        {
+          "gameId": 11239,
+          "title": "Wizardry: Proving Grounds of the Mad Overlord"
+        },
+        {
+          "gameId": 137938,
+          "title": "Wizardry: Proving Grounds of the Mad Overlord"
+        }
+      ]
+    },
+    {
+      "normalized": "wizards and warriors",
+      "games": [
+        {
+          "gameId": 11241,
+          "title": "Wizards & Warriors"
+        },
+        {
+          "gameId": 11242,
+          "title": "Wizards & Warriors"
+        }
+      ]
+    },
+    {
+      "normalized": "wordle",
+      "games": [
+        {
+          "gameId": 85805,
+          "title": "Wordle"
+        },
+        {
+          "gameId": 103434,
+          "title": "Wordle"
+        }
+      ]
+    },
+    {
+      "normalized": "worms",
+      "games": [
+        {
+          "gameId": 11299,
+          "title": "Worms"
+        },
+        {
+          "gameId": 11300,
+          "title": "Worms"
+        }
+      ]
+    },
+    {
+      "normalized": "wrc fia world rally championship",
+      "games": [
+        {
+          "gameId": 11320,
+          "title": "WRC: FIA World Rally Championship"
+        },
+        {
+          "gameId": 97124,
+          "title": "WRC: FIA World Rally Championship"
+        }
+      ]
+    },
+    {
+      "normalized": "wwf royal rumble",
+      "games": [
+        {
+          "gameId": 11349,
+          "title": "WWF Royal Rumble"
+        },
+        {
+          "gameId": 89093,
+          "title": "WWF Royal Rumble"
+        }
+      ]
+    },
+    {
+      "normalized": "x men",
+      "games": [
+        {
+          "gameId": 11369,
+          "title": "X-Men"
+        },
+        {
+          "gameId": 11370,
+          "title": "X-Men"
+        }
+      ]
+    },
+    {
+      "normalized": "xiii",
+      "games": [
+        {
+          "gameId": 11413,
+          "title": "XIII"
+        },
+        {
+          "gameId": 84972,
+          "title": "XIII"
+        }
+      ]
+    },
+    {
+      "normalized": "you don t know jack",
+      "games": [
+        {
+          "gameId": 11449,
+          "title": "You Don't Know Jack"
+        },
+        {
+          "gameId": 11450,
+          "title": "You Don't Know Jack"
+        }
+      ]
+    },
+    {
+      "normalized": "you have 10 seconds",
+      "games": [
+        {
+          "gameId": 39026,
+          "title": "You Have 10 Seconds"
+        },
+        {
+          "gameId": 145624,
+          "title": "You Have 10 Seconds"
+        }
+      ]
+    },
+    {
+      "normalized": "ys v lost kefin kingdom of sand",
+      "games": [
+        {
+          "gameId": 11469,
+          "title": "Ys V: Lost Kefin, Kingdom of Sand"
+        },
+        {
+          "gameId": 182496,
+          "title": "Ys V: Lost Kefin, Kingdom of Sand"
+        }
+      ]
+    },
+    {
+      "normalized": "yuki",
+      "games": [
+        {
+          "gameId": 103965,
+          "title": "YUKI"
+        },
+        {
+          "gameId": 176277,
+          "title": "Yuki"
+        }
+      ]
+    },
+    {
+      "normalized": "zombi",
+      "games": [
+        {
+          "gameId": 11583,
+          "title": "Zombi"
+        },
+        {
+          "gameId": 28367,
+          "title": "Zombi"
+        }
+      ]
+    },
+    {
+      "normalized": "zoo keeper",
+      "games": [
+        {
+          "gameId": 11590,
+          "title": "Zoo Keeper"
+        },
+        {
+          "gameId": 11591,
+          "title": "Zoo Keeper"
+        }
+      ]
+    },
+    {
+      "normalized": "zoo tycoon",
+      "games": [
+        {
+          "gameId": 14293,
+          "title": "Zoo Tycoon"
+        },
+        {
+          "gameId": 14339,
+          "title": "Zoo Tycoon"
+        }
+      ]
+    }
+  ]
+}

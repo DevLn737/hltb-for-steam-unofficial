@@ -4,6 +4,7 @@ import { findStrictMatch, normalizeTitle } from '../src/core/title-matcher';
 describe('strict title matching', () => {
   it('normalizes punctuation without dropping meaningful words', () => {
     expect(normalizeTitle('Trails™ in the Sky: 1st Chapter')).toBe('trails in the sky 1st chapter');
+    expect(normalizeTitle('Щелкунчик: Мой герой™')).toBe('щелкунчик мои герои');
   });
 
   it('accepts an exact normalized title', () => {
@@ -29,4 +30,3 @@ describe('strict title matching', () => {
     expect(match?.candidate.id).toBe(4);
   });
 });
-

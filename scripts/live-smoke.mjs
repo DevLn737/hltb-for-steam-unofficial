@@ -1,19 +1,25 @@
-import { mkdir } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 
 const appId = process.argv[2] ?? '2258500';
 const slug = process.argv[3] ?? 'CRYMACHINA';
 const userAgentMode = process.argv[4] ?? 'chrome';
+const expectedOutcome = process.argv[5] ?? 'result';
 const chromeUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
 const steamUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Valve Steam Client) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.183 Safari/537.36';
 if (!['chrome', 'steam'].includes(userAgentMode)) throw new Error(`Unknown user-agent mode: ${userAgentMode}`);
+if (!['result', 'not-found'].includes(expectedOutcome)) throw new Error(`Unknown expected outcome: ${expectedOutcome}`);
 const steamUrl = `https://store.steampowered.com/app/${appId}/${slug}/`;
 const outputDirectory = path.resolve('live-smoke');
-const extensionPath = path.resolve('.output/chrome-mv3');
+const buildPath = path.resolve('.output/chrome-mv3');
+const temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'hltb-live-smoke-'));
+const extensionPath = path.join(temporaryDirectory, 'extension');
 const events = [];
 
 await mkdir(outputDirectory, { recursive: true });
+await cp(buildPath, extensionPath, { recursive: true });
 const context = await chromium.launchPersistentContext('', {
   channel: 'chromium',
   headless: true,
@@ -152,12 +158,17 @@ try {
     throw new Error('Steam mode unexpectedly contacted HowLongToBeat');
   }
   if (!placement || placement.gap < 20) throw new Error(`The widget-to-purchase gap is too small: ${placement?.gap ?? 'missing'}px`);
-  if (/temporarily unavailable|could not be loaded/i.test(text) || !text.includes('Open on HowLongToBeat')) {
-    throw new Error(`The extension did not render a live HLTB result: ${text}`);
+  if (expectedOutcome === 'result') {
+    if (/temporarily unavailable|could not be loaded/i.test(text) || !text.includes('Open on HowLongToBeat')) {
+      throw new Error(`The extension did not render a live HLTB result: ${text}`);
+    }
+  } else if (!text.includes('No confident title match was found.') || !text.includes('Search on HowLongToBeat')) {
+    throw new Error(`The extension did not render the expected not-found state: ${text}`);
   }
-  if (userAgentMode === 'steam' && (text.includes('Local snapshot') || !text.includes('Updated'))) {
+  if (expectedOutcome === 'result' && userAgentMode === 'steam' && (text.includes('Local snapshot') || !text.includes('Updated'))) {
     throw new Error(`Steam mode did not render the date-only snapshot footer: ${text}`);
   }
 } finally {
   await context.close();
+  await rm(temporaryDirectory, { recursive: true, force: true });
 }

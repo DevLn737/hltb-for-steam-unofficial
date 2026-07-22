@@ -1,8 +1,12 @@
-import { copyFile, mkdir } from 'node:fs/promises';
+import { copyFile, cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 
-const extensionPath = path.resolve('.output/chrome-mv3');
+const buildPath = path.resolve('.output/chrome-mv3');
+const temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'hltb-screenshot-'));
+const extensionPath = path.join(temporaryDirectory, 'extension');
+await cp(buildPath, extensionPath, { recursive: true });
 const steamUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Valve Steam Client) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.183 Safari/537.36';
 const context = await chromium.launchPersistentContext('', {
   channel: 'chromium',
@@ -36,4 +40,5 @@ try {
   await copyFile(screenshot, path.resolve('widget-preview.png'));
 } finally {
   await context.close();
+  await rm(temporaryDirectory, { recursive: true, force: true });
 }

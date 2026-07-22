@@ -1,112 +1,150 @@
 import { createHash } from 'node:crypto';
+import { encodeSteamIndex, packSnapshotLocation } from '../shared/snapshot-codec.mjs';
+import { normalizeTitle, SNAPSHOT_BUCKET_COUNT, snapshotBucket } from '../shared/title-normalization.mjs';
 
-export const SNAPSHOT_SCHEMA = 1;
-export const BUCKET_COUNT = 64;
-
-export function normalizeSnapshotTitle(value) {
-  return String(value ?? '')
-    .replace(/[™®©]/g, '')
-    .normalize('NFKD')
-    .replace(/&/g, ' and ')
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim()
-    .toLocaleLowerCase('en-US')
-    .replace(/\s+/g, ' ');
-}
-
-export function snapshotBucket(normalizedTitle) {
-  let hash = 0x811c9dc5;
-  for (let index = 0; index < normalizedTitle.length; index += 1) {
-    hash ^= normalizedTitle.charCodeAt(index);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0) % BUCKET_COUNT;
-}
+export const SNAPSHOT_SCHEMA = 2;
+export const BUCKET_COUNT = SNAPSHOT_BUCKET_COUNT;
 
 export function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
-function hoursToMinutes(value) {
+export function secondsToMinutes(value) {
   return typeof value === 'number' && Number.isFinite(value) && value > 0
-    ? Math.round(value * 60)
+    ? Math.max(1, Math.round(value / 60))
     : null;
 }
 
-function validMinutes(value) {
-  return Number.isInteger(value) && value > 0 ? value : null;
+function positiveInteger(value) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
-export function buildSnapshot(source, overrides) {
-  if (!source || !Array.isArray(source.games)) throw new Error('Snapshot source must contain a games array');
-  if (!overrides || !Array.isArray(overrides.entries)) throw new Error('Overrides must contain an entries array');
+export function extractSnapshotRecord(sourceEntry) {
+  const game = Array.isArray(sourceEntry?.game) ? sourceEntry.game[0] : null;
+  const gameId = positiveInteger(game?.game_id);
+  const title = typeof game?.game_name === 'string' ? game.game_name.trim() : '';
+  const times = [
+    secondsToMinutes(game?.comp_main),
+    secondsToMinutes(game?.comp_plus),
+    secondsToMinutes(game?.comp_100),
+  ];
+  if (!gameId || !title || times.every((value) => value === null)) return null;
+  const steamAppIds = [...new Set([game?.profile_steam, game?.profile_steam_alt]
+    .map(positiveInteger)
+    .filter((value) => value !== null))];
+  return {
+    gameId,
+    title,
+    mainStory: times[0],
+    mainPlusExtras: times[1],
+    completionist: times[2],
+    steamAppIds,
+  };
+}
 
-  const dates = [source.lastUpdated || '2025-10-23'];
-  const dateIndex = new Map(dates.map((date, index) => [date, index]));
-  const candidates = new Map();
-  let emptyEntries = 0;
+function sameRecord(left, right) {
+  return left.title === right.title
+    && left.mainStory === right.mainStory
+    && left.mainPlusExtras === right.mainPlusExtras
+    && left.completionist === right.completionist
+    && JSON.stringify(left.steamAppIds) === JSON.stringify(right.steamAppIds);
+}
 
-  for (const game of source.games) {
-    const title = typeof game?.title === 'string' ? game.title.trim() : '';
-    const normalized = normalizeSnapshotTitle(title);
-    const row = [
-      title,
-      hoursToMinutes(game?.data?.mainStory),
-      hoursToMinutes(game?.data?.mainExtra),
-      hoursToMinutes(game?.data?.completionist),
-    ];
-    if (!normalized || row.slice(1).every((value) => value === null)) {
-      emptyEntries += 1;
+function collisionReport(normalized, gameIds, records) {
+  return {
+    normalized,
+    games: [...gameIds].sort((left, right) => left - right).map((gameId) => ({
+      gameId,
+      title: records.get(gameId)?.title ?? '<missing>',
+    })),
+  };
+}
+
+export function buildSnapshot(records, overrides = { schema: 2, origin: 'unknown', entries: [] }) {
+  if (!Array.isArray(records)) throw new Error('Snapshot records must be an array');
+  if (overrides?.schema !== 2 || !Array.isArray(overrides.entries)) throw new Error('Snapshot overrides must use schema 2');
+
+  const recordsById = new Map();
+  const titleCandidates = new Map();
+  const steamCandidates = new Map();
+  let duplicateEntries = 0;
+
+  for (const record of records) {
+    const normalized = normalizeTitle(record?.title);
+    if (!positiveInteger(record?.gameId)) throw new Error('Invalid compact snapshot record');
+    const existing = recordsById.get(record.gameId);
+    if (existing) {
+      if (!sameRecord(existing, record)) throw new Error(`Conflicting duplicate HLTB game ID: ${record.gameId}`);
+      duplicateEntries += 1;
       continue;
     }
-    const existing = candidates.get(normalized) ?? [];
-    existing.push(row);
-    candidates.set(normalized, existing);
+    recordsById.set(record.gameId, record);
+    const titleIds = titleCandidates.get(normalized) ?? new Set();
+    titleIds.add(record.gameId);
+    titleCandidates.set(normalized, titleIds);
+    for (const appId of record.steamAppIds) {
+      const appIds = steamCandidates.get(appId) ?? new Set();
+      appIds.add(record.gameId);
+      steamCandidates.set(appId, appIds);
+    }
   }
 
   for (const override of overrides.entries) {
-    const title = typeof override?.title === 'string' ? override.title.trim() : '';
-    const normalized = normalizeSnapshotTitle(title);
-    const updatedAt = override?.updatedAt || dates[0];
-    if (!dateIndex.has(updatedAt)) {
-      dateIndex.set(updatedAt, dates.length);
-      dates.push(updatedAt);
-    }
-    const row = [
-      title,
-      validMinutes(override?.mainStory),
-      validMinutes(override?.mainPlusExtras),
-      validMinutes(override?.completionist),
-      dateIndex.get(updatedAt),
-    ];
-    if (!normalized || row.slice(1, 4).every((value) => value === null)) throw new Error(`Invalid snapshot override: ${title || '<untitled>'}`);
-    candidates.set(normalized, [row]);
+    const appId = positiveInteger(override?.appId);
+    const gameId = positiveInteger(override?.hltbGameId);
+    if (!appId || !gameId || !recordsById.has(gameId)) throw new Error(`Invalid snapshot mapping override: ${override?.appId ?? '<missing>'}`);
+    steamCandidates.set(appId, new Set([gameId]));
   }
 
-  const buckets = Array.from({ length: BUCKET_COUNT }, () => []);
-  const collisions = [];
-  for (const [normalized, rows] of candidates) {
-    const distinct = new Map(rows.map((row) => [JSON.stringify(row.slice(0, 4)), row]));
-    if (distinct.size !== 1) {
-      collisions.push({ normalized, titles: [...distinct.values()].map((row) => row[0]) });
-      continue;
-    }
-    buckets[snapshotBucket(normalized)].push([...distinct.values()][0]);
+  const titleBuckets = Array.from({ length: BUCKET_COUNT }, () => []);
+  for (const record of recordsById.values()) {
+    const normalized = normalizeTitle(record.title);
+    titleBuckets[snapshotBucket(normalized)].push({ normalized, record });
   }
-  for (const bucket of buckets) bucket.sort((left, right) => normalizeSnapshotTitle(left[0]).localeCompare(normalizeSnapshotTitle(right[0]), 'en'));
+  for (const bucket of titleBuckets) {
+    bucket.sort((left, right) => left.normalized.localeCompare(right.normalized, 'en') || left.record.gameId - right.record.gameId);
+  }
+
+  const locations = new Map();
+  const rows = titleBuckets.map((bucket, bucketIndex) => bucket.map(({ record }, rowIndex) => {
+    locations.set(record.gameId, packSnapshotLocation(bucketIndex, rowIndex));
+    return [record.title, record.gameId, record.mainStory, record.mainPlusExtras, record.completionist];
+  }));
+
+  const titleCollisions = [...titleCandidates]
+    .filter(([, gameIds]) => gameIds.size > 1)
+    .map(([normalized, gameIds]) => collisionReport(normalized, gameIds, recordsById))
+    .sort((left, right) => left.normalized.localeCompare(right.normalized, 'en'));
+  const steamCollisionCount = [...steamCandidates.values()].filter((gameIds) => gameIds.size > 1).length;
+  const steamPairs = [...steamCandidates]
+    .filter(([, gameIds]) => gameIds.size === 1)
+    .map(([appId, gameIds]) => {
+      const gameId = [...gameIds][0];
+      const location = locations.get(gameId);
+      if (location === undefined) throw new Error(`Missing snapshot location for HLTB game ${gameId}`);
+      return [appId, location];
+    });
+  const steamBuckets = Array.from({ length: BUCKET_COUNT }, () => []);
+  for (const pair of steamPairs) steamBuckets[pair[0] % BUCKET_COUNT].push(pair);
+  for (const bucket of steamBuckets) bucket.sort((left, right) => left[0] - right[0]);
 
   return {
-    buckets,
-    collisions,
+    titleBuckets: rows,
+    steamBuckets: steamBuckets.map(encodeSteamIndex),
+    steamBucketEntryCounts: steamBuckets.map((bucket) => bucket.length),
+    titleCollisions,
     metadata: {
       schema: SNAPSHOT_SCHEMA,
-      sourceVersion: source.version || 'unknown',
-      sourceUpdatedAt: dates[0],
-      dates,
-      sourceEntryCount: source.games.length,
-      entryCount: buckets.reduce((total, bucket) => total + bucket.length, 0),
-      emptyEntries,
-      collisionCount: collisions.length,
+      compression: 'gzip',
+      entryCount: recordsById.size,
+      normalizedTitleCount: titleCandidates.size,
+      titleCollisionCount: titleCollisions.length,
+      titleCollisionRecordCount: titleCollisions.reduce((total, collision) => total + collision.games.length, 0),
+      steamCandidateCount: steamCandidates.size,
+      steamMappingCount: steamPairs.length,
+      steamCollisionCount,
+      duplicateEntries,
       bucketCount: BUCKET_COUNT,
       origin: overrides.origin,
     },

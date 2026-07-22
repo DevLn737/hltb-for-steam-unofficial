@@ -1,3 +1,7 @@
+import { normalizeTitle } from '../../shared/title-normalization.mjs';
+
+export { normalizeTitle } from '../../shared/title-normalization.mjs';
+
 export interface MatchCandidate {
   id: number;
   name: string;
@@ -11,17 +15,6 @@ export interface TitleMatch<T extends MatchCandidate> {
 
 const MIN_SCORE = 0.9;
 const MIN_MARGIN = 0.04;
-
-export function normalizeTitle(value: string): string {
-  return value
-    .replace(/[™®©]/g, '')
-    .normalize('NFKD')
-    .replace(/&/g, ' and ')
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim()
-    .toLocaleLowerCase('en-US')
-    .replace(/\s+/g, ' ');
-}
 
 function tokenSimilarity(left: string, right: string): number {
   const a = new Set(left.split(' ').filter(Boolean));

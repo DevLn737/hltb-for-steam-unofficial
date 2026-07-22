@@ -1,38 +1,94 @@
-import { execFileSync } from 'node:child_process';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { gzipSync } from 'node:zlib';
 import path from 'node:path';
 import { buildSnapshot, sha256 } from './snapshot-lib.mjs';
+import { readSnapshotSource } from './snapshot-source.mjs';
+import { verifySnapshot } from './verify-snapshot.mjs';
 
-const sourceArgument = process.argv[2] ?? 'upstream/master:src/background/services/fallback-data.json';
+const sourceArgument = process.argv[2];
+if (!sourceArgument) throw new Error('Usage: npm run snapshot:import -- <path-to-hltb_data.json>');
+
+const sourcePath = path.resolve(sourceArgument);
 const outputDirectory = path.resolve('public/data/hltb-snapshot');
+const temporaryDirectory = path.resolve(`public/data/.hltb-snapshot-${process.pid}`);
+const previousDirectory = path.resolve('public/data/.hltb-snapshot-previous');
+const reportDirectory = path.resolve('data/snapshot-reports');
 const overridesPath = path.resolve('data/snapshot-overrides.json');
 
-async function readSource(argument) {
-  if (!argument.includes(':') && argument.endsWith('.json')) return JSON.parse(await readFile(path.resolve(argument), 'utf8'));
-  const content = execFileSync('git', ['show', argument], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
-  return JSON.parse(content);
+const source = await readSnapshotSource(sourcePath);
+const { records, sourceEntryCount, lastGameId, sourceSha256: digest } = source;
+
+const overrides = JSON.parse(await readFile(overridesPath, 'utf8'));
+const snapshot = buildSnapshot(records, overrides);
+const sourceUpdatedAt = new Date(source.sourceMtimeMs).toISOString().slice(0, 10);
+
+await rm(temporaryDirectory, { recursive: true, force: true });
+await mkdir(path.join(temporaryDirectory, 'title'), { recursive: true });
+await mkdir(path.join(temporaryDirectory, 'steam'), { recursive: true });
+
+function bucketInfo(name, entries, raw, compressed) {
+  return {
+    name,
+    entries,
+    compressedBytes: compressed.length,
+    uncompressedBytes: raw.length,
+    sha256: sha256(compressed),
+    uncompressedSha256: sha256(raw),
+  };
 }
 
-const [source, overrides] = await Promise.all([
-  readSource(sourceArgument),
-  readFile(overridesPath, 'utf8').then(JSON.parse),
-]);
-const snapshot = buildSnapshot(source, overrides);
-
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
-
-const bucketMetadata = [];
-for (let index = 0; index < snapshot.buckets.length; index += 1) {
+const titleBuckets = [];
+const steamBuckets = [];
+for (let index = 0; index < snapshot.titleBuckets.length; index += 1) {
   const name = index.toString(16).padStart(2, '0');
-  const content = JSON.stringify(snapshot.buckets[index]);
-  await writeFile(path.join(outputDirectory, `${name}.json`), content);
-  bucketMetadata.push({ name, entries: snapshot.buckets[index].length, bytes: Buffer.byteLength(content), sha256: sha256(content) });
+  const titleRaw = Buffer.from(JSON.stringify(snapshot.titleBuckets[index]));
+  const titleCompressed = gzipSync(titleRaw, { level: 9, mtime: 0 });
+  await writeFile(path.join(temporaryDirectory, 'title', `${name}.json.gz`), titleCompressed);
+  titleBuckets.push(bucketInfo(name, snapshot.titleBuckets[index].length, titleRaw, titleCompressed));
+
+  const steamRaw = Buffer.from(snapshot.steamBuckets[index]);
+  const steamCompressed = gzipSync(steamRaw, { level: 9, mtime: 0 });
+  await writeFile(path.join(temporaryDirectory, 'steam', `${name}.bin.gz`), steamCompressed);
+  steamBuckets.push(bucketInfo(name, snapshot.steamBucketEntryCounts[index], steamRaw, steamCompressed));
 }
 
-const manifest = { ...snapshot.metadata, buckets: bucketMetadata };
-await writeFile(path.join(outputDirectory, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-await writeFile(path.join(outputDirectory, 'collisions.json'), `${JSON.stringify(snapshot.collisions, null, 2)}\n`);
+const manifest = {
+  ...snapshot.metadata,
+  sourceUpdatedAt,
+  source: {
+    bytes: source.sourceBytes,
+    sha256: digest,
+    lastGameId,
+  },
+  sourceEntryCount,
+  timedEntryCount: records.length,
+  titleBuckets,
+  steamBuckets,
+};
+await writeFile(path.join(temporaryDirectory, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 
-const totalBytes = bucketMetadata.reduce((total, bucket) => total + bucket.bytes, 0);
-console.log(`Generated ${manifest.entryCount} entries in ${manifest.bucketCount} buckets (${totalBytes} bytes, ${manifest.collisionCount} excluded collisions).`);
+// Validate every checksum and cross-reference before replacing the packaged snapshot.
+await verifySnapshot(temporaryDirectory);
+await rm(previousDirectory, { recursive: true, force: true });
+try {
+  await rename(outputDirectory, previousDirectory);
+} catch (error) {
+  if (error?.code !== 'ENOENT') throw error;
+}
+try {
+  await rename(temporaryDirectory, outputDirectory);
+  await rm(previousDirectory, { recursive: true, force: true });
+} catch (error) {
+  try { await rename(previousDirectory, outputDirectory); } catch { /* Keep the original error. */ }
+  throw error;
+}
+
+await mkdir(reportDirectory, { recursive: true });
+await writeFile(path.join(reportDirectory, 'collisions.json'), `${JSON.stringify({
+  generatedAt: sourceUpdatedAt,
+  sourceSha256: digest,
+  titleCollisions: snapshot.titleCollisions,
+}, null, 2)}\n`);
+
+const compressedBytes = [...titleBuckets, ...steamBuckets].reduce((total, bucket) => total + bucket.compressedBytes, 0);
+console.log(`Generated schema v2: ${manifest.entryCount} timed games from ${sourceEntryCount} records (${compressedBytes} compressed bytes).`);

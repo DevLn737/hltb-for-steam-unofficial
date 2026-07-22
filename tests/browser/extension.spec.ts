@@ -1,21 +1,33 @@
 import { chromium, expect, test, type BrowserContext, type Worker } from '@playwright/test';
+import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const extensionPath = path.resolve('.output/chrome-mv3');
+const buildPath = path.resolve('.output/chrome-mv3');
 let context: BrowserContext;
 let worker: Worker;
+let temporaryDirectory: string;
+const hltbRequests: string[] = [];
 
 test.beforeAll(async () => {
+  temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'hltb-browser-smoke-'));
+  const extensionPath = path.join(temporaryDirectory, 'extension');
+  await cp(buildPath, extensionPath, { recursive: true });
   context = await chromium.launchPersistentContext('', {
     channel: 'chromium',
     headless: true,
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Valve Steam Client) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.183 Safari/537.36',
     args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`],
+  });
+  context.on('request', (request) => {
+    if (request.url().startsWith('https://howlongtobeat.com/')) hltbRequests.push(request.url());
   });
   worker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
 });
 
 test.afterAll(async () => {
   await context.close();
+  await rm(temporaryDirectory, { recursive: true, force: true });
 });
 
 test('loads the MV3 worker and popup', async () => {
@@ -28,26 +40,6 @@ test('loads the MV3 worker and popup', async () => {
 });
 
 test('injects one Shadow DOM widget on a Steam game page', async () => {
-  await worker.evaluate(async () => {
-    const extensionApi = (globalThis as unknown as {
-      chrome: { storage: { local: { set(value: Record<string, unknown>): Promise<void> } } };
-    }).chrome;
-    await extensionApi.storage.local.set({
-      'game:v4:3375780:trails in the sky 1st chapter': {
-        schema: 4,
-        data: {
-          appId: '3375780',
-          requestedTitle: 'Trails in the Sky 1st Chapter',
-          matchedTitle: 'Trails in the Sky 1st Chapter',
-          mainStory: 2400,
-          mainPlusExtras: 3420,
-          completionist: 3480,
-          hltbUrl: 'https://howlongtobeat.com/game/155183',
-          updatedAt: Date.now(),
-        },
-      },
-    });
-  });
   const page = await context.newPage();
   await page.route('https://store.steampowered.com/app/3375780/Trails_in_the_Sky_1st_Chapter/', (route) => route.fulfill({
     contentType: 'text/html',
@@ -59,7 +51,9 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   await expect(widget.locator('xpath=following-sibling::*[1]')).toHaveClass('game_area_purchase');
   await expect(widget).toContainText('40 Hours');
   await expect(widget).toContainText('57 Hours');
-  await expect(widget).toContainText('58 Hours');
+  await expect(widget).toContainText('75 Hours');
+  await expect(widget.locator('a')).toHaveAttribute('href', /howlongtobeat\.com\/game\/156025/);
   await expect(widget).not.toContainText('4.6');
   await expect(widget).not.toContainText('Local snapshot');
+  expect(hltbRequests).toEqual([]);
 });
