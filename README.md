@@ -40,16 +40,18 @@ npm run verify:firefox
 npm run zip:all
 ```
 
-The unpacked extension is written to `.output/chrome-mv3`; the release ZIP is written to `.output/`.
+The unpacked extension is written to `.output/chrome-mv3`; local ZIP/XPI packages are written to `.output/`.
 The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
 
 ## Architecture
 
 The Steam content script extracts the App ID, visible title, and existing Steam artwork, then renders an isolated Shadow DOM card. A short-lived Manifest V3 service worker owns the HLTB adapter, strict matcher, request concurrency, versioned `chrome.storage.local` cache, and local snapshot lookup.
 
-Steam's embedded Chromium uses a compact local snapshot because HLTB rejects its network fingerprint. Chrome and Firefox continue to prefer current HLTB responses and use the snapshot only when the service is unavailable. The snapshot contains no images, uses exact normalized matches only, and identifies its data date in the widget. Its 52,000+ records are split into 64 buckets so each lookup reads only a small portion.
+Steam's embedded Chromium uses a compact local snapshot because HLTB rejects its network fingerprint. Chrome and Firefox continue to prefer current HLTB responses and use the snapshot only when the service is unavailable. The snapshot contains no images and uses only an unambiguous Steam App ID or an exact, unique normalized title. The widget shows the snapshot date without a distracting source badge.
 
-Snapshot updates are manual and reviewable. `npm run snapshot:import -- path/to/fallback-data.json` regenerates the compact files; `npm run verify:snapshot` verifies coverage, size, rows, and checksums. CI validates the committed snapshot and never scrapes HLTB.
+The schema-v2 snapshot was generated from the completed July 22, 2026 scrape. It contains all 58,820 HLTB games with at least one non-zero completion time and 34,245 unambiguous Steam App ID mappings. Title data is split across 64 gzip JSON buckets; App IDs use 64 small gzip-compressed binary ULEB128 indexes. A lookup decompresses at most the relevant title and Steam buckets and keeps them only for the service worker lifetime. The complete packaged Chrome build is about 1.46 MB, compared with the 720.97 MiB source JSON.
+
+Snapshot updates are manual and reviewable. `npm run snapshot:import -- path/to/hltb_data.json` streams the source without loading it into memory and atomically regenerates the compact files; `npm run verify:snapshot` verifies coverage, layout, cross-references, compressed and uncompressed checksums. The 755,986,614-byte source JSON, descriptions, reviews, images, and collision report never enter the extension package. CI validates the committed snapshot and never scrapes HLTB.
 
 ## Privacy and independence
 

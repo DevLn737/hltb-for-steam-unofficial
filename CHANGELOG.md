@@ -2,6 +2,33 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1.0] - Unreleased
+
+### Added
+
+- Add the schema-v2 autonomous snapshot generated from the completed July 22, 2026 scrape: 58,820 timed HLTB games and 34,245 unambiguous Steam App ID mappings.
+- Add a streaming, atomic snapshot importer with source invariants, SHA-256 verification, deterministic gzip buckets, collision reporting outside the extension, and round-trip tests.
+- Add direct HLTB game links, exact Steam App ID precedence, and exact unique-title fallback.
+- Add Steam artwork extraction without storing or bundling cover images.
+
+### Changed
+
+- Steam now performs snapshot-only lookups and makes no HLTB request; Chrome and Firefox still prefer current network data and fall back safely.
+- Store title rows in 64 gzip JSON buckets and App ID locations in 64 gzip binary ULEB128 indexes. The 720.97 MiB source becomes 1,361,020 bytes of snapshot data and a roughly 1.46 MB installed build.
+- Use one shared Unicode normalization implementation for import and runtime, preserving Cyrillic and removing only trademark symbols.
+- Redesign the result as a compact horizontal card with Steam artwork, a blurred backdrop, a 28 px Steam-style section gap, and only the snapshot update date in metadata.
+- Migrate the local cache to schema v4 and use the fresh scrape values as the snapshot source of truth.
+
+### Fixed
+
+- Reject ambiguous titles and Steam App IDs instead of returning a guessed game.
+- Preserve sub-minute non-zero source values as one minute instead of collapsing them to missing data.
+- Replace the snapshot only after every generated file and cross-reference passes validation.
+
+### Removed
+
+- Remove schema-v1 JSON buckets, packaged collision reports, and manual time overrides.
+
 ## [2.0.5] - 2026-07-18
 
 ### Fixed
@@ -70,15 +97,3 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ### Removed
 
 - Bundled game-time database, fuzzy fallback estimates, HTML scraper, legacy services, and keep-alive alarms.
-## [2.1.0] - Unreleased
-
-### Added
-
-- Added a compact, versioned 52,000+ game snapshot for autonomous Steam-client lookups.
-- Added exact snapshot matching, per-entry data dates, checksum verification, and a manual importer.
-- Added Steam artwork extraction without storing or bundling cover images.
-
-### Changed
-
-- Steam now skips HLTB network requests that are known to receive HTTP 403; Chrome and Firefox still prefer current network data.
-- Redesigned the result as a shorter horizontal card and migrated the local cache to schema v4.
