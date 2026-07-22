@@ -30,6 +30,8 @@ jobs:
           name: browser-extensions
           path: |
             .output/*-chrome.zip
-            .output/*-firefox.xpi
+            .output/*-firefox.zip
+            .output/*-firefox-unsigned.xpi
+            .output/*-sources.zip
           if-no-files-found: error
           include-hidden-files: true

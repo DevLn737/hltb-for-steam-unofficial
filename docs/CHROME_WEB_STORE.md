@@ -1,27 +1,46 @@
-# Chrome Web Store draft
+# Chrome Web Store preparation
 
-## Name
+This is a submission draft and checklist, not evidence that the extension is already published.
 
-HLTB for Steam — Unofficial
+## Listing copy
 
-## Short description
+**Name:** HLTB for Steam — Unofficial
 
-See HowLongToBeat completion times directly on Steam game pages.
+**Short description:** See HowLongToBeat completion times directly on Steam game pages.
 
-## Detailed description
+**Single purpose:** Display HowLongToBeat completion-time data on Steam game pages.
+
+**Detailed description:**
 
 HLTB for Steam — Unofficial adds a compact completion-time card to supported Steam game pages. It shows Main Story, Main + Extras, and Completionist estimates, with configurable categories and time formats.
 
-The extension uses strict title matching and never substitutes uncertain estimates. Chrome prefers current HLTB results; Steam's embedded browser uses a compact, dated local snapshot because HLTB rejects its network fingerprint. Successful network results are cached locally. English and Russian are supported automatically.
+Chrome requests current completion-time data from HowLongToBeat and keeps a local cache. If the service is unavailable, the extension can use a compact dated snapshot. Inside Steam's embedded browser, lookup is fully local because HLTB rejects that browser's requests. Matching is deliberately strict: the extension does not substitute an uncertain game's estimates.
 
-No analytics, ads, accounts, remote executable code, or developer backend are included. The packaged completion-time snapshot contains no cover images and is accessed only by exact title.
+English and Russian are selected automatically. The extension has no analytics, ads, accounts, remote executable code, or developer-operated backend. This independent project is not affiliated with Valve, Steam, or HowLongToBeat.
 
-This independent project is not affiliated with Valve, Steam, or HowLongToBeat.
+## Permission justifications
 
-## Single purpose
+- `storage`: saves display settings and completion-time cache locally.
+- `store.steampowered.com` and `steamcommunity.com`: reads the public App ID, title, and existing artwork on supported game pages and inserts the widget.
+- `howlongtobeat.com`: requests current completion-time data in Chrome/Chromium.
+- `declarativeNetRequestWithHostAccess`: applies the narrowly scoped request headers required by the HLTB search endpoint.
 
-Display HowLongToBeat completion-time data on Steam game pages.
+The dashboard privacy answers must disclose **website content** processing and the transmission of the game title to HowLongToBeat. They must remain consistent with [PRIVACY.md](../PRIVACY.md). Remote code: **No**.
 
-## Permission justification
+## Before submission
 
-See [PRIVACY.md](../PRIVACY.md). Store submission should link to the hosted privacy policy in the public repository.
+- [x] Manifest V3 production ZIP with `manifest.json` at archive root.
+- [x] Name, version, short description, icons, and narrow single purpose.
+- [x] Public privacy-policy text and Limited Use statement.
+- [x] No remote executable code, telemetry, advertising, or developer server.
+- [x] Automated checks and manual Chrome/Steam smoke testing.
+- [ ] Review whether every host permission and DNR header rewrite is still the minimum necessary.
+- [ ] Complete a legal/redistribution review for the packaged HLTB-derived snapshot.
+- [ ] Add original final store assets listed in [STORE_ASSETS.md](STORE_ASSETS.md).
+- [ ] Register/verify the Chrome Web Store developer account and enable 2-Step Verification.
+- [ ] Host the privacy-policy URL from the public repository.
+- [ ] Fill the Listing, Privacy practices, Distribution, and support fields in the dashboard.
+- [ ] Upload the exact `*-chrome.zip`, first as a controlled/private test if desired.
+- [ ] Perform a final installed-from-store smoke test before public visibility.
+
+Official references: [prepare an extension](https://developer.chrome.com/docs/webstore/prepare), [listing information](https://developer.chrome.com/docs/webstore/cws-dashboard-listing), and [privacy fields](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy).

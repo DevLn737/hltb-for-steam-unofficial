@@ -10,6 +10,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Add a streaming, atomic snapshot importer with source invariants, SHA-256 verification, deterministic gzip buckets, collision reporting outside the extension, and round-trip tests.
 - Add direct HLTB game links, exact Steam App ID precedence, and exact unique-title fallback.
 - Add Steam artwork extraction without storing or bundling cover images.
+- Add clean Mozilla reviewer source packaging, reproducible build instructions, and an archive-content verifier.
+- Add separate Chrome Web Store, Firefox AMO, and future store-asset checklists.
 
 ### Changed
 
@@ -18,12 +20,15 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Use one shared Unicode normalization implementation for import and runtime, preserving Cyrillic and removing only trademark symbols.
 - Redesign the result as a compact horizontal card with Steam artwork, a blurred backdrop, a 28 px Steam-style section gap, and only the snapshot update date in metadata.
 - Migrate the local cache to schema v4 and use the fresh scrape values as the snapshot source of truth.
+- Label Firefox development XPI files explicitly as unsigned and publish the AMO submission ZIP separately.
+- Expand the README and privacy policy with exact browser-specific data flow and publication status.
 
 ### Fixed
 
 - Reject ambiguous titles and Steam App IDs instead of returning a guessed game.
 - Preserve sub-minute non-zero source values as one minute instead of collapsing them to missing data.
 - Replace the snapshot only after every generated file and cross-reference passes validation.
+- Exclude local Steam diagnostics, smoke screenshots, raw scrape data, credentials, and generated packages from reviewer sources.
 
 ### Removed
 
@@ -54,7 +59,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 - Add an opt-in live Chromium smoke test against a real Steam page and HLTB response.
 - Show the safe failing HLTB stage and HTTP status when a network request is rejected.
-- Add a native Firefox Manifest V3 build and unsigned XPI release artifact.
+- Add a native Firefox Manifest V3 build and unsigned XPI development artifact.
 
 ## [2.0.3] - 2026-07-18
 

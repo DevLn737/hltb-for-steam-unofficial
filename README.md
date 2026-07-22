@@ -1,69 +1,117 @@
 # HLTB for Steam — Unofficial
 
-An independent, privacy-friendly Chrome and Firefox extension that adds HowLongToBeat completion times to Steam game pages, including Steam's embedded browser.
+An independent, privacy-conscious Chrome and Firefox extension that shows HowLongToBeat completion times directly on Steam game pages — including pages opened inside the Steam desktop client.
 
-![Compact HLTB-inspired completion-time card using Steam artwork and a blurred backdrop](docs/screenshots/widget.png)
+![HLTB completion-time card on a Steam game page](docs/screenshots/widget.png)
 
-## Features
+## What it does
 
-- Main Story, Main + Extras, and Completionist estimates.
-- Compact horizontal card using the Steam page artwork, colored time bars, and a blurred backdrop.
-- An autonomous local snapshot for Steam's embedded browser, where HLTB rejects extension requests.
-- Strict title matching: uncertain results are never shown as facts.
-- Seven-day local cache with a saved-result fallback during temporary outages.
-- English and Russian interface selected from the browser language.
-- Configurable categories, time format, cache duration, and cache clearing.
-- Manifest V3, no analytics, ads, remote code, or developer backend.
+- Shows Main Story, Main + Extras, and Completionist estimates.
+- Uses a compact horizontal card, Steam artwork, and an isolated Shadow DOM.
+- Supports Steam page changes without a full reload.
+- Matches exact titles only; an uncertain match is reported as not found.
+- Provides English and Russian UI, configurable categories, time format, and cache lifetime.
+- Contains no analytics, advertising, accounts, remote executable code, or developer backend.
 
-## Install
+## Data sources
 
-Download the Chrome ZIP from the latest [GitHub Release](../../releases/latest), extract it, open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the extracted folder.
+| Environment | Preferred source | Fallback |
+| --- | --- | --- |
+| Chrome / Chromium | Current HowLongToBeat response | Local cache, then packaged snapshot |
+| Firefox | Current HowLongToBeat response | Local cache, then packaged snapshot |
+| Steam desktop client | Local cache | Packaged snapshot |
 
-Firefox releases also include an unsigned `.xpi` development build. Load it temporarily from `about:debugging#/runtime/this-firefox` using **Load Temporary Add-on**. Permanent installation in regular Firefox requires Mozilla AMO signing; the package already contains its stable Gecko ID and current data-transmission declaration.
+Steam's embedded Chromium receives HTTP 403 responses from HLTB, so it never makes an HLTB API request. Its packaged snapshot is dated July 22, 2026. Network browsers send only the Steam game title to HowLongToBeat over HTTPS when current data is requested. See [Privacy Policy](PRIVACY.md).
 
-For development:
+## Install a development build
+
+These are sideload packages, not store-signed installations.
+
+### Chrome and Chromium
+
+1. Extract `hltb-for-steam-unofficial-2.1.0-chrome.zip`.
+2. Open `chrome://extensions` and enable **Developer mode**.
+3. Choose **Load unpacked** and select the extracted directory.
+
+### Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Choose **Load Temporary Add-on**.
+3. Select the manifest from the extracted Firefox ZIP, or select the explicitly named `firefox-unsigned.xpi` development artifact.
+
+The unsigned XPI is temporary-development material. Permanent installation in standard Firefox requires Mozilla signing through AMO. The extension already has a stable Gecko ID and a data-transmission declaration; see [Firefox publishing checklist](docs/FIREFOX_AMO.md).
+
+## Develop and verify
+
+Requirements: Node.js 22 or newer and npm.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Production checks and packaging:
+Run the complete automated checks:
 
 ```sh
 npm run check
 npx playwright install chromium
 npm run test:browser
-npm run test:live -- 2258500 CRYMACHINA
 npm run build:firefox
 npm run verify:firefox
 npm run zip:all
 ```
 
-The unpacked extension is written to `.output/chrome-mv3`; local ZIP/XPI packages are written to `.output/`.
-The opt-in live smoke test loads the built extension in an isolated Chromium profile, opens the real Steam page, and saves its widget screenshot under `live-smoke/`.
+An optional live smoke test opens a real Steam page in an isolated Chromium profile and writes local screenshots under the ignored `live-smoke/` directory:
+
+```sh
+npm run test:live -- 2258500 CRYMACHINA
+```
+
+### Package outputs
+
+`npm run zip:all` writes these files to the ignored `.output/` directory:
+
+- `*-chrome.zip` — Chrome/Chromium sideload and Chrome Web Store upload archive;
+- `*-firefox.zip` — unsigned Firefox archive intended for AMO submission;
+- `*-firefox-unsigned.xpi` — identical unsigned development package, clearly labeled;
+- `*-sources.zip` — clean, matching Mozilla reviewer sources.
+
+The source archive excludes local diagnostics, smoke screenshots, collision reports, raw scrape files, credentials, and generated artifacts. Mozilla signing is intentionally not automated yet.
 
 ## Architecture
 
-The Steam content script extracts the App ID, visible title, and existing Steam artwork, then renders an isolated Shadow DOM card. A short-lived Manifest V3 service worker owns the HLTB adapter, strict matcher, request concurrency, versioned `chrome.storage.local` cache, and local snapshot lookup.
+The content script extracts the Steam App ID, visible title, and an existing Steam artwork URL, then renders the widget inside Shadow DOM. A Manifest V3 service worker owns the HLTB adapter, strict matching, request concurrency, versioned `storage.local` cache, and snapshot lookup.
 
-Steam's embedded Chromium uses a compact local snapshot because HLTB rejects its network fingerprint. Chrome and Firefox continue to prefer current HLTB responses and use the snapshot only when the service is unavailable. The snapshot contains no images and uses only an unambiguous Steam App ID or an exact, unique normalized title. The widget shows the snapshot date without a distracting source badge.
+The schema-v2 snapshot contains 58,820 HLTB games with at least one non-zero completion time and 34,245 unambiguous Steam App ID mappings. Title data is split into 64 gzip JSON buckets; App IDs use 64 gzip-compressed binary ULEB128 indexes. A lookup decompresses only the relevant buckets and retains them only for the service worker lifetime. Images, descriptions, reviews, and the 755,986,614-byte raw scrape are not packaged.
 
-The schema-v2 snapshot was generated from the completed July 22, 2026 scrape. It contains all 58,820 HLTB games with at least one non-zero completion time and 34,245 unambiguous Steam App ID mappings. Title data is split across 64 gzip JSON buckets; App IDs use 64 small gzip-compressed binary ULEB128 indexes. A lookup decompresses at most the relevant title and Steam buckets and keeps them only for the service worker lifetime. The complete packaged Chrome build is about 1.46 MB, compared with the 720.97 MiB source JSON.
+Snapshot updates are manual and reviewable:
 
-Snapshot updates are manual and reviewable. `npm run snapshot:import -- path/to/hltb_data.json` streams the source without loading it into memory and atomically regenerates the compact files; `npm run verify:snapshot` verifies coverage, layout, cross-references, compressed and uncompressed checksums. The 755,986,614-byte source JSON, descriptions, reviews, images, and collision report never enter the extension package. CI validates the committed snapshot and never scrapes HLTB.
+```sh
+npm run snapshot:import -- path/to/hltb_data.json
+npm run verify:snapshot
+```
+
+CI validates committed data and never scrapes HLTB. More detail is in the [reviewer build instructions](SOURCE_BUILD.md).
+
+## Publication status
+
+Version 2.1.0 is functionally validated in the Steam client, Chrome, and Firefox. The repository and artifacts are prepared for public source hosting, but browser-store submission remains a separate manual stage.
+
+- Chrome: package, manifest, privacy text, and listing draft are prepared; final branded assets, account setup, final permission/legal review, and dashboard submission remain. See [Chrome Web Store checklist](docs/CHROME_WEB_STORE.md).
+- Firefox: package, stable ID, source archive, and reviewer build instructions are prepared; AMO validation, listing metadata, final compatibility testing, and Mozilla signing remain. See [Firefox AMO checklist](docs/FIREFOX_AMO.md).
+- Known non-blocking issues, including rare missing Steam artwork, are tracked in [Known issues](docs/KNOWN_ISSUES.md).
+
+Store artwork is intentionally not fabricated in this release. The required sizes and planned files are documented in [Store assets](docs/STORE_ASSETS.md) so original branding can be added during the 2.1.x cycle.
 
 ## Privacy and independence
 
-Chrome and Firefox send the Steam game title to HowLongToBeat when current data is requested. Steam's embedded browser resolves titles locally and sends nothing to HLTB. The extension has no telemetry or user accounts. See [PRIVACY.md](PRIVACY.md) for details.
-
 This project is not affiliated with, endorsed by, or sponsored by Valve Corporation, Steam, or HowLongToBeat. Product names and trademarks belong to their respective owners.
 
-Inspired by the original [k4sr4/hltbsteam](https://github.com/k4sr4/hltbsteam) project and rebuilt from a clean codebase for current Manifest V3 browsers.
+Inspired by the original [k4sr4/hltbsteam](https://github.com/k4sr4/hltbsteam) project and rebuilt from a clean TypeScript/WXT codebase for current Manifest V3 browsers.
 
 ## Русский
 
-Расширение добавляет на страницы игр Steam время прохождения HowLongToBeat. В браузерах используются свежие сетевые данные, а внутри клиента Steam — компактный автономный снимок без обложек. Совпадения строго точные: при сомнении расширение не показывает чужое время.
+Расширение показывает время прохождения HowLongToBeat на страницах игр Steam. В Chrome и Firefox оно запрашивает свежие данные и использует локальный fallback, а внутри клиента Steam работает автономно по компактному снимку. Совпадения строго точные: при сомнении чужое время не показывается.
 
 ## License
 
