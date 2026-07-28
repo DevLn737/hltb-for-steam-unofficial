@@ -29,7 +29,7 @@ These are sideload packages, not store-signed installations.
 
 ### Chrome and Chromium
 
-1. Extract `hltb-for-steam-unofficial-2.1.0-chrome.zip`.
+1. Extract `hltb-for-steam-unofficial-2.1.1-chrome.zip`.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Choose **Load unpacked** and select the extracted directory.
 
@@ -95,7 +95,7 @@ CI validates committed data and never scrapes HLTB. More detail is in the [revie
 
 ## Publication status
 
-Version 2.1.0 is functionally validated in the Steam client, Chrome, and Firefox. The repository and artifacts are prepared for public source hosting, but browser-store submission remains a separate manual stage.
+Version 2.1.1 is functionally validated in the Steam client, Chrome, and Firefox. The repository and artifacts are prepared for public source hosting, but browser-store submission remains a separate manual stage.
 
 - Chrome: package, manifest, privacy text, and listing draft are prepared; final branded assets, account setup, final permission/legal review, and dashboard submission remain. See [Chrome Web Store checklist](docs/CHROME_WEB_STORE.md).
 - Firefox: package, stable ID, source archive, and reviewer build instructions are prepared; AMO validation, listing metadata, final compatibility testing, and Mozilla signing remain. See [Firefox AMO checklist](docs/FIREFOX_AMO.md).

@@ -1,6 +1,6 @@
 {
   "name": "hltb-for-steam-unofficial",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "description": "An unofficial Chrome and Firefox extension that shows HowLongToBeat estimates on Steam game pages.",
   "type": "module",

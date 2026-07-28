@@ -30,8 +30,8 @@ npm run xpi:firefox:unsigned
 
 The command creates:
 
-- `.output/hltb-for-steam-unofficial-2.1.0-firefox.zip` — extension archive to submit to AMO;
-- `.output/hltb-for-steam-unofficial-2.1.0-sources.zip` — matching reviewer sources;
-- `.output/hltb-for-steam-unofficial-2.1.0-firefox-unsigned.xpi` — an explicitly unsigned development copy for temporary installation only.
+- `.output/hltb-for-steam-unofficial-2.1.1-firefox.zip` — extension archive to submit to AMO;
+- `.output/hltb-for-steam-unofficial-2.1.1-sources.zip` — matching reviewer sources;
+- `.output/hltb-for-steam-unofficial-2.1.1-firefox-unsigned.xpi` — an explicitly unsigned development copy for temporary installation only.
 
 Generated JavaScript is bundled by WXT. No minifier obfuscation, remote executable code, post-download code generation, or native binaries are used.
