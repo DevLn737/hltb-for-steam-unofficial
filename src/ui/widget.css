@@ -46,6 +46,8 @@ header span, .badge { color: #55b9f3; font-size: 10px; font-weight: 700; letter-
 .time-mainStory strong { background: #88498f; }
 .time-mainPlusExtras strong { background: #4d63b2; }
 .time-completionist strong { background: #ce3d52; }
+.time.is-unavailable strong { color: #d1d5d9; background: #4b5055; }
+.unavailable-card footer a { margin-left: auto; }
 
 footer { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 9px; margin-top: auto; padding: 7px 2px 0; color: #b4b4b4; font-size: 10px; }
 footer a { margin-left: auto; color: #f3f3f3; font-size: 13px; }

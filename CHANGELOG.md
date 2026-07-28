@@ -2,6 +2,13 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- Render unknown games and known HLTB games without completion-time submissions in the same horizontal card, using neutral gray `—` values instead of an inaccurate title-match error.
+- Render only missing categories in gray when HLTB provides a partial set of completion times.
+
 ## [2.1.0] - 2026-07-22
 
 ### Added

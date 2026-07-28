@@ -4,7 +4,7 @@ import { withTimeout } from '../src/core/async';
 import { isLookupResult, isSettingsResponse } from '../src/core/runtime-validation';
 import { extractSteamGamePage, findWidgetPlacement } from '../src/steam/page';
 import { detectLocale } from '../src/ui/i18n';
-import { ensureWidgetHost, renderError, renderLoading, renderResult, WIDGET_ID } from '../src/ui/widget';
+import { ensureWidgetHost, renderError, renderLoading, renderResult, renderUnavailableResult, WIDGET_ID } from '../src/ui/widget';
 
 async function send(message: RuntimeRequest, timeoutMs: number): Promise<unknown> {
   return await withTimeout(browser.runtime.sendMessage(message) as Promise<unknown>, timeoutMs);
@@ -55,6 +55,8 @@ export default defineContentScript({
         renderError(host, 'service_error', page.title, locale);
       } else if (lookup.ok) {
         renderResult(host, lookup.data, settings, locale, page.artworkUrl, page.backdropUrl);
+      } else if (lookup.error === 'not_found') {
+        renderUnavailableResult(host, page.title, settings, locale, page.artworkUrl, page.backdropUrl);
       } else {
         renderError(host, lookup.error, page.title, locale, lookup.diagnostic);
       }

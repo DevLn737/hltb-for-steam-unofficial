@@ -69,6 +69,29 @@ describe('HltbClient', () => {
     });
   });
 
+  it('keeps an exact HLTB match when no completion times have been submitted', async () => {
+    const fetchMock = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(initResponse())
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        data: [{
+          game_id: 189_049,
+          game_name: 'AV Director Life!',
+          comp_main: 0,
+          comp_plus: 0,
+          comp_100: 0,
+        }],
+      }), { status: 200 }));
+
+    await expect(new HltbClient({ fetch: fetchMock }).lookup('AV Director Life!')).resolves.toEqual({
+      gameId: 189_049,
+      matchedTitle: 'AV Director Life!',
+      mainStory: null,
+      mainPlusExtras: null,
+      completionist: null,
+      hltbUrl: 'https://howlongtobeat.com/game/189049',
+    });
+  });
+
   it('reports rate limits with Retry-After', async () => {
     const fetchMock = vi.fn<typeof fetch>()
       .mockResolvedValueOnce(initResponse())

@@ -78,23 +78,35 @@ export function renderLoading(host: HTMLElement, locale = detectLocale()): void 
   article.append(createElement(article.ownerDocument, 'p', 'status loading', translate('loading', locale)));
 }
 
-export function renderResult(
+interface TimeCardData {
+  requestedTitle: string;
+  matchedTitle: string;
+  mainStory: number | null;
+  mainPlusExtras: number | null;
+  completionist: number | null;
+  hltbUrl: string;
+  source: GameTimes['source'] | 'unavailable';
+  updatedAt: number | null;
+  stale: boolean;
+}
+
+function renderTimeCard(
   host: HTMLElement,
-  data: GameTimes,
+  data: TimeCardData,
   settings: ExtensionSettings,
-  locale = detectLocale(),
-  steamArtworkUrl: string | null = null,
-  steamBackdropUrl: string | null = null,
+  locale: Locale,
+  steamArtworkUrl: string | null,
+  steamBackdropUrl: string | null,
 ): void {
   const documentRef = host.ownerDocument;
-  const article = frame(host, 'result-card');
+  const unavailable = data.source === 'unavailable';
+  const article = frame(host, `result-card${unavailable ? ' unavailable-card' : ''}`);
   const backdrop = createElement(documentRef, 'div', 'cover-backdrop');
   backdrop.setAttribute('aria-hidden', 'true');
   const shade = createElement(documentRef, 'div', 'card-shade');
   shade.setAttribute('aria-hidden', 'true');
   const layout = createElement(documentRef, 'div', 'result-layout');
   const artwork = createElement(documentRef, 'figure', 'artwork');
-  const pageUrl = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';
   const imageUrl = safeSteamArtworkUrl(steamArtworkUrl);
   const backdropUrl = safeSteamArtworkUrl(steamBackdropUrl) ?? imageUrl;
 
@@ -123,7 +135,7 @@ export function renderResult(
   ] as const;
   for (const [setting, label, value] of categories) {
     if (!settings.categories[setting]) continue;
-    const row = createElement(documentRef, 'div', `time time-${setting}`);
+    const row = createElement(documentRef, 'div', `time time-${setting}${value === null ? ' is-unavailable' : ''}`);
     row.append(
       createElement(documentRef, 'span', undefined, translate(label, locale)),
       createElement(documentRef, 'strong', undefined, formatMinutes(value, settings.timeFormat, locale)),
@@ -133,13 +145,15 @@ export function renderResult(
   content.append(times);
 
   const footer = createElement(documentRef, 'footer');
-  if (data.source === 'cache') {
-    footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
+  if (!unavailable && data.updatedAt !== null) {
+    if (data.source === 'cache') {
+      footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
+    }
+    const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
+    footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
   }
-  const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
-  footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
-  const link = createElement(documentRef, 'a', undefined, `${translate('openHltb', locale)} ↗`);
-  link.href = pageUrl;
+  const link = createElement(documentRef, 'a', undefined, `${translate(unavailable ? 'searchHltb' : 'openHltb', locale)} ↗`);
+  link.href = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
   footer.append(link);
@@ -147,6 +161,38 @@ export function renderResult(
   if (imageUrl) layout.append(artwork);
   layout.append(content);
   article.append(backdrop, shade, layout);
+}
+
+export function renderResult(
+  host: HTMLElement,
+  data: GameTimes,
+  settings: ExtensionSettings,
+  locale = detectLocale(),
+  steamArtworkUrl: string | null = null,
+  steamBackdropUrl: string | null = null,
+): void {
+  renderTimeCard(host, data, settings, locale, steamArtworkUrl, steamBackdropUrl);
+}
+
+export function renderUnavailableResult(
+  host: HTMLElement,
+  title: string,
+  settings: ExtensionSettings,
+  locale = detectLocale(),
+  steamArtworkUrl: string | null = null,
+  steamBackdropUrl: string | null = null,
+): void {
+  renderTimeCard(host, {
+    requestedTitle: title,
+    matchedTitle: title,
+    mainStory: null,
+    mainPlusExtras: null,
+    completionist: null,
+    hltbUrl: `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`,
+    source: 'unavailable',
+    updatedAt: null,
+    stale: false,
+  }, settings, locale, steamArtworkUrl, steamBackdropUrl);
 }
 
 export function renderError(

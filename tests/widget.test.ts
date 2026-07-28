@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from '../src/core/contracts';
-import { ensureWidgetHost, renderError, renderLoading, renderResult } from '../src/ui/widget';
+import { ensureWidgetHost, renderError, renderLoading, renderResult, renderUnavailableResult } from '../src/ui/widget';
 
 describe('Steam widget', () => {
   it('uses one Shadow DOM host and renders loading state', () => {
@@ -56,12 +56,33 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).not.toContain('HowLongToBeatHowLongToBeat');
   });
 
-  it('renders a safe search link for uncertain matches', () => {
+  it('renders uncertain matches as a unified gray result card', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
-    renderError(host, 'not_found', 'Unknown & Game', 'ru');
-    expect(host.shadowRoot?.textContent).toContain('Надёжное совпадение');
+    renderUnavailableResult(host, 'Unknown & Game', DEFAULT_SETTINGS, 'ru',
+      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3181220/library_600x900_2x.jpg',
+      'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3181220/header.jpg');
+    expect(host.shadowRoot?.querySelector('.result-card')).not.toBeNull();
+    expect(host.shadowRoot?.querySelectorAll('.time.is-unavailable')).toHaveLength(3);
+    expect(host.shadowRoot?.querySelectorAll('.time strong')).toHaveLength(3);
+    expect([...host.shadowRoot?.querySelectorAll('.time strong') ?? []].every((value) => value.textContent === '—')).toBe(true);
+    expect(host.shadowRoot?.textContent).not.toContain('Надёжное совпадение');
+    expect(host.shadowRoot?.textContent).not.toContain('Обновлено');
     expect(host.shadowRoot?.querySelector('a')?.href).toContain('Unknown%20%26%20Game');
+  });
+
+  it('uses gray only for missing categories in a partial HLTB result', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderResult(host, {
+      appId: '3181220', requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
+      mainStory: null, mainPlusExtras: 120, completionist: null,
+      hltbUrl: 'https://howlongtobeat.com/game/189049', source: 'network',
+      updatedAt: Date.UTC(2026, 6, 28), stale: false,
+    }, DEFAULT_SETTINGS, 'en');
+    expect(host.shadowRoot?.querySelectorAll('.time.is-unavailable')).toHaveLength(2);
+    expect(host.shadowRoot?.querySelector('.time-mainPlusExtras')?.classList).not.toContain('is-unavailable');
+    expect(host.shadowRoot?.textContent).toContain('2 Hours');
   });
 
   it('shows a safe network stage and status instead of hiding the cause', () => {

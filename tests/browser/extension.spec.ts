@@ -57,3 +57,19 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   await expect(widget).not.toContainText('Local snapshot');
   expect(hltbRequests).toEqual([]);
 });
+
+test('renders an unknown or untimed Steam game as a gray result card', async () => {
+  const page = await context.newPage();
+  await page.route('https://store.steampowered.com/app/3181220/AV_Director_Life/', (route) => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><html><head><meta property="og:title" content="AV Director Life!"><meta property="og:image" content="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3181220/header.jpg"></head><body><div class="apphub_AppName">AV Director Life!</div><main><div class="game_area_purchase"></div></main></body></html>',
+  }));
+  await page.goto('https://store.steampowered.com/app/3181220/AV_Director_Life/');
+  const widget = page.locator('#hltb-for-steam-unofficial');
+  await expect(widget).toContainText('AV Director Life!');
+  await expect(widget.locator('.time.is-unavailable')).toHaveCount(3);
+  await expect(widget.locator('.time strong')).toHaveText(['—', '—', '—']);
+  await expect(widget.locator('a')).toHaveAttribute('href', /howlongtobeat\.com\/\?q=AV%20Director%20Life!/);
+  await expect(widget).not.toContainText('No confident title match');
+  expect(hltbRequests).toEqual([]);
+});
