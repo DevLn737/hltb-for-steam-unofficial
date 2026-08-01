@@ -40,7 +40,7 @@
     "globals": "^17.8.0",
     "jsdom": "^30.0.1",
     "stream-json": "^3.5.0",
-    "typescript": "^7.0.2",
+    "typescript": "~6.0.3",
     "typescript-eslint": "^8.65.0",
     "vitest": "^4.1.10",
     "wxt": "^0.21.2"

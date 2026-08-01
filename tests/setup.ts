@@ -5,7 +5,8 @@ Object.assign(globalThis, { browser: fakeBrowser, chrome: fakeBrowser });
 
 beforeEach(() => {
   fakeBrowser.reset();
-  document.head.innerHTML = '';
-  document.body.innerHTML = '';
+  if (typeof document !== 'undefined') {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+  }
 });
-

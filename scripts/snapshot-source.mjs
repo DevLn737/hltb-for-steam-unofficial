@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { Transform } from 'node:stream';
-import StreamArray from 'stream-json/streamers/StreamArray.js';
+import { pipeline } from 'node:stream/promises';
+import streamArray from 'stream-json/streamers/stream-array.js';
 import { extractSnapshotRecord } from './snapshot-lib.mjs';
 
 export async function readSnapshotSource(sourcePath, options = {}) {
@@ -14,19 +15,27 @@ export async function readSnapshotSource(sourcePath, options = {}) {
       callback(null, chunk);
     },
   });
-  const parser = StreamArray.withParser();
-  createReadStream(sourcePath, { highWaterMark: 1024 * 1024 }).pipe(hashingStream).pipe(parser);
+  const entries = streamArray.withParserAsStream();
+  const pipelineDone = pipeline(
+    createReadStream(sourcePath, { highWaterMark: 1024 * 1024 }),
+    hashingStream,
+    entries,
+  );
 
   const records = [];
   let sourceEntryCount = 0;
   let lastGameId = 0;
-  for await (const { value } of parser) {
-    sourceEntryCount += 1;
-    const sourceGameId = Number(value?.game?.[0]?.game_id);
-    if (Number.isSafeInteger(sourceGameId)) lastGameId = Math.max(lastGameId, sourceGameId);
-    const record = extractSnapshotRecord(value);
-    if (record) records.push(record);
-    await options.onEntry?.(value, sourceEntryCount);
+  try {
+    for await (const { value } of entries) {
+      sourceEntryCount += 1;
+      const sourceGameId = Number(value?.game?.[0]?.game_id);
+      if (Number.isSafeInteger(sourceGameId)) lastGameId = Math.max(lastGameId, sourceGameId);
+      const record = extractSnapshotRecord(value);
+      if (record) records.push(record);
+      await options.onEntry?.(value, sourceEntryCount);
+    }
+  } finally {
+    await pipelineDone;
   }
 
   const after = await stat(sourcePath);
