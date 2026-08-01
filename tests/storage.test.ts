@@ -16,6 +16,7 @@ describe('storage', () => {
     await setCachedGame({
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
+      availability: 'timed',
       source: 'network', updatedAt: 1_000, stale: false,
     });
     await expect(getCachedGame('3375780', 'Trails in the Sky 1st Chapter', 7, 2_000)).resolves.toMatchObject({ fresh: true });
@@ -34,10 +35,25 @@ describe('storage', () => {
       },
     });
     await expect(getCachedGame('3375780', 'Trails in the Sky 1st Chapter', 7, 2_000))
-      .resolves.toMatchObject({ fresh: true, data: { updatedAt: 1_000 } });
+      .resolves.toMatchObject({ fresh: true, data: { updatedAt: 1_000, availability: 'timed' } });
     const stored = await browser.storage.local.get(null);
     expect(stored['game:v3:3375780:trails in the sky 1st chapter']).toBeUndefined();
     expect(JSON.stringify(stored)).not.toContain('old.jpg');
+  });
+
+  it('lazily migrates a v4 cache entry and derives the known-without-times state', async () => {
+    await browser.storage.local.set({
+      'game:v4:3181220:av director life': {
+        schema: 4,
+        data: {
+          appId: '3181220', requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
+          mainStory: null, mainPlusExtras: null, completionist: null,
+          hltbUrl: 'https://howlongtobeat.com/game/175491', updatedAt: 1_000,
+        },
+      },
+    });
+    await expect(getCachedGame('3181220', 'AV Director Life!', 7, 2_000))
+      .resolves.toMatchObject({ fresh: true, data: { availability: 'known_without_times' } });
   });
 
   it('clears game cache without deleting settings', async () => {

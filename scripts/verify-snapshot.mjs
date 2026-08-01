@@ -9,12 +9,13 @@ import { normalizeTitle, snapshotBucket } from '../shared/title-normalization.mj
 const EXPECTED = {
   sourceBytes: 755_986_614,
   sourceEntries: 171_889,
+  entries: 171_888,
   timedEntries: 58_820,
-  normalizedTitles: 58_131,
-  titleCollisions: 604,
-  titleCollisionRecords: 1_293,
-  steamMappings: 34_245,
-  steamCollisions: 182,
+  normalizedTitles: 163_456,
+  titleCollisions: 7_573,
+  titleCollisionRecords: 16_005,
+  steamMappings: 58_288,
+  steamCollisions: 600,
   lastGameId: 189_049,
 };
 
@@ -47,16 +48,16 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
   }
 
   const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
-  if (manifest.schema !== 2 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
+  if (manifest.schema !== 3 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
     || manifest.titleBuckets?.length !== 64 || manifest.steamBuckets?.length !== 64) {
-    throw new Error('Invalid HLTB snapshot v2 manifest');
+    throw new Error('Invalid HLTB snapshot v3 manifest');
   }
   if (manifest.source?.bytes !== EXPECTED.sourceBytes
     || manifest.source?.lastGameId !== EXPECTED.lastGameId
     || !/^[a-f0-9]{64}$/.test(manifest.source?.sha256 ?? '')
     || manifest.sourceEntryCount !== EXPECTED.sourceEntries
     || manifest.timedEntryCount !== EXPECTED.timedEntries
-    || manifest.entryCount !== EXPECTED.timedEntries
+    || manifest.entryCount !== EXPECTED.entries
     || manifest.normalizedTitleCount !== EXPECTED.normalizedTitles
     || manifest.titleCollisionCount !== EXPECTED.titleCollisions
     || manifest.titleCollisionRecordCount !== EXPECTED.titleCollisionRecords
@@ -115,11 +116,11 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
     || collisions.reduce((total, count) => total + count, 0) !== manifest.titleCollisionRecordCount) {
     throw new Error('Snapshot cross-reference count mismatch');
   }
-  if (compressedBytes > 1_600_000) throw new Error(`Snapshot is unexpectedly large: ${compressedBytes} bytes`);
+  if (compressedBytes > 4_000_000) throw new Error(`Snapshot is unexpectedly large: ${compressedBytes} bytes`);
   return { entries, compressedBytes, steamMappings, collisionCount: collisions.length };
 }
 
 if (path.resolve(process.argv[1] ?? '') === fileURLToPath(import.meta.url)) {
   const result = await verifySnapshot();
-  console.log(`Verified HLTB snapshot v2: ${result.entries} games, ${result.steamMappings} Steam mappings (${result.compressedBytes} bytes).`);
+  console.log(`Verified HLTB snapshot v3: ${result.entries} games, ${result.steamMappings} Steam mappings (${result.compressedBytes} bytes).`);
 }

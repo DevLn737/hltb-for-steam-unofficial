@@ -2,6 +2,25 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1.2] - 2026-08-02
+
+### Added
+
+- Retain all 171,888 valid HLTB cards in snapshot schema v3, including games with no submitted completion times, with 58,288 unambiguous Steam App ID mappings.
+- Add tested Steam Client detection for representative Steam, Chrome, Firefox, and Edge user agents.
+
+### Changed
+
+- Make Steam strictly snapshot-only; normal browsers continue to use fresh cache, HLTB network data, and safe stale-cache/snapshot fallback.
+- Hide fetch timestamps for live network results, while keeping meaningful snapshot and cache dates.
+- Fall back from unavailable vertical Steam artwork to allowlisted horizontal header/OpenGraph artwork without distortion.
+- Migrate cached game records to schema v5 with a typed `timed` or `known_without_times` availability state.
+
+### Fixed
+
+- Preserve direct HLTB links and neutral gray time blocks for known games without completion-time submissions, including AV Director Life!.
+- Remove the text-only artwork fallback on Steam pages where a safe horizontal image is already available.
+
 ## [2.1.1] - 2026-07-28
 
 ### Fixed

@@ -19,7 +19,7 @@ An independent, privacy-conscious Chrome and Firefox extension that shows HowLon
 | --- | --- | --- |
 | Chrome / Chromium | Current HowLongToBeat response | Local cache, then packaged snapshot |
 | Firefox | Current HowLongToBeat response | Local cache, then packaged snapshot |
-| Steam desktop client | Local cache | Packaged snapshot |
+| Steam desktop client | Packaged snapshot | None |
 
 Steam's embedded Chromium receives HTTP 403 responses from HLTB, so it never makes an HLTB API request. Its packaged snapshot is dated July 22, 2026. Network browsers send only the Steam game title to HowLongToBeat over HTTPS when current data is requested. See [Privacy Policy](PRIVACY.md).
 
@@ -29,7 +29,7 @@ These are sideload packages, not store-signed installations.
 
 ### Chrome and Chromium
 
-1. Extract `hltb-for-steam-unofficial-2.1.1-chrome.zip`.
+1. Extract `hltb-for-steam-unofficial-2.1.2-chrome.zip`.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Choose **Load unpacked** and select the extracted directory.
 
@@ -82,7 +82,7 @@ The source archive excludes local diagnostics, smoke screenshots, collision repo
 
 The content script extracts the Steam App ID, visible title, and an existing Steam artwork URL, then renders the widget inside Shadow DOM. A Manifest V3 service worker owns the HLTB adapter, strict matching, request concurrency, versioned `storage.local` cache, and snapshot lookup.
 
-The schema-v2 snapshot contains 58,820 HLTB games with at least one non-zero completion time and 34,245 unambiguous Steam App ID mappings. Title data is split into 64 gzip JSON buckets; App IDs use 64 gzip-compressed binary ULEB128 indexes. A lookup decompresses only the relevant buckets and retains them only for the service worker lifetime. Images, descriptions, reviews, and the 755,986,614-byte raw scrape are not packaged.
+The schema-v3 snapshot contains 171,888 known HLTB games, including 58,820 with completion-time data, and 58,288 unambiguous Steam App ID mappings. Title data is split into 64 gzip JSON buckets; App IDs use 64 gzip-compressed binary ULEB128 indexes. A lookup decompresses only the relevant buckets and retains them only for the service worker lifetime. Images, descriptions, reviews, and the 755,986,614-byte raw scrape are not packaged.
 
 Snapshot updates are manual and reviewable:
 
@@ -95,13 +95,13 @@ CI validates committed data and never scrapes HLTB. More detail is in the [revie
 
 ## Publication status
 
-Version 2.1.1 is functionally validated in the Steam client, Chrome, and Firefox. The repository and artifacts are prepared for public source hosting, but browser-store submission remains a separate manual stage.
+Version 2.1.2 is functionally validated in the Steam client, Chrome, and Firefox. The next project stage is Chrome Web Store preparation and submission.
 
 - Chrome: package, manifest, privacy text, and listing draft are prepared; final branded assets, account setup, final permission/legal review, and dashboard submission remain. See [Chrome Web Store checklist](docs/CHROME_WEB_STORE.md).
 - Firefox: package, stable ID, source archive, and reviewer build instructions are prepared; AMO validation, listing metadata, final compatibility testing, and Mozilla signing remain. See [Firefox AMO checklist](docs/FIREFOX_AMO.md).
-- Known non-blocking issues, including rare missing Steam artwork, are tracked in [Known issues](docs/KNOWN_ISSUES.md).
+- Current release status is tracked in [Known issues](docs/KNOWN_ISSUES.md).
 
-Store artwork is intentionally not fabricated in this release. The required sizes and planned files are documented in [Store assets](docs/STORE_ASSETS.md) so original branding can be added during the 2.1.x cycle.
+Store artwork is intentionally not fabricated in this release. The required sizes and planned files are documented in [Store assets](docs/STORE_ASSETS.md) for the publication stage.
 
 ## Privacy and independence
 

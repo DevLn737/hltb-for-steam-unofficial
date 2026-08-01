@@ -7,6 +7,7 @@ playwright-report/
 live-smoke/
 steam-debug-logs/
 public/data/.hltb-snapshot-*/
+data/snapshot-reports/
 hltb_data.json
 dist/
 release/

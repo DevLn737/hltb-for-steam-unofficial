@@ -1,7 +1,7 @@
 export interface SteamGamePage {
   appId: string;
   title: string;
-  artworkUrl: string | null;
+  artworkUrls: string[];
   backdropUrl: string | null;
 }
 
@@ -20,6 +20,10 @@ export function safeSteamArtworkUrl(value: string | null | undefined): string | 
   } catch {
     return null;
   }
+}
+
+function uniqueArtworkUrls(values: Array<string | null | undefined>): string[] {
+  return [...new Set(values.map(safeSteamArtworkUrl).filter((value): value is string => value !== null))];
 }
 
 export interface WidgetPlacement {
@@ -46,9 +50,13 @@ export function extractSteamGamePage(documentRef: Document = document, url = loc
   const headerImage = documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.currentSrc
     || documentRef.querySelector<HTMLImageElement>('.game_header_image_full, .game_header_image')?.src;
   const openGraphImage = documentRef.querySelector<HTMLMetaElement>('meta[property="og:image"]')?.content;
-  const artworkUrl = safeSteamArtworkUrl(`https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/library_600x900_2x.jpg`);
+  const artworkUrls = uniqueArtworkUrls([
+    `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/library_600x900_2x.jpg`,
+    headerImage,
+    openGraphImage,
+  ]);
   const backdropUrl = safeSteamArtworkUrl(headerImage || openGraphImage);
-  return title ? { appId, title, artworkUrl, backdropUrl } : null;
+  return title ? { appId, title, artworkUrls, backdropUrl } : null;
 }
 
 export function findWidgetPlacement(documentRef: Document = document): WidgetPlacement | null {

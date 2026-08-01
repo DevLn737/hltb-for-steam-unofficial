@@ -28,15 +28,15 @@ export class GameTimesService {
 
   private async lookup(appId: string, requestedTitle: string, clientContext: ClientContext): Promise<LookupResult> {
     if (!/^\d+$/.test(appId) || !requestedTitle.trim()) return { ok: false, error: 'invalid_request' };
+    const lookupTitle = getLookupTitle(appId, requestedTitle.trim());
+    if (clientContext === 'steam') {
+      const snapshot = await this.getSnapshot(appId, requestedTitle, lookupTitle);
+      return snapshot ? { ok: true, data: snapshot } : { ok: false, error: 'not_found' };
+    }
+
     const settings = await getSettings();
     const cached = await getCachedGame(appId, requestedTitle, settings.cacheDurationDays);
     if (cached?.fresh) return { ok: true, data: cached.data };
-
-    const lookupTitle = getLookupTitle(appId, requestedTitle.trim());
-    if (clientContext === 'steam') {
-      const fallback = await this.getFallback(appId, requestedTitle, lookupTitle, cached?.data);
-      return fallback ? { ok: true, data: fallback } : { ok: false, error: 'not_found' };
-    }
 
     await this.acquire();
     try {
@@ -52,6 +52,7 @@ export class GameTimesService {
         mainStory: found.mainStory,
         mainPlusExtras: found.mainPlusExtras,
         completionist: found.completionist,
+        availability: this.availability(found.mainStory, found.mainPlusExtras, found.completionist),
         hltbUrl: found.hltbUrl,
         source: 'network',
         updatedAt: Date.now(),
@@ -82,27 +83,35 @@ export class GameTimesService {
     lookupTitle: string,
     cached?: GameTimes,
   ): Promise<GameTimes | null> {
-    let snapshot: SnapshotGameTimes | null = null;
-    try {
-      snapshot = await this.snapshot.lookup(appId, lookupTitle);
-    } catch {
-      // A packaged-data failure must not hide a usable browser cache or network diagnostic.
-    }
-    const snapshotData: GameTimes | null = snapshot ? {
-      appId,
-      requestedTitle,
-      matchedTitle: snapshot.matchedTitle,
-      mainStory: snapshot.mainStory,
-      mainPlusExtras: snapshot.mainPlusExtras,
-      completionist: snapshot.completionist,
-      hltbUrl: `https://howlongtobeat.com/game/${snapshot.gameId}`,
-      source: 'snapshot',
-      updatedAt: snapshot.updatedAt,
-      stale: false,
-    } : null;
+    const snapshotData = await this.getSnapshot(appId, requestedTitle, lookupTitle);
     if (!cached) return snapshotData;
     if (!snapshotData || cached.updatedAt >= snapshotData.updatedAt) return { ...cached, source: 'cache', stale: true };
     return snapshotData;
+  }
+
+  private async getSnapshot(appId: string, requestedTitle: string, lookupTitle: string): Promise<GameTimes | null> {
+    try {
+      const snapshot: SnapshotGameTimes | null = await this.snapshot.lookup(appId, lookupTitle);
+      return snapshot ? {
+        appId,
+        requestedTitle,
+        matchedTitle: snapshot.matchedTitle,
+        mainStory: snapshot.mainStory,
+        mainPlusExtras: snapshot.mainPlusExtras,
+        completionist: snapshot.completionist,
+        availability: this.availability(snapshot.mainStory, snapshot.mainPlusExtras, snapshot.completionist),
+        hltbUrl: `https://howlongtobeat.com/game/${snapshot.gameId}`,
+        source: 'snapshot',
+        updatedAt: snapshot.updatedAt,
+        stale: false,
+      } : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private availability(...times: Array<number | null>): GameTimes['availability'] {
+    return times.every((value) => value === null) ? 'known_without_times' : 'timed';
   }
 
   private async acquire(): Promise<void> {

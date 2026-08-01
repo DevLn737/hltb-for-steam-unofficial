@@ -20,7 +20,7 @@ interface SnapshotBucketInfo {
 }
 
 export interface SnapshotManifest {
-  schema: 2;
+  schema: 3;
   compression: 'gzip';
   sourceUpdatedAt: string;
   sourceEntryCount: number;
@@ -117,7 +117,7 @@ export class HltbSnapshot {
 
   private getManifest(): Promise<SnapshotManifest> {
     this.manifestPromise ??= this.loadJson<SnapshotManifest>('manifest.json').then((manifest) => {
-      if (manifest.schema !== 2 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
+      if (manifest.schema !== 3 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
         || manifest.titleBuckets.length !== 64 || manifest.steamBuckets.length !== 64) {
         throw new Error('Unsupported HLTB snapshot manifest');
       }

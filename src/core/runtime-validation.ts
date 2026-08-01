@@ -47,6 +47,7 @@ export function isLookupResult(value: unknown): value is LookupResult {
     && isNullableNumber(data.mainStory)
     && isNullableNumber(data.mainPlusExtras)
     && isNullableNumber(data.completionist)
+    && (data.availability === 'timed' || data.availability === 'known_without_times')
     && typeof data.hltbUrl === 'string'
     && (data.source === 'network' || data.source === 'cache' || data.source === 'snapshot')
     && typeof data.updatedAt === 'number'

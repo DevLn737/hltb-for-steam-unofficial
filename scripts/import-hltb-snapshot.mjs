@@ -21,6 +21,8 @@ const { records, sourceEntryCount, lastGameId, sourceSha256: digest } = source;
 const overrides = JSON.parse(await readFile(overridesPath, 'utf8'));
 const snapshot = buildSnapshot(records, overrides);
 const sourceUpdatedAt = new Date(source.sourceMtimeMs).toISOString().slice(0, 10);
+const timedEntryCount = records.filter((record) => [record.mainStory, record.mainPlusExtras, record.completionist]
+  .some((value) => value !== null)).length;
 
 await rm(temporaryDirectory, { recursive: true, force: true });
 await mkdir(path.join(temporaryDirectory, 'title'), { recursive: true });
@@ -61,7 +63,7 @@ const manifest = {
     lastGameId,
   },
   sourceEntryCount,
-  timedEntryCount: records.length,
+  timedEntryCount,
   titleBuckets,
   steamBuckets,
 };
@@ -91,4 +93,4 @@ await writeFile(path.join(reportDirectory, 'collisions.json'), `${JSON.stringify
 }, null, 2)}\n`);
 
 const compressedBytes = [...titleBuckets, ...steamBuckets].reduce((total, bucket) => total + bucket.compressedBytes, 0);
-console.log(`Generated schema v2: ${manifest.entryCount} timed games from ${sourceEntryCount} records (${compressedBytes} compressed bytes).`);
+console.log(`Generated schema v3: ${manifest.entryCount} known games (${timedEntryCount} timed) from ${sourceEntryCount} records (${compressedBytes} compressed bytes).`);

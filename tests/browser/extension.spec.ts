@@ -58,7 +58,7 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   expect(hltbRequests).toEqual([]);
 });
 
-test('renders an unknown or untimed Steam game as a gray result card', async () => {
+test('renders a known untimed Steam game as a gray result card with a direct HLTB link', async () => {
   const page = await context.newPage();
   await page.route('https://store.steampowered.com/app/3181220/AV_Director_Life/', (route) => route.fulfill({
     contentType: 'text/html',
@@ -69,7 +69,7 @@ test('renders an unknown or untimed Steam game as a gray result card', async () 
   await expect(widget).toContainText('AV Director Life!');
   await expect(widget.locator('.time.is-unavailable')).toHaveCount(3);
   await expect(widget.locator('.time strong')).toHaveText(['—', '—', '—']);
-  await expect(widget.locator('a')).toHaveAttribute('href', /howlongtobeat\.com\/\?q=AV%20Director%20Life!/);
+  await expect(widget.locator('a')).toHaveAttribute('href', 'https://howlongtobeat.com/game/175491');
   await expect(widget).not.toContainText('No confident title match');
   expect(hltbRequests).toEqual([]);
 });

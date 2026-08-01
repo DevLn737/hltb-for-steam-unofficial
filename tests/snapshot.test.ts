@@ -17,15 +17,25 @@ function localSnapshot(): HltbSnapshot {
   });
 }
 
-describe('packaged HLTB snapshot v2', () => {
+describe('packaged HLTB snapshot v3', () => {
   it('contains the complete compact source', async () => {
     const manifest = JSON.parse(await readFile('public/data/hltb-snapshot/manifest.json', 'utf8')) as {
       schema: number; sourceEntryCount: number; timedEntryCount: number; entryCount: number;
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };
     expect(manifest).toMatchObject({
-      schema: 2, sourceEntryCount: 171_889, timedEntryCount: 58_820, entryCount: 58_820,
-      normalizedTitleCount: 58_131, titleCollisionCount: 604, steamMappingCount: 34_245,
+      schema: 3, sourceEntryCount: 171_889, timedEntryCount: 58_820, entryCount: 171_888,
+      normalizedTitleCount: 163_456, titleCollisionCount: 7_573, steamMappingCount: 58_288,
+    });
+  });
+
+  it('retains known HLTB games with no completion times', async () => {
+    await expect(localSnapshot().lookup('3181220', 'AV Director Life!')).resolves.toMatchObject({
+      gameId: 175_491,
+      matchedTitle: 'AV Director Life!',
+      mainStory: null,
+      mainPlusExtras: null,
+      completionist: null,
     });
   });
 

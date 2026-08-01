@@ -45,6 +45,7 @@ describe('GameTimesService', () => {
     await setCachedGame({
       appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: found.matchedTitle,
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: found.hltbUrl,
+      availability: 'timed',
       source: 'network', updatedAt: 1, stale: false,
     });
     const result = await new GameTimesService(new StubClient(new HltbNetworkError('offline')), 2, new StubSnapshot()).getGameTimes('3375780', 'Trails in the Sky 1st Chapter');
@@ -100,6 +101,34 @@ describe('GameTimesService', () => {
       .getGameTimes('2258500', 'CRYMACHINA', 'steam');
     expect(networkCalls).toBe(0);
     expect(result).toMatchObject({ ok: true, data: { source: 'snapshot', mainStory: 930, completionist: 1740 } });
+  });
+
+  it('uses only the snapshot in Steam even when a fresh network cache exists', async () => {
+    await setCachedGame({
+      appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'Old cached title',
+      mainStory: 1, mainPlusExtras: 1, completionist: 1, availability: 'timed',
+      hltbUrl: 'https://howlongtobeat.com/game/1', source: 'network', updatedAt: Date.now(), stale: false,
+    });
+    const snapshot = new StubSnapshot({
+      gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
+      updatedAt: Date.UTC(2026, 6, 22),
+    });
+    const result = await new GameTimesService(new StubClient(found), 2, snapshot)
+      .getGameTimes('2258500', 'CRYMACHINA', 'steam');
+    expect(result).toMatchObject({ ok: true, data: { source: 'snapshot', mainStory: 930 } });
+  });
+
+  it('returns a typed known-without-times snapshot result', async () => {
+    const snapshot = new StubSnapshot({
+      gameId: 175_491, matchedTitle: 'AV Director Life!', mainStory: null, mainPlusExtras: null, completionist: null,
+      updatedAt: Date.UTC(2026, 6, 22),
+    });
+    const result = await new GameTimesService(new StubClient(null), 2, snapshot)
+      .getGameTimes('3181220', 'AV Director Life!', 'steam');
+    expect(result).toMatchObject({
+      ok: true,
+      data: { availability: 'known_without_times', hltbUrl: 'https://howlongtobeat.com/game/175491' },
+    });
   });
 
   it('prefers a browser network result over the snapshot', async () => {

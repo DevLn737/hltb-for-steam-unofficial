@@ -95,7 +95,7 @@ function renderTimeCard(
   data: TimeCardData,
   settings: ExtensionSettings,
   locale: Locale,
-  steamArtworkUrl: string | null,
+  steamArtworkUrls: readonly string[],
   steamBackdropUrl: string | null,
 ): void {
   const documentRef = host.ownerDocument;
@@ -107,18 +107,31 @@ function renderTimeCard(
   shade.setAttribute('aria-hidden', 'true');
   const layout = createElement(documentRef, 'div', 'result-layout');
   const artwork = createElement(documentRef, 'figure', 'artwork');
-  const imageUrl = safeSteamArtworkUrl(steamArtworkUrl);
-  const backdropUrl = safeSteamArtworkUrl(steamBackdropUrl) ?? imageUrl;
+  const imageUrls = [...new Set(steamArtworkUrls.map(safeSteamArtworkUrl).filter((value): value is string => value !== null))];
+  const backdropUrl = safeSteamArtworkUrl(steamBackdropUrl) ?? imageUrls[0] ?? null;
 
-  if (imageUrl) {
+  if (imageUrls.length > 0) {
     const image = createElement(documentRef, 'img');
-    image.src = imageUrl;
     image.alt = data.requestedTitle;
     image.referrerPolicy = 'no-referrer';
+    let imageIndex = 0;
+    const selectImage = (index: number) => {
+      imageIndex = index;
+      image.src = imageUrls[index]!;
+      article.classList.toggle('landscape-artwork', index > 0);
+      if (index > 0) article.style.setProperty('--cover-image', `url("${imageUrls[index]!.replace(/["\\]/g, '\\$&')}")`);
+    };
     image.addEventListener('error', () => {
+      if (imageIndex + 1 < imageUrls.length) {
+        selectImage(imageIndex + 1);
+        return;
+      }
       artwork.remove();
       article.classList.add('no-artwork');
-    }, { once: true });
+      article.classList.remove('landscape-artwork');
+      article.style.removeProperty('--cover-image');
+    });
+    selectImage(0);
     artwork.append(image);
   } else {
     article.classList.add('no-artwork');
@@ -145,12 +158,14 @@ function renderTimeCard(
   content.append(times);
 
   const footer = createElement(documentRef, 'footer');
-  if (!unavailable && data.updatedAt !== null) {
-    if (data.source === 'cache') {
-      footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
-    }
+  if (!unavailable && data.updatedAt !== null && data.source !== 'network') {
     const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
-    footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
+    if (data.source === 'snapshot') {
+      footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
+    } else {
+      footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
+      footer.append(createElement(documentRef, 'span', 'updated', translate('checked', locale, { date })));
+    }
   }
   const link = createElement(documentRef, 'a', undefined, `${translate(unavailable ? 'searchHltb' : 'openHltb', locale)} ↗`);
   link.href = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';
@@ -158,7 +173,7 @@ function renderTimeCard(
   link.rel = 'noopener noreferrer';
   footer.append(link);
   content.append(footer);
-  if (imageUrl) layout.append(artwork);
+  if (imageUrls.length > 0) layout.append(artwork);
   layout.append(content);
   article.append(backdrop, shade, layout);
 }
@@ -168,10 +183,10 @@ export function renderResult(
   data: GameTimes,
   settings: ExtensionSettings,
   locale = detectLocale(),
-  steamArtworkUrl: string | null = null,
+  steamArtworkUrls: readonly string[] = [],
   steamBackdropUrl: string | null = null,
 ): void {
-  renderTimeCard(host, data, settings, locale, steamArtworkUrl, steamBackdropUrl);
+  renderTimeCard(host, data, settings, locale, steamArtworkUrls, steamBackdropUrl);
 }
 
 export function renderUnavailableResult(
@@ -179,7 +194,7 @@ export function renderUnavailableResult(
   title: string,
   settings: ExtensionSettings,
   locale = detectLocale(),
-  steamArtworkUrl: string | null = null,
+  steamArtworkUrls: readonly string[] = [],
   steamBackdropUrl: string | null = null,
 ): void {
   renderTimeCard(host, {
@@ -192,7 +207,7 @@ export function renderUnavailableResult(
     source: 'unavailable',
     updatedAt: null,
     stale: false,
-  }, settings, locale, steamArtworkUrl, steamBackdropUrl);
+  }, settings, locale, steamArtworkUrls, steamBackdropUrl);
 }
 
 export function renderError(

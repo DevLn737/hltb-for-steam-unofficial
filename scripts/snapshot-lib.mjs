@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { encodeSteamIndex, packSnapshotLocation } from '../shared/snapshot-codec.mjs';
 import { normalizeTitle, SNAPSHOT_BUCKET_COUNT, snapshotBucket } from '../shared/title-normalization.mjs';
 
-export const SNAPSHOT_SCHEMA = 2;
+export const SNAPSHOT_SCHEMA = 3;
 export const BUCKET_COUNT = SNAPSHOT_BUCKET_COUNT;
 
 export function sha256(value) {
@@ -29,7 +29,7 @@ export function extractSnapshotRecord(sourceEntry) {
     secondsToMinutes(game?.comp_plus),
     secondsToMinutes(game?.comp_100),
   ];
-  if (!gameId || !title || times.every((value) => value === null)) return null;
+  if (!gameId || !title) return null;
   const steamAppIds = [...new Set([game?.profile_steam, game?.profile_steam_alt]
     .map(positiveInteger)
     .filter((value) => value !== null))];
@@ -61,9 +61,9 @@ function collisionReport(normalized, gameIds, records) {
   };
 }
 
-export function buildSnapshot(records, overrides = { schema: 2, origin: 'unknown', entries: [] }) {
+export function buildSnapshot(records, overrides = { schema: 3, origin: 'unknown', entries: [] }) {
   if (!Array.isArray(records)) throw new Error('Snapshot records must be an array');
-  if (overrides?.schema !== 2 || !Array.isArray(overrides.entries)) throw new Error('Snapshot overrides must use schema 2');
+  if (overrides?.schema !== 3 || !Array.isArray(overrides.entries)) throw new Error('Snapshot overrides must use schema 3');
 
   const recordsById = new Map();
   const titleCandidates = new Map();

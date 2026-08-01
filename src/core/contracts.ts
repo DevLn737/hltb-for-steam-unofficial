@@ -25,6 +25,7 @@ export interface GameTimes {
   mainStory: number | null;
   mainPlusExtras: number | null;
   completionist: number | null;
+  availability: 'timed' | 'known_without_times';
   hltbUrl: string;
   source: 'network' | 'cache' | 'snapshot';
   updatedAt: number;

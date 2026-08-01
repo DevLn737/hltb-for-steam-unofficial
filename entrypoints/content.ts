@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser';
 import { DEFAULT_SETTINGS, type ExtensionSettings, type RuntimeRequest } from '../src/core/contracts';
 import { withTimeout } from '../src/core/async';
+import { detectClientContext } from '../src/core/client-context';
 import { isLookupResult, isSettingsResponse } from '../src/core/runtime-validation';
 import { extractSteamGamePage, findWidgetPlacement } from '../src/steam/page';
 import { detectLocale } from '../src/ui/i18n';
@@ -40,7 +41,7 @@ export default defineContentScript({
             type: 'GET_GAME_TIMES',
             appId: page.appId,
             title: page.title,
-            client: navigator.userAgent.includes('Valve Steam Client') ? 'steam' : 'browser',
+            client: detectClientContext(navigator.userAgent),
           }, 20_000),
           send({ type: 'GET_SETTINGS' }, 3_000)
             .then((response) => isSettingsResponse(response) ? response.settings : DEFAULT_SETTINGS)
@@ -54,9 +55,9 @@ export default defineContentScript({
       if (!isLookupResult(lookup)) {
         renderError(host, 'service_error', page.title, locale);
       } else if (lookup.ok) {
-        renderResult(host, lookup.data, settings, locale, page.artworkUrl, page.backdropUrl);
+        renderResult(host, lookup.data, settings, locale, page.artworkUrls, page.backdropUrl);
       } else if (lookup.error === 'not_found') {
-        renderUnavailableResult(host, page.title, settings, locale, page.artworkUrl, page.backdropUrl);
+        renderUnavailableResult(host, page.title, settings, locale, page.artworkUrls, page.backdropUrl);
       } else {
         renderError(host, lookup.error, page.title, locale, lookup.diagnostic);
       }
