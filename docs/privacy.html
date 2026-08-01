@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — HLTB for Steam</title>
+  <meta name="description" content="Privacy policy for HLTB for Steam — Unofficial.">
+  <link rel="stylesheet" href="store.css">
+</head>
+<body>
+  <main>
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: August 2, 2026</p>
+    <p>HLTB for Steam — Unofficial has no accounts, analytics, advertising, telemetry, or developer-operated server. The developer does not receive, collect, sell, or analyze user data.</p>
+
+    <h2>Data processed</h2>
+    <p>When a supported Steam game page is opened, the extension processes public website content: the Steam App ID, game title, and artwork URL. In Chrome and Firefox, the game title is sent over HTTPS directly to HowLongToBeat to request current completion-time information. This tells HowLongToBeat which title is being looked up, and HowLongToBeat processes that request under its own privacy practices. Inside Steam's embedded browser, lookup uses the packaged snapshot and the title is not sent to HowLongToBeat.</p>
+    <p>Successful network responses, the requested title, Steam App ID, and extension preferences are stored locally in browser extension storage. Cache retention is configurable to 1, 7, or 30 days. An expired entry may remain locally as a stale fallback until it is replaced or the user clears the cache. Steam artwork is displayed from its existing HTTPS URL and is not stored by the extension. Users can clear cached game data from the extension popup.</p>
+    <p>The data is used only to display completion times and operate settings and cache. It is not used or transferred for advertising, profiling, credit decisions, or sale. Use of information complies with the Chrome Web Store User Data Policy, including its Limited Use requirements.</p>
+
+    <h2>Permissions</h2>
+    <ul>
+      <li><strong>Storage:</strong> stores preferences and cached completion times locally.</li>
+      <li><strong>Steam game-page content scripts:</strong> read the public game identifier, title, and existing artwork and display the card only on declared Steam <code>/app/*</code> pages.</li>
+      <li><strong>Access to howlongtobeat.com:</strong> requests current completion-time data.</li>
+      <li><strong>Declarative network request with host access:</strong> applies required request headers only to the HTTPS HLTB search endpoints.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>For privacy questions, use the project's <a href="support.html">support page</a>. Security reports should follow the private process in the <a href="https://github.com/DevLn737/hltb-for-steam-unofficial/security/policy">Security Policy</a>.</p>
+    <nav aria-label="Project links">
+      <a href="index.html">Project home</a>
+      <a href="https://github.com/DevLn737/hltb-for-steam-unofficial/blob/main/PRIVACY.md">Policy source</a>
+    </nav>
+  </main>
+</body>
+</html>

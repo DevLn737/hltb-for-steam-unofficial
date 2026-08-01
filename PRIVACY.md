@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: July 22, 2026
+Last updated: August 2, 2026
 
 HLTB for Steam — Unofficial has no accounts, analytics, advertising, telemetry, or developer-operated server. The developer does not receive, collect, sell, or analyze user data.
 
@@ -15,8 +15,8 @@ The extension uses this data only to display completion times and operate its us
 ## Permissions
 
 - `storage`: stores preferences and cached completion times locally.
-- Access to Steam store/community game pages: reads the public game identifier/title and displays the card.
+- Content scripts on Steam store/community game pages: read the public game identifier/title and display the card. These scripts run only on declared Steam game-page URL patterns; the extension does not request separate Steam host access.
 - Access to `howlongtobeat.com`: requests completion-time data.
-- `declarativeNetRequestWithHostAccess`: applies required request headers only to the HLTB search endpoint.
+- `declarativeNetRequestWithHostAccess`: applies required request headers only to the HLTB initialization and search endpoints.
 
-Questions or security reports can be opened through the repository's documented support channels.
+Questions can be opened through the [public support page](https://devln737.github.io/hltb-for-steam-unofficial/support.html). Security reports should follow the private process described in the repository's [Security Policy](https://github.com/DevLn737/hltb-for-steam-unofficial/security/policy).

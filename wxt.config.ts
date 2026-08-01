@@ -35,13 +35,10 @@ export default defineConfig({
     short_name: 'HLTB for Steam',
     description: 'Shows HowLongToBeat completion times on Steam game pages.',
     version: '2.1.2',
+    homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
     ...(browser === 'firefox' ? {} : { minimum_chrome_version: '80' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
-    host_permissions: [
-      'https://store.steampowered.com/*',
-      'https://steamcommunity.com/*',
-      'https://howlongtobeat.com/*',
-    ],
+    host_permissions: ['https://howlongtobeat.com/*'],
     declarative_net_request: {
       rule_resources: [
         {

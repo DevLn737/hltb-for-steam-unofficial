@@ -21,7 +21,7 @@ An independent, privacy-conscious Chrome and Firefox extension that shows HowLon
 | Firefox | Current HowLongToBeat response | Local cache, then packaged snapshot |
 | Steam desktop client | Packaged snapshot | None |
 
-Steam's embedded Chromium receives HTTP 403 responses from HLTB, so it never makes an HLTB API request. Its packaged snapshot is dated July 22, 2026. Network browsers send only the Steam game title to HowLongToBeat over HTTPS when current data is requested. See [Privacy Policy](PRIVACY.md).
+Steam's embedded Chromium receives HTTP 403 responses from HLTB, so it never makes an HLTB API request. Its packaged snapshot is dated July 22, 2026. Network browsers send only the Steam game title to HowLongToBeat over HTTPS when current data is requested. See the [Privacy Policy](https://devln737.github.io/hltb-for-steam-unofficial/privacy.html) ([repository source](PRIVACY.md)).
 
 ## Install a development build
 

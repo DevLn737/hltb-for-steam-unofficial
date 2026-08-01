@@ -5,12 +5,11 @@
     "action": {
       "type": "modifyHeaders",
       "requestHeaders": [
-        { "header": "Referer", "operation": "set", "value": "https://howlongtobeat.com/" },
-        { "header": "User-Agent", "operation": "set", "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" }
+        { "header": "Referer", "operation": "set", "value": "https://howlongtobeat.com/" }
       ]
     },
     "condition": {
-      "urlFilter": "||howlongtobeat.com/api/bleed/init",
+      "urlFilter": "|https://howlongtobeat.com/api/bleed/init",
       "requestMethods": ["get"],
       "resourceTypes": ["xmlhttprequest"]
     }
@@ -22,12 +21,11 @@
       "type": "modifyHeaders",
       "requestHeaders": [
         { "header": "Origin", "operation": "set", "value": "https://howlongtobeat.com" },
-        { "header": "Referer", "operation": "set", "value": "https://howlongtobeat.com/" },
-        { "header": "User-Agent", "operation": "set", "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" }
+        { "header": "Referer", "operation": "set", "value": "https://howlongtobeat.com/" }
       ]
     },
     "condition": {
-      "urlFilter": "||howlongtobeat.com/api/bleed",
+      "urlFilter": "|https://howlongtobeat.com/api/bleed|",
       "requestMethods": ["post"],
       "resourceTypes": ["xmlhttprequest"]
     }

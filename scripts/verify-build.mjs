@@ -8,6 +8,12 @@ const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'ut
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
 if (manifest.version !== '2.1.2') throw new Error('Unexpected extension version');
 if (manifest.permissions.includes('alarms')) throw new Error('The extension must not use keep-alive alarms');
+if (JSON.stringify(manifest.permissions) !== JSON.stringify(['storage', 'declarativeNetRequestWithHostAccess'])) {
+  throw new Error(`Unexpected extension permissions: ${JSON.stringify(manifest.permissions)}`);
+}
+if (JSON.stringify(manifest.host_permissions) !== JSON.stringify(['https://howlongtobeat.com/*'])) {
+  throw new Error(`Unexpected host permissions: ${JSON.stringify(manifest.host_permissions)}`);
+}
 
 const required = [
   manifest.background?.service_worker,

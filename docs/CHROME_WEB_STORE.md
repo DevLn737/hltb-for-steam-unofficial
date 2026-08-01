@@ -21,7 +21,7 @@ English and Russian are selected automatically. The extension has no analytics, 
 ## Permission justifications
 
 - `storage`: saves display settings and completion-time cache locally.
-- `store.steampowered.com` and `steamcommunity.com`: reads the public App ID, title, and existing artwork on supported game pages and inserts the widget.
+- Steam Store and Steam Community content-script matches: run only on declared `/app/*` game pages to read the public App ID, title, and existing artwork and insert the widget. No separate Steam host permission is requested.
 - `howlongtobeat.com`: requests current completion-time data in Chrome/Chromium.
 - `declarativeNetRequestWithHostAccess`: applies the narrowly scoped request headers required by the HLTB search endpoint.
 
@@ -34,13 +34,18 @@ The dashboard privacy answers must disclose **website content** processing and t
 - [x] Public privacy-policy text and Limited Use statement.
 - [x] No remote executable code, telemetry, advertising, or developer server.
 - [x] Automated checks and manual Chrome/Steam smoke testing.
-- [ ] Review whether every host permission and DNR header rewrite is still the minimum necessary.
-- [ ] Complete a legal/redistribution review for the packaged HLTB-derived snapshot.
+- [x] Review every host permission and DNR header rewrite. Steam host permissions were removed; HLTB access is the only host permission, and DNR filters are pinned to HTTPS API endpoints.
+- [x] Record the publication decision for the packaged HLTB-derived snapshot: publish while knowingly accepting the risk of a complaint, rejection, or removal. This is a project-owner risk decision, not legal clearance.
 - [ ] Add original final store assets listed in [STORE_ASSETS.md](STORE_ASSETS.md).
-- [ ] Register/verify the Chrome Web Store developer account and enable 2-Step Verification.
-- [ ] Host the privacy-policy URL from the public repository.
+- [x] Register/verify the Chrome Web Store developer account and enable 2-Step Verification.
+- [x] Add public privacy and support pages under `docs/`, ready for GitHub Pages at the URLs below. Repository Pages still has to be enabled and the live URLs checked.
 - [ ] Fill the Listing, Privacy practices, Distribution, and support fields in the dashboard.
 - [ ] Upload the exact `*-chrome.zip`, first as a controlled/private test if desired.
 - [ ] Perform a final installed-from-store smoke test before public visibility.
 
 Official references: [prepare an extension](https://developer.chrome.com/docs/webstore/prepare), [listing information](https://developer.chrome.com/docs/webstore/cws-dashboard-listing), and [privacy fields](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy).
+
+Planned public URLs:
+
+- Privacy policy: `https://devln737.github.io/hltb-for-steam-unofficial/privacy.html`
+- Support: `https://devln737.github.io/hltb-for-steam-unofficial/support.html`
