@@ -6,12 +6,25 @@ const root = path.resolve('.output/firefox-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Firefox Manifest V3');
-if (manifest.version !== '2.1.2') throw new Error('Unexpected Firefox extension version');
+if (manifest.version !== '2.1.4') throw new Error('Unexpected Firefox extension version');
+if (manifest.default_locale !== 'en'
+  || manifest.name !== '__MSG_extensionName__'
+  || manifest.description !== '__MSG_extensionDescription__') {
+  throw new Error('Firefox manifest localization is incomplete');
+}
 if (manifest.browser_specific_settings?.gecko?.id !== 'hltb-for-steam-unofficial@devln737.github.io') {
   throw new Error('Firefox add-on ID is missing');
 }
+if (manifest.browser_specific_settings?.gecko?.strict_min_version !== '140.0'
+  || manifest.browser_specific_settings?.gecko_android?.strict_min_version !== '142.0') {
+  throw new Error('Firefox desktop or Android minimum version is incorrect');
+}
 if (!manifest.browser_specific_settings?.gecko?.data_collection_permissions?.required?.includes('websiteContent')) {
   throw new Error('Firefox website-content disclosure is missing');
+}
+if (manifest.icons?.['64'] !== 'icons/icon64.png'
+  || manifest.action?.default_icon?.['64'] !== 'icons/icon64.png') {
+  throw new Error('Firefox Retina icon is missing');
 }
 
 const required = [
@@ -19,6 +32,8 @@ const required = [
   manifest.action?.default_popup,
   ...Object.values(manifest.icons ?? {}),
   ...(manifest.declarative_net_request?.rule_resources ?? []).map((rule) => rule.path),
+  ...['en', 'ru', 'de', 'fr', 'es', 'pt_BR', 'it', 'pl', 'uk', 'tr', 'ja', 'ko', 'zh_CN', 'zh_TW']
+    .map((locale) => `_locales/${locale}/messages.json`),
 ].filter(Boolean);
 for (const relative of required) await access(path.join(root, relative));
 await verifySnapshot(path.join(root, 'data/hltb-snapshot'));

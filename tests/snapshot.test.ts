@@ -19,7 +19,7 @@ function localSnapshot(): HltbSnapshot {
 
 describe('packaged HLTB snapshot v3', () => {
   it('contains the complete compact source', async () => {
-    const manifest = JSON.parse(await readFile('public/data/hltb-snapshot/manifest.json', 'utf8')) as {
+    const manifest = JSON.parse(await readFile('public/data/hltb-snapshot/snapshot.json', 'utf8')) as {
       schema: number; sourceEntryCount: number; timedEntryCount: number; entryCount: number;
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };

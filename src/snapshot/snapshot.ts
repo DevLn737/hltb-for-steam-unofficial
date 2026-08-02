@@ -116,7 +116,7 @@ export class HltbSnapshot {
   }
 
   private getManifest(): Promise<SnapshotManifest> {
-    this.manifestPromise ??= this.loadJson<SnapshotManifest>('manifest.json').then((manifest) => {
+    this.manifestPromise ??= this.loadJson<SnapshotManifest>('snapshot.json').then((manifest) => {
       if (manifest.schema !== 3 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
         || manifest.titleBuckets.length !== 64 || manifest.steamBuckets.length !== 64) {
         throw new Error('Unsupported HLTB snapshot manifest');

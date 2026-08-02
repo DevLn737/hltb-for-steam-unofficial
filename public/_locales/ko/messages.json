@@ -1,0 +1,6 @@
+{
+  "extensionName": { "message": "Steam용 HLTB — 비공식" },
+  "extensionShortName": { "message": "Steam용 HLTB" },
+  "extensionDescription": { "message": "Steam 게임 페이지에 HowLongToBeat 플레이 시간을 표시합니다." },
+  "extensionActionTitle": { "message": "Steam용 HLTB — 비공식" }
+}

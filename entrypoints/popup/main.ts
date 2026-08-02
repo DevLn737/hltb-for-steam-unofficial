@@ -6,6 +6,7 @@ import { DEFAULT_SETTINGS } from '../../src/core/contracts';
 
 const locale = detectLocale();
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+document.title = `${translate('heading', locale)} — ${translate('settings', locale)}`;
 
 const labels: Record<string, MessageKey> = {
   unofficial: 'unofficial',

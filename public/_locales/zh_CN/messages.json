@@ -1,0 +1,6 @@
+{
+  "extensionName": { "message": "Steam 版 HLTB — 非官方" },
+  "extensionShortName": { "message": "Steam 版 HLTB" },
+  "extensionDescription": { "message": "在 Steam 游戏页面显示 HowLongToBeat 通关时间。" },
+  "extensionActionTitle": { "message": "Steam 版 HLTB — 非官方" }
+}

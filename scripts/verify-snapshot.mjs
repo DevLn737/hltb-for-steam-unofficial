@@ -39,7 +39,7 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
     .map((entry) => path.relative(root, path.join(entry.parentPath, entry.name)).replaceAll('\\', '/'))
     .sort();
   const allowedFiles = [
-    'manifest.json',
+    'snapshot.json',
     ...Array.from({ length: 64 }, (_, index) => `steam/${index.toString(16).padStart(2, '0')}.bin.gz`),
     ...Array.from({ length: 64 }, (_, index) => `title/${index.toString(16).padStart(2, '0')}.json.gz`),
   ].sort();
@@ -47,7 +47,7 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
     throw new Error('Snapshot contains missing or forbidden files');
   }
 
-  const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
+  const manifest = JSON.parse(await readFile(path.join(root, 'snapshot.json'), 'utf8'));
   if (manifest.schema !== 3 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
     || manifest.titleBuckets?.length !== 64 || manifest.steamBuckets?.length !== 64) {
     throw new Error('Invalid HLTB snapshot v3 manifest');

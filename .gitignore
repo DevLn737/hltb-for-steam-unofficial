@@ -21,3 +21,5 @@ signed/
 *.key
 *.log
 .DS_Store
+docs/store-assets/chrome/icon-options/
+docs/store-assets/chrome/promo-options/

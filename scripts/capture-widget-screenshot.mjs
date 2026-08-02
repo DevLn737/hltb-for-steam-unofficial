@@ -31,6 +31,11 @@ try {
   const widget = page.locator('#hltb-for-steam-unofficial');
   await widget.waitFor();
   await page.waitForFunction(() => {
+    const root = globalThis.document.querySelector('#hltb-for-steam-unofficial')?.shadowRoot;
+    const values = [...(root?.querySelectorAll('.time strong') ?? [])];
+    return values.length === 3 && values.every((value) => value.textContent?.trim());
+  });
+  await page.waitForFunction(() => {
     const image = globalThis.document.querySelector('#hltb-for-steam-unofficial')?.shadowRoot?.querySelector('img');
     return image?.complete && image.naturalWidth > 0;
   });

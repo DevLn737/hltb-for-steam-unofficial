@@ -14,6 +14,8 @@ export default defineConfig({
       'coverage/**',
       'data/snapshot-reports/**',
       'dist/**',
+      'docs/screenshots/**',
+      'docs/store-assets/**',
       'live-smoke/**',
       'node_modules/**',
       'playwright-report/**',
@@ -28,15 +30,17 @@ export default defineConfig({
       '*.log',
       '*.pem',
       '*.xpi',
+      'widget-preview.png',
     ],
   },
   manifest: ({ browser }) => ({
-    name: 'HLTB for Steam — Unofficial',
-    short_name: 'HLTB for Steam',
-    description: 'Shows HowLongToBeat completion times on Steam game pages.',
-    version: '2.1.2',
+    name: '__MSG_extensionName__',
+    short_name: '__MSG_extensionShortName__',
+    description: '__MSG_extensionDescription__',
+    default_locale: 'en',
+    version: '2.1.4',
     homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
-    ...(browser === 'firefox' ? {} : { minimum_chrome_version: '80' }),
+    ...(browser === 'firefox' ? {} : { minimum_chrome_version: '88' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
     host_permissions: ['https://howlongtobeat.com/*'],
     declarative_net_request: {
@@ -49,28 +53,31 @@ export default defineConfig({
       ],
     },
     action: {
-      default_title: 'HLTB for Steam — Unofficial',
+      default_title: '__MSG_extensionActionTitle__',
       default_icon: {
         16: 'icons/icon16.png',
         32: 'icons/icon32.png',
         48: 'icons/icon48.png',
-        ...(browser === 'firefox' ? {} : { 128: 'icons/icon128.png' }),
+        ...(browser === 'firefox' ? { 64: 'icons/icon64.png' } : { 128: 'icons/icon128.png' }),
       },
     },
     icons: {
       16: 'icons/icon16.png',
       32: 'icons/icon32.png',
       48: 'icons/icon48.png',
-      ...(browser === 'firefox' ? {} : { 128: 'icons/icon128.png' }),
+      ...(browser === 'firefox' ? { 64: 'icons/icon64.png' } : { 128: 'icons/icon128.png' }),
     },
     ...(browser === 'firefox' ? {
       browser_specific_settings: {
         gecko: {
           id: 'hltb-for-steam-unofficial@devln737.github.io',
-          strict_min_version: '142.0',
+          strict_min_version: '140.0',
           data_collection_permissions: {
             required: ['websiteContent'],
           },
+        },
+        gecko_android: {
+          strict_min_version: '142.0',
         },
       },
     } : {}),

@@ -67,7 +67,7 @@ const manifest = {
   titleBuckets,
   steamBuckets,
 };
-await writeFile(path.join(temporaryDirectory, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+await writeFile(path.join(temporaryDirectory, 'snapshot.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 
 // Validate every checksum and cross-reference before replacing the packaged snapshot.
 await verifySnapshot(temporaryDirectory);

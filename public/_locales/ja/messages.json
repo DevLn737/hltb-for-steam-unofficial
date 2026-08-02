@@ -1,0 +1,6 @@
+{
+  "extensionName": { "message": "Steam向けHLTB — 非公式" },
+  "extensionShortName": { "message": "Steam向けHLTB" },
+  "extensionDescription": { "message": "SteamのゲームページにHowLongToBeatのクリア時間を表示します。" },
+  "extensionActionTitle": { "message": "Steam向けHLTB — 非公式" }
+}

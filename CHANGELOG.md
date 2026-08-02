@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1.4] - 2026-08-02
+
+### Added
+
+- Add the selected 128×128 extension icon and 440×280 Chrome Web Store promotional tile.
+- Add complete English and Russian README files with a language switcher.
+- Add standard Chrome extension i18n catalogs for localized store listings, manifest metadata, and toolbar titles in 14 languages.
+- Add complete widget and settings translations for German, French, Spanish, Brazilian Portuguese, Italian, Polish, Ukrainian, Turkish, Japanese, Korean, Simplified Chinese, and Traditional Chinese.
+
+### Changed
+
+- Replace the extension icons at every packaged size with the selected visual identity.
+- Refresh the README widget screenshot and make its capture wait for rendered completion times.
+
+### Fixed
+
+- Rename the packaged snapshot metadata from `manifest.json` to `snapshot.json`, leaving exactly one extension manifest in Chrome Web Store upload archives.
+- Reject nested `manifest.json` files during package verification to prevent the upload error from recurring.
+- Raise the declared minimum Chrome version to 88, as required for Chrome Web Store Manifest V3 publication.
+
 ## [2.1.2] - 2026-08-02
 
 ### Added

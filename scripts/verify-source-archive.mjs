@@ -71,7 +71,7 @@ for (const required of [
   'wxt.config.ts',
   'entrypoints/background.ts',
   'src/background/game-times-service.ts',
-  'public/data/hltb-snapshot/manifest.json',
+  'public/data/hltb-snapshot/snapshot.json',
 ]) {
   if (!entries.includes(required)) throw new Error(`Missing required source archive entry: ${required}`);
 }

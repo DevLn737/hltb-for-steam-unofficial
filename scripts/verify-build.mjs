@@ -6,7 +6,17 @@ const root = path.resolve('.output/chrome-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.1.2') throw new Error('Unexpected extension version');
+if (manifest.version !== '2.1.4') throw new Error('Unexpected extension version');
+if (Number(manifest.minimum_chrome_version) < 88) {
+  throw new Error('Chrome Web Store requires minimum_chrome_version 88 or newer for Manifest V3');
+}
+if (manifest.default_locale !== 'en'
+  || manifest.name !== '__MSG_extensionName__'
+  || manifest.short_name !== '__MSG_extensionShortName__'
+  || manifest.description !== '__MSG_extensionDescription__'
+  || manifest.action?.default_title !== '__MSG_extensionActionTitle__') {
+  throw new Error('Chrome Web Store manifest localization is incomplete');
+}
 if (manifest.permissions.includes('alarms')) throw new Error('The extension must not use keep-alive alarms');
 if (JSON.stringify(manifest.permissions) !== JSON.stringify(['storage', 'declarativeNetRequestWithHostAccess'])) {
   throw new Error(`Unexpected extension permissions: ${JSON.stringify(manifest.permissions)}`);
@@ -20,6 +30,8 @@ const required = [
   manifest.action?.default_popup,
   ...Object.values(manifest.icons ?? {}),
   ...(manifest.declarative_net_request?.rule_resources ?? []).map((rule) => rule.path),
+  ...['en', 'ru', 'de', 'fr', 'es', 'pt_BR', 'it', 'pl', 'uk', 'tr', 'ja', 'ko', 'zh_CN', 'zh_TW']
+    .map((locale) => `_locales/${locale}/messages.json`),
 ].filter(Boolean);
 
 for (const relative of required) await access(path.join(root, relative));
@@ -37,6 +49,11 @@ async function scan(directory) {
 }
 
 const files = await scan(root);
+const nestedManifests = files.filter((file) => path.basename(file).toLowerCase() === 'manifest.json'
+  && path.resolve(file) !== path.resolve(root, 'manifest.json'));
+if (nestedManifests.length > 0) {
+  throw new Error(`Chrome Web Store rejects nested manifest.json files: ${nestedManifests.join(', ')}`);
+}
 const forbidden = files.find((file) => /fallback-data|hltb_data|scraper|collision|coverage|\.backup|[\\/]_metadata[\\/]/i.test(file));
 if (forbidden) throw new Error(`Forbidden legacy artifact in build: ${forbidden}`);
 const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size))).reduce((sum, size) => sum + size, 0);
