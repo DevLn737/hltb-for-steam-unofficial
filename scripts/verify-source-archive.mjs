@@ -67,7 +67,7 @@ for (const entry of entries) {
 for (const required of [
   'package.json',
   'package-lock.json',
-  'SOURCE_BUILD.md',
+  'README.md',
   'wxt.config.ts',
   'entrypoints/background.ts',
   'src/background/game-times-service.ts',

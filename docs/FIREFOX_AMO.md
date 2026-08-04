@@ -9,7 +9,7 @@ The repository can build a Firefox extension and a clean matching source archive
 - Firefox Desktop 140 and Firefox Android 142 minimum versions declared in the manifest.
 - `websiteContent` data-transmission declaration.
 - Privacy policy describing the title sent to HowLongToBeat.
-- Reproducible reviewer instructions in [SOURCE_BUILD.md](../SOURCE_BUILD.md).
+- Reproducible reviewer instructions in the [README Development section](../README.md#development).
 - WXT source ZIP excludes local diagnostics, raw scrape data, credentials, and generated packages.
 - Dedicated 64-pixel Retina icon.
 
@@ -68,7 +68,7 @@ In regular Firefox, the public game title is sent over HTTPS to HowLongToBeat to
 
 The declarative network request rules only set the required `Origin` and `Referer` headers for the HowLongToBeat initialization and search endpoints.
 
-Generated JavaScript is bundled from TypeScript by WXT. The matching source archive contains `SOURCE_BUILD.md`. Reproduce the Firefox build with:
+Generated JavaScript is bundled from TypeScript by WXT. The matching source archive contains complete build instructions in `README.md`. Reproduce the Firefox build with:
 
 ```sh
 npm ci

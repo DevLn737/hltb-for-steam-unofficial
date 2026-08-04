@@ -55,7 +55,23 @@ Permanent installation in standard Firefox requires Mozilla signing through AMO.
 
 ## Development
 
-Requirements: Node.js 22 or newer and npm.
+Supported build environments: Windows, macOS, and Linux.
+
+Install [Node.js 22 or newer](https://nodejs.org/en/download). The official
+Node.js installer includes npm, so no separate npm installation is required.
+Verify the environment with:
+
+```sh
+node --version
+npm --version
+```
+
+The Node.js version must be 22 or newer. Dependency versions are locked in
+`package-lock.json` and installed reproducibly with `npm ci`. No private
+packages, credentials, environment variables, external build services, or
+network scraping are required.
+
+Start a development build:
 
 ```sh
 npm ci
@@ -72,6 +88,22 @@ npm run build:firefox
 npm run verify:firefox
 npm run zip:all
 ```
+
+To reproduce only the Firefox package submitted to Mozilla, extract the source
+archive, open a terminal in its root directory, and run:
+
+```sh
+npm ci
+npm run build:firefox
+npm run verify:firefox
+npm run xpi:firefox:unsigned
+```
+
+The unpacked Firefox extension is produced in `.output/firefox-mv3/`. The AMO
+submission archive is written to
+`.output/hltb-for-steam-unofficial-<version>-firefox.zip`. WXT bundles the
+generated JavaScript from the included TypeScript sources. The local HLTB
+snapshot is a static build input; the build does not contact HowLongToBeat.
 
 Package outputs are written to the ignored `.output/` directory:
 
@@ -93,7 +125,9 @@ npm run snapshot:import -- path/to/hltb_data.json
 npm run verify:snapshot
 ```
 
-CI validates committed data and never scrapes HLTB. Reviewer build details are available in [SOURCE_BUILD.md](SOURCE_BUILD.md).
+CI validates committed data and never scrapes HLTB. The Development section
+above contains the complete reproducible-build instructions used by Mozilla
+reviewers.
 
 ## Publishing
 

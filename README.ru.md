@@ -93,7 +93,7 @@ npm run snapshot:import -- path/to/hltb_data.json
 npm run verify:snapshot
 ```
 
-CI проверяет уже добавленные данные и никогда не запускает scraping HLTB. Инструкции для ревью сборки находятся в [SOURCE_BUILD.md](SOURCE_BUILD.md).
+CI проверяет уже добавленные данные и никогда не запускает scraping HLTB. Полные инструкции воспроизводимой сборки для ревью находятся в разделе [Development](README.md#development) английской версии README.
 
 ## Публикация
 
