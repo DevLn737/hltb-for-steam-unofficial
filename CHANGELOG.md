@@ -2,6 +2,21 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased] — 2.2.0 development
+
+### Added
+
+- Add independently versioned, ECDSA P-256 signed schema-v4 snapshot updates from a static GitHub Pages data channel.
+- Add atomic IndexedDB installation with active/previous remote versions and packaged-snapshot fallback.
+- Add strict pointer, manifest, pack, bucket, SHA-256, and signature validation with no remote executable logic.
+- Add a separate private Forgejo/SQLite updater foundation for incremental ID discovery, adaptive refresh, retained backups, guarded monthly publication, and data-only pack generation.
+
+### Changed
+
+- Steam prefers the newest verified remote snapshot and remains fully functional offline through stored and packaged snapshots.
+- Chrome and Firefox retain live HLTB lookup while adding the verified current snapshot before the packaged fallback.
+- Snapshot update checks use fixed URLs at most once every 24 hours and never send a Steam App ID or title to the data host.
+
 ## [2.1.4] - 2026-08-02
 
 ### Added

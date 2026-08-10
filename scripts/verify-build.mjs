@@ -21,7 +21,10 @@ if (manifest.permissions.includes('alarms')) throw new Error('The extension must
 if (JSON.stringify(manifest.permissions) !== JSON.stringify(['storage', 'declarativeNetRequestWithHostAccess'])) {
   throw new Error(`Unexpected extension permissions: ${JSON.stringify(manifest.permissions)}`);
 }
-if (JSON.stringify(manifest.host_permissions) !== JSON.stringify(['https://howlongtobeat.com/*'])) {
+if (JSON.stringify(manifest.host_permissions) !== JSON.stringify([
+  'https://howlongtobeat.com/*',
+  'https://devln737.github.io/hltb-for-steam-data/*',
+])) {
   throw new Error(`Unexpected host permissions: ${JSON.stringify(manifest.host_permissions)}`);
 }
 

@@ -1,6 +1,9 @@
 import { browser } from 'wxt/browser';
 import { decodeSteamIndex, type SteamIndexPair, unpackSnapshotLocation } from '../../shared/snapshot-codec.mjs';
 import { normalizeTitle, snapshotBucket } from '../../shared/title-normalization.mjs';
+import type { SnapshotLookupManifest } from './contracts';
+import { toLookupManifest } from './manifest';
+import type { RemoteSnapshotStore } from './remote-store';
 
 type SnapshotRow = [
   title: string,
@@ -9,32 +12,6 @@ type SnapshotRow = [
   mainPlusExtras: number | null,
   completionist: number | null,
 ];
-
-interface SnapshotBucketInfo {
-  name: string;
-  entries: number;
-  compressedBytes: number;
-  uncompressedBytes: number;
-  sha256: string;
-  uncompressedSha256: string;
-}
-
-export interface SnapshotManifest {
-  schema: 3;
-  compression: 'gzip';
-  sourceUpdatedAt: string;
-  sourceEntryCount: number;
-  timedEntryCount: number;
-  entryCount: number;
-  normalizedTitleCount: number;
-  titleCollisionCount: number;
-  steamMappingCount: number;
-  steamCollisionCount: number;
-  bucketCount: 64;
-  origin: string;
-  titleBuckets: SnapshotBucketInfo[];
-  steamBuckets: SnapshotBucketInfo[];
-}
 
 export interface SnapshotGameTimes {
   gameId: number;
@@ -48,6 +25,12 @@ export interface SnapshotGameTimes {
 export interface SnapshotOptions {
   fetch?: typeof fetch;
   getUrl?: (path: string) => string;
+  source?: SnapshotSource;
+}
+
+export interface SnapshotSource {
+  getManifest(): Promise<SnapshotLookupManifest>;
+  loadCompressed(path: string): Promise<Uint8Array>;
 }
 
 function bucketName(index: number): string {
@@ -69,15 +52,26 @@ function findAppLocation(pairs: SteamIndexPair[], appId: number): number | null 
 }
 
 export class HltbSnapshot {
-  private readonly fetchImpl: typeof fetch;
-  private readonly getUrl: (path: string) => string;
-  private manifestPromise?: Promise<SnapshotManifest>;
+  private readonly source: SnapshotSource;
+  private manifestPromise?: Promise<SnapshotLookupManifest>;
   private readonly titleBucketPromises = new Map<string, Promise<SnapshotRow[]>>();
   private readonly steamBucketPromises = new Map<string, Promise<SteamIndexPair[]>>();
 
   constructor(options: SnapshotOptions = {}) {
-    this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
-    this.getUrl = options.getUrl ?? ((path) => browser.runtime.getURL(path as never));
+    const fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
+    const getUrl = options.getUrl ?? ((path: string) => browser.runtime.getURL(path as never));
+    this.source = options.source ?? {
+      getManifest: async () => {
+        const response = await fetchImpl(getUrl('data/hltb-snapshot/snapshot.json'));
+        if (!response.ok) throw new Error(`Unable to load packaged HLTB snapshot manifest (HTTP ${response.status})`);
+        return await response.json() as SnapshotLookupManifest;
+      },
+      loadCompressed: async (path) => {
+        const response = await fetchImpl(getUrl(`data/hltb-snapshot/${path}`));
+        if (!response.ok) throw new Error(`Unable to load packaged HLTB snapshot ${path} (HTTP ${response.status})`);
+        return new Uint8Array(await response.arrayBuffer());
+      },
+    };
   }
 
   async lookup(appId: string, title: string): Promise<SnapshotGameTimes | null> {
@@ -103,7 +97,7 @@ export class HltbSnapshot {
     return matches.length === 1 ? this.toResult(matches[0]!, manifest) : null;
   }
 
-  private toResult(row: SnapshotRow, manifest: SnapshotManifest): SnapshotGameTimes {
+  private toResult(row: SnapshotRow, manifest: SnapshotLookupManifest): SnapshotGameTimes {
     const parsedDate = Date.parse(manifest.sourceUpdatedAt);
     return {
       gameId: row[1],
@@ -115,9 +109,9 @@ export class HltbSnapshot {
     };
   }
 
-  private getManifest(): Promise<SnapshotManifest> {
-    this.manifestPromise ??= this.loadJson<SnapshotManifest>('snapshot.json').then((manifest) => {
-      if (manifest.schema !== 3 || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
+  private getManifest(): Promise<SnapshotLookupManifest> {
+    this.manifestPromise ??= this.source.getManifest().then((manifest) => {
+      if ((manifest.schema !== 3 && manifest.schema !== 4) || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
         || manifest.titleBuckets.length !== 64 || manifest.steamBuckets.length !== 64) {
         throw new Error('Unsupported HLTB snapshot manifest');
       }
@@ -126,7 +120,7 @@ export class HltbSnapshot {
     return this.manifestPromise;
   }
 
-  private getTitleBucket(name: string, manifest: SnapshotManifest): Promise<SnapshotRow[]> {
+  private getTitleBucket(name: string, manifest: SnapshotLookupManifest): Promise<SnapshotRow[]> {
     const metadata = manifest.titleBuckets.find((bucket) => bucket.name === name);
     if (!metadata) return Promise.reject(new Error(`Missing HLTB title bucket ${name}`));
     let pending = this.titleBucketPromises.get(name);
@@ -141,7 +135,7 @@ export class HltbSnapshot {
     return pending;
   }
 
-  private getSteamBucket(name: string, manifest: SnapshotManifest): Promise<SteamIndexPair[]> {
+  private getSteamBucket(name: string, manifest: SnapshotLookupManifest): Promise<SteamIndexPair[]> {
     const metadata = manifest.steamBuckets.find((bucket) => bucket.name === name);
     if (!metadata) return Promise.reject(new Error(`Missing HLTB Steam bucket ${name}`));
     let pending = this.steamBucketPromises.get(name);
@@ -157,15 +151,56 @@ export class HltbSnapshot {
   }
 
   private async loadGzip(file: string): Promise<Uint8Array> {
-    const response = await this.fetchImpl(this.getUrl(`data/hltb-snapshot/${file}`));
-    if (!response.ok || !response.body) throw new Error(`Unable to load HLTB snapshot ${file} (HTTP ${response.status})`);
-    const decompressed = response.body.pipeThrough(new DecompressionStream('gzip'));
+    const compressed = await this.source.loadCompressed(file);
+    const buffer = compressed.buffer.slice(compressed.byteOffset, compressed.byteOffset + compressed.byteLength) as ArrayBuffer;
+    const body = new Response(buffer).body;
+    if (!body) throw new Error(`Unable to create HLTB snapshot stream for ${file}`);
+    const decompressed = body.pipeThrough(new DecompressionStream('gzip'));
     return new Uint8Array(await new Response(decompressed).arrayBuffer());
   }
+}
 
-  private async loadJson<T>(file: string): Promise<T> {
-    const response = await this.fetchImpl(this.getUrl(`data/hltb-snapshot/${file}`));
-    if (!response.ok) throw new Error(`Unable to load HLTB snapshot ${file} (HTTP ${response.status})`);
-    return await response.json() as T;
+export class SnapshotRepository {
+  private readonly packaged: HltbSnapshot;
+  private remoteVersion: string | undefined;
+  private remote: HltbSnapshot | undefined;
+
+  constructor(
+    private readonly store: RemoteSnapshotStore,
+    packagedOptions: SnapshotOptions = {},
+  ) {
+    this.packaged = new HltbSnapshot(packagedOptions);
+  }
+
+  async lookup(appId: string, title: string): Promise<SnapshotGameTimes | null> {
+    try {
+      const active = await this.store.getActive();
+      if (active) {
+        if (!this.remote || this.remoteVersion !== active.activeVersion) {
+          const version = active.activeVersion;
+          const manifest = toLookupManifest(active.manifest);
+          this.remote = new HltbSnapshot({
+            source: {
+              getManifest: async () => manifest,
+              loadCompressed: async (path) => {
+                const bytes = await this.store.getBucket(version, path);
+                if (!bytes) throw new Error(`Missing remote snapshot bucket ${path}`);
+                return bytes;
+              },
+            },
+          });
+          this.remoteVersion = version;
+        }
+        try {
+          return await this.remote.lookup(appId, title);
+        } catch {
+          this.remote = undefined;
+          this.remoteVersion = undefined;
+        }
+      }
+    } catch {
+      // IndexedDB may be unavailable (for example in a restricted private context).
+    }
+    return await this.packaged.lookup(appId, title);
   }
 }

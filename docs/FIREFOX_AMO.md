@@ -64,7 +64,7 @@ To test:
 3. A HowLongToBeat card should appear below the main Steam game section.
 4. Open the toolbar popup to test category visibility, time format, cache duration, and cache clearing.
 
-In regular Firefox, the public game title is sent over HTTPS to HowLongToBeat to obtain current completion-time data. If the request fails, the packaged local snapshot is used. No analytics, advertising, telemetry, remote executable code, or developer-operated server is used.
+In regular Firefox, the public game title is sent over HTTPS to HowLongToBeat to obtain current completion-time data. If the request fails, a verified signed snapshot and then the packaged local snapshot are used. At most once every 24 hours the extension checks fixed snapshot URLs that contain no page URL, App ID, title, browsing history, or persistent identifier. No analytics, advertising, telemetry, remote executable code, or dynamic developer-operated backend is used.
 
 The declarative network request rules only set the required `Origin` and `Referer` headers for the HowLongToBeat initialization and search endpoints.
 

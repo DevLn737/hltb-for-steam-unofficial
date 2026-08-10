@@ -68,6 +68,7 @@ export default defineContentScript({
       scheduled = setTimeout(() => void refresh(), 150);
     };
 
+    void send({ type: 'CHECK_SNAPSHOT_UPDATE' }, 120_000).catch(() => undefined);
     void refresh();
     const observer = new MutationObserver(schedule);
     observer.observe(document.documentElement, { childList: true, subtree: true });

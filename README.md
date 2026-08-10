@@ -29,11 +29,11 @@ Supported interfaces and store listings: English, Russian, German, French, Spani
 
 | Environment | Preferred source | Fallback |
 | --- | --- | --- |
-| Chrome / Chromium | Current HowLongToBeat response | Local cache, then packaged snapshot |
-| Firefox | Current HowLongToBeat response | Local cache, then packaged snapshot |
-| Steam desktop client | Packaged snapshot | None |
+| Chrome / Chromium | Current HowLongToBeat response | Local cache, signed current snapshot, then packaged snapshot |
+| Firefox | Current HowLongToBeat response | Local cache, signed current snapshot, then packaged snapshot |
+| Steam desktop client | Signed current snapshot | Packaged snapshot |
 
-HLTB rejects requests from Steam's embedded Chromium, so Steam mode never contacts its API. The packaged snapshot is dated July 22, 2026. In regular browsers, only the current Steam game title is sent to HowLongToBeat over HTTPS. See the [Privacy Policy](https://devln737.github.io/hltb-for-steam-unofficial/privacy.html) and its [repository source](PRIVACY.md).
+HLTB rejects requests from Steam's embedded Chromium, so Steam mode never contacts its API. Version 2.2 checks a signed static data channel at most once every 24 hours and downloads a roughly 3.3 MB data-only snapshot when its calendar version changes. These fixed update requests contain no Steam App ID or game title. The packaged July 22, 2026 snapshot remains available when the channel is unavailable. In regular browsers, only the current Steam game title is sent to HowLongToBeat over HTTPS. See the [Privacy Policy](https://devln737.github.io/hltb-for-steam-unofficial/privacy.html) and its [repository source](PRIVACY.md).
 
 ## Install a development build
 
@@ -116,16 +116,16 @@ Package outputs are written to the ignored `.output/` directory:
 
 The content script reads the Steam App ID, visible title, and an existing Steam artwork URL, then renders the card inside Shadow DOM. A Manifest V3 service worker handles the HLTB adapter, strict matching, request concurrency, versioned local cache, and snapshot lookup.
 
-The compact schema-v3 snapshot contains 171,888 known HLTB games, including 58,820 with completion-time data and 58,288 unambiguous Steam App ID mappings. It is split into 64 gzip title buckets and 64 gzip binary App ID indexes. Images, descriptions, reviews, and the 755,986,614-byte source scrape are not packaged.
+The packaged schema-v3 snapshot contains 171,888 known HLTB games, including 58,820 with completion-time data and 58,288 unambiguous Steam App ID mappings. Version 2.2 can atomically install a signed schema-v4 snapshot in IndexedDB while retaining the previous remote version and the packaged fallback. Remote packs contain the same 64 gzip title buckets and 64 gzip binary App ID indexes; they cannot contain executable code or configuration. Images, descriptions, reviews, and the 755,986,614-byte source scrape are never packaged.
 
-Snapshot updates are manual and reviewable:
+The packaged fallback remains manual and reviewable:
 
 ```sh
 npm run snapshot:import -- path/to/hltb_data.json
 npm run verify:snapshot
 ```
 
-CI validates committed data and never scrapes HLTB. The Development section
+Public extension CI validates committed data and never scrapes HLTB. Incremental collection and signed data-channel generation run in a separate private Forgejo updater repository; its SQLite state, scraper, signing key, and raw input are not part of this project or its reviewer source archive. The Development section
 above contains the complete reproducible-build instructions used by Mozilla
 reviewers.
 

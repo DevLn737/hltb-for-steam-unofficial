@@ -42,7 +42,10 @@ export default defineConfig({
     homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
     ...(browser === 'firefox' ? {} : { minimum_chrome_version: '88' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
-    host_permissions: ['https://howlongtobeat.com/*'],
+    host_permissions: [
+      'https://howlongtobeat.com/*',
+      'https://devln737.github.io/hltb-for-steam-data/*',
+    ],
     declarative_net_request: {
       rule_resources: [
         {

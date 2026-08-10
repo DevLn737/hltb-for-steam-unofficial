@@ -1,3 +1,5 @@
+import type { SnapshotUpdateState } from '../snapshot/contracts';
+
 export type TimeCategory = 'mainStory' | 'mainPlusExtras' | 'completionist';
 export type TimeFormat = 'decimal' | 'hoursMinutes';
 export type CacheDurationDays = 1 | 7 | 30;
@@ -52,12 +54,14 @@ export type LookupResult =
 
 export type RuntimeRequest =
   | { type: 'GET_GAME_TIMES'; appId: string; title: string; client: ClientContext }
+  | { type: 'CHECK_SNAPSHOT_UPDATE'; force?: boolean }
   | { type: 'GET_SETTINGS' }
   | { type: 'UPDATE_SETTINGS'; settings: ExtensionSettings }
   | { type: 'CLEAR_CACHE' };
 
 export type RuntimeResponse =
   | LookupResult
+  | { ok: true; update: SnapshotUpdateState }
   | { ok: true; settings: ExtensionSettings }
   | { ok: true; cleared: true }
   | { ok: false; error: 'invalid_request' | 'service_error' };

@@ -6,6 +6,10 @@ import { getCachedGame, setCachedGame } from '../storage/cache';
 import { getSettings } from '../storage/settings';
 import { HltbSnapshot, type SnapshotGameTimes } from '../snapshot/snapshot';
 
+export interface SnapshotLookup {
+  lookup(appId: string, title: string): Promise<SnapshotGameTimes | null>;
+}
+
 export class GameTimesService {
   private readonly pending = new Map<string, Promise<LookupResult>>();
   private activeRequests = 0;
@@ -14,7 +18,7 @@ export class GameTimesService {
   constructor(
     private readonly client = new HltbClient(),
     private readonly maxConcurrent = 2,
-    private readonly snapshot = new HltbSnapshot(),
+    private readonly snapshot: SnapshotLookup = new HltbSnapshot(),
   ) {}
 
   getGameTimes(appId: string, title: string, clientContext: ClientContext = 'browser'): Promise<LookupResult> {
