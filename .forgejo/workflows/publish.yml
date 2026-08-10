@@ -1,0 +1,88 @@
+name: Publish stable snapshot
+
+on:
+  schedule:
+    - cron: '0 5 1 * *'
+      timezone: Indian/Mauritius
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Calendar snapshot version (YYYY.MM.DD.N)
+        required: true
+        type: string
+
+jobs:
+  publish:
+    if: ${{ vars.ENABLE_STABLE_PUBLISH == 'true' }}
+    runs-on: hltb-updater
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - name: Install and test updater
+        run: python3.12 -m pip install --disable-pip-version-check '.[test]'
+      - run: pytest -q
+      - name: Derive scheduled version
+        id: version
+        shell: bash
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          version="${REQUESTED_VERSION:-$(date -u +%Y.%m.%d.1)}"
+          echo "value=$version" >> "$FORGEJO_OUTPUT"
+      - name: Load previous stable manifest for delta gates
+        id: previous
+        shell: bash
+        run: |
+          mkdir -p previous
+          if curl --fail --silent --show-error --location \
+            https://devln737.github.io/hltb-for-steam-data/stable.json \
+            --output previous/stable.json; then
+            manifest_path="$(python3.12 -c 'import json; p=json.load(open("previous/stable.json", encoding="utf-8")); v=p["snapshotVersion"]; expected=f"versions/{v}/manifest.json"; assert p["manifestPath"] == expected; print(expected)')"
+            curl --fail --silent --show-error --location \
+              "https://devln737.github.io/hltb-for-steam-data/$manifest_path" \
+              --output previous/manifest.json
+            echo "argument=--previous-manifest previous/manifest.json" >> "$FORGEJO_OUTPUT"
+          else
+            echo "argument=" >> "$FORGEJO_OUTPUT"
+          fi
+      - name: Build signed candidate
+        env:
+          SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
+        shell: bash
+        run: |
+          signing_dir="$(mktemp -d)"
+          trap 'rm -rf "$signing_dir"' EXIT
+          chmod 700 "$signing_dir"
+          printf '%s' "$SNAPSHOT_SIGNING_KEY" > "$signing_dir/key.pem"
+          rm -rf candidate
+          hltb-updater build --database /var/lib/hltb-updater/hltb.sqlite --output candidate --version "${{ steps.version.outputs.value }}" --private-key "$signing_dir/key.pem" --overrides config/overrides.json ${{ steps.previous.outputs.argument }}
+      - name: Verify complete signed candidate
+        run: hltb-updater verify-candidate --candidate candidate --public-key config/snapshot-public-key.json
+      - name: Publish GitHub Pages data branch
+        env:
+          DATA_REPOSITORY_URL: ${{ secrets.DATA_REPOSITORY_URL }}
+          DATA_REPOSITORY_TOKEN: ${{ secrets.DATA_REPOSITORY_TOKEN }}
+        shell: bash
+        run: scripts/publish-pages.sh candidate
+
+  report-failure:
+    needs: publish
+    if: ${{ always() && needs.publish.result == 'failure' }}
+    runs-on: hltb-updater
+    steps:
+      - name: Create internal Forgejo issue
+        env:
+          FORGEJO_ISSUE_TOKEN: ${{ secrets.FORGEJO_ISSUE_TOKEN }}
+          FORGEJO_SERVER_URL: ${{ forgejo.server_url }}
+          FORGEJO_REPOSITORY: ${{ forgejo.repository }}
+          FORGEJO_RUN_URL: ${{ forgejo.server_url }}/${{ forgejo.repository }}/actions/runs/${{ forgejo.run_id }}
+        shell: bash
+        run: |
+          payload="$(jq -n \
+            --arg title "Snapshot publication blocked on $(date -u +%Y-%m-%d)" \
+            --arg body "The candidate failed validation and the stable channel was not changed. Run: $FORGEJO_RUN_URL" \
+            '{title: $title, body: $body}')"
+          curl --fail --silent --show-error \
+            -H "Authorization: token $FORGEJO_ISSUE_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data "$payload" \
+            "$FORGEJO_SERVER_URL/api/v1/repos/$FORGEJO_REPOSITORY/issues"

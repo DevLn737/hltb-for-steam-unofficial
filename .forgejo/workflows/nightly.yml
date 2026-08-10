@@ -1,0 +1,61 @@
+name: Nightly updater
+
+on:
+  schedule:
+    - cron: '30 3 * * *'
+      timezone: Indian/Mauritius
+  workflow_dispatch:
+    inputs:
+      maxTail:
+        description: Maximum IDs beyond the current frontier
+        default: 2000
+        type: number
+      maxRefresh:
+        description: Maximum due records to refresh
+        default: 1000
+        type: number
+
+jobs:
+  update:
+    runs-on: hltb-updater
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v6
+      - name: Install updater
+        run: python3.12 -m pip install --disable-pip-version-check .
+      - name: Verify parser canaries
+        run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
+      - name: Update frontier and due records
+        run: >-
+          hltb-updater update
+          --database /var/lib/hltb-updater/hltb.sqlite
+          --max-tail ${{ inputs.maxTail || 2000 }}
+          --max-refresh ${{ inputs.maxRefresh || 1000 }}
+      - name: Create retained backup
+        run: hltb-updater backup --database /var/lib/hltb-updater/hltb.sqlite --directory /var/lib/hltb-updater/backups
+      - name: Build and verify shadow candidate
+        env:
+          SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
+        shell: bash
+        run: |
+          signing_dir="$(mktemp -d)"
+          trap 'rm -rf "$signing_dir"' EXIT
+          chmod 700 "$signing_dir"
+          printf '%s' "$SNAPSHOT_SIGNING_KEY" > "$signing_dir/key.pem"
+          rm -rf /var/lib/hltb-updater/shadow-candidate
+          previous=()
+          if test -f /var/lib/hltb-updater/shadow-previous-manifest.json; then
+            previous=(--previous-manifest /var/lib/hltb-updater/shadow-previous-manifest.json)
+          fi
+          version="$(date -u +%Y.%m.%d.1)"
+          hltb-updater build \
+            --database /var/lib/hltb-updater/hltb.sqlite \
+            --output /var/lib/hltb-updater/shadow-candidate \
+            --version "$version" \
+            --private-key "$signing_dir/key.pem" \
+            --overrides config/overrides.json \
+            "${previous[@]}"
+          hltb-updater verify-candidate \
+            --candidate /var/lib/hltb-updater/shadow-candidate \
+            --public-key config/snapshot-public-key.json
+          cp "/var/lib/hltb-updater/shadow-candidate/versions/$version/manifest.json" \
+            /var/lib/hltb-updater/shadow-previous-manifest.json

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hltb-snapshot-updater"
+version = "0.1.0"
+description = "Private SQLite updater and signed snapshot publisher for HLTB for Steam — Unofficial"
+requires-python = ">=3.11"
+dependencies = [
+  "cryptography>=45,<47",
+  "httpx>=0.28,<1",
+  "ijson>=3.4,<4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.4,<10"]
+
+[project.scripts]
+hltb-updater = "hltb_updater.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hltb_updater"]
