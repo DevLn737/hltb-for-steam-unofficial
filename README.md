@@ -9,6 +9,8 @@ Private updater for the signed data channel used by HLTB for Steam — Unofficia
 - A fine-grained GitHub token limited to the public data repository
 - An ECDSA P-256 private key stored as a Forgejo secret or protected runner file
 
+The dedicated runner job image is built from `runner/Dockerfile`. It combines Node.js 22 for JavaScript-based Forgejo actions with an isolated Python 3.11 environment for the updater.
+
 ## Bootstrap
 
 ```bash

@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - name: Install and test updater
-        run: python3.12 -m pip install --disable-pip-version-check '.[test]'
+        run: python3 -m pip install --disable-pip-version-check '.[test]'
       - run: pytest -q
       - name: Derive scheduled version
         id: version
@@ -36,7 +36,7 @@ jobs:
           if curl --fail --silent --show-error --location \
             https://devln737.github.io/hltb-for-steam-data/stable.json \
             --output previous/stable.json; then
-            manifest_path="$(python3.12 -c 'import json; p=json.load(open("previous/stable.json", encoding="utf-8")); v=p["snapshotVersion"]; expected=f"versions/{v}/manifest.json"; assert p["manifestPath"] == expected; print(expected)')"
+            manifest_path="$(python3 -c 'import json; p=json.load(open("previous/stable.json", encoding="utf-8")); v=p["snapshotVersion"]; expected=f"versions/{v}/manifest.json"; assert p["manifestPath"] == expected; print(expected)')"
             curl --fail --silent --show-error --location \
               "https://devln737.github.io/hltb-for-steam-data/$manifest_path" \
               --output previous/manifest.json

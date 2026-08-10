@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - name: Install updater
-        run: python3.12 -m pip install --disable-pip-version-check .
+        run: python3 -m pip install --disable-pip-version-check .
       - name: Verify parser canaries
         run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
       - name: Update frontier and due records
