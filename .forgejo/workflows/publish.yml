@@ -46,13 +46,13 @@ jobs:
           fi
       - name: Build signed candidate
         env:
-          SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
+          SNAPSHOT_SIGNING_KEY_B64: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
         shell: bash
         run: |
           signing_dir="$(mktemp -d)"
           trap 'rm -rf "$signing_dir"' EXIT
           chmod 700 "$signing_dir"
-          printf '%s' "$SNAPSHOT_SIGNING_KEY" > "$signing_dir/key.pem"
+          printf '%s' "$SNAPSHOT_SIGNING_KEY_B64" | base64 --decode > "$signing_dir/key.pem"
           rm -rf candidate
           hltb-updater build --database /var/lib/hltb-updater/hltb.sqlite --output candidate --version "${{ steps.version.outputs.value }}" --private-key "$signing_dir/key.pem" --overrides config/overrides.json ${{ steps.previous.outputs.argument }}
       - name: Verify complete signed candidate

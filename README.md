@@ -40,7 +40,7 @@ hltb-updater build --database state/hltb.sqlite --output candidate --version 202
 
 Register a self-hosted runner with the dedicated `hltb-updater` label and mount its persistent state at `/var/lib/hltb-updater`. Configure these repository secrets:
 
-- `SNAPSHOT_SIGNING_KEY`: the PEM ECDSA P-256 private key matching `config/snapshot-public-key.json`;
+- `SNAPSHOT_SIGNING_KEY`: the Base64-encoded PEM ECDSA P-256 private key matching `config/snapshot-public-key.json`;
 - `DATA_REPOSITORY_URL`: the HTTPS clone URL of the dedicated public data repository;
 - `DATA_REPOSITORY_TOKEN`: a fine-grained GitHub token limited to that repository;
 - `ISSUE_REPORT_TOKEN`: a token allowed to create issues only in this private updater repository.

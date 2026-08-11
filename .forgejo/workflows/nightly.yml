@@ -14,6 +14,10 @@ on:
         description: Maximum due records to refresh
         default: 1000
         type: number
+      buildOnly:
+        description: Skip database updates and rebuild the shadow candidate only
+        default: false
+        type: boolean
 
 jobs:
   update:
@@ -25,6 +29,7 @@ jobs:
       - name: Verify parser canaries
         run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
       - name: Update frontier and due records
+        if: ${{ !inputs.buildOnly }}
         run: >-
           hltb-updater update
           --database /var/lib/hltb-updater/hltb.sqlite
@@ -34,13 +39,13 @@ jobs:
         run: hltb-updater backup --database /var/lib/hltb-updater/hltb.sqlite --directory /var/lib/hltb-updater/backups
       - name: Build and verify shadow candidate
         env:
-          SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
+          SNAPSHOT_SIGNING_KEY_B64: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
         shell: bash
         run: |
           signing_dir="$(mktemp -d)"
           trap 'rm -rf "$signing_dir"' EXIT
           chmod 700 "$signing_dir"
-          printf '%s' "$SNAPSHOT_SIGNING_KEY" > "$signing_dir/key.pem"
+          printf '%s' "$SNAPSHOT_SIGNING_KEY_B64" | base64 --decode > "$signing_dir/key.pem"
           rm -rf /var/lib/hltb-updater/shadow-candidate
           previous=()
           if test -f /var/lib/hltb-updater/shadow-previous-manifest.json; then
