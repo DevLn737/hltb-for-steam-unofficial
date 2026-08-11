@@ -22,6 +22,8 @@ def parser() -> argparse.ArgumentParser:
     import_command.add_argument("--database", required=True)
     import_command.add_argument("--source", required=True)
     import_command.add_argument("--source-date", required=True)
+    rebalance = commands.add_parser("rebalance-schedule")
+    rebalance.add_argument("--database", required=True)
     canary = commands.add_parser("canary")
     canary.add_argument("--database", required=True)
     canary.add_argument("--config", required=True)
@@ -72,6 +74,8 @@ def main() -> None:
             progress=lambda count: print(f"Read {count} source entries", flush=True),
         )
         print(f"Imported {imported} games from {source_count} source entries")
+    elif arguments.command == "rebalance-schedule":
+        print(json.dumps({"rescheduled": database.rebalance_legacy_import_schedule()}, sort_keys=True))
     elif arguments.command == "canary":
         config = json.loads(Path(arguments.config).read_text(encoding="utf-8"))
         if config.get("schema") != 1 or not isinstance(config.get("games"), list):

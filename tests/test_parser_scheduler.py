@@ -61,3 +61,30 @@ def test_rate_limit_persists_retry_after_and_stops_cycle(tmp_path) -> None:
     with pytest.raises(CircuitBreakerError, match="7200 seconds"):
         update_database(database, client, max_tail=1, max_refresh=0)  # type: ignore[arg-type]
     assert database.get_metadata("retry_after_until")
+
+
+def test_non_404_breaks_forward_missing_streak(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    now = __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
+    database.upsert(GameRecord(1000, "Frontier", 1, None, None, None, None), now)
+    prefix = [FetchResult("missing", status_code=404)] * 249 + [
+        FetchResult("ok", GameRecord(1000, "Frontier", 1, None, None, None, None), 200)
+    ]
+    results = prefix + [FetchResult("missing", status_code=404)] * 499 + [FetchResult("network_error")]
+    results += [FetchResult("missing", status_code=404)] * 500
+    stats = update_database(database, FakeClient(results), max_tail=2000, max_refresh=0)  # type: ignore[arg-type]
+    assert stats.attempted == 1250
+
+
+def test_refresh_parser_failures_open_circuit_breaker(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    now = __import__("datetime").datetime(2025, 1, 1, tzinfo=__import__("datetime").timezone.utc)
+    for game_id in range(1, 6):
+        database.upsert(GameRecord(game_id, f"Game {game_id}", 1, None, None, 100 + game_id, None), now)
+    database.upsert(GameRecord(1000, "Frontier", 1, None, None, None, None), now)
+    tail = [FetchResult("ok", GameRecord(1000, "Frontier", 1, None, None, None, None), 200)]
+    client = FakeClient([FetchResult("missing", status_code=404)] * 249 + tail + [FetchResult("parse_error")] * 5)
+    with pytest.raises(CircuitBreakerError, match="parser failures"):
+        update_database(database, client, max_tail=0, max_refresh=5)  # type: ignore[arg-type]

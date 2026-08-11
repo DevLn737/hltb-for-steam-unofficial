@@ -50,6 +50,7 @@ def update_database(
         try:
             if datetime.fromisoformat(retry_after_until) > now:
                 raise CircuitBreakerError(f"HLTB Retry-After remains active until {retry_after_until}")
+            database.set_metadata("retry_after_until", "")
         except ValueError:
             database.set_metadata("retry_after_until", "")
     original_max = database.max_id()
@@ -70,24 +71,27 @@ def update_database(
             database.set_metadata("retry_after_until", (now + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
+            apply_result(database, game_id, result, now, stats)
             raise CircuitBreakerError(f"HLTB stopped the updater with {result.status_code}")
         if result.status == "parse_error":
             consecutive_parser_errors += 1
             if consecutive_parser_errors >= 5:
+                apply_result(database, game_id, result, now, stats)
                 raise CircuitBreakerError("Five consecutive HLTB parser failures")
         else:
             consecutive_parser_errors = 0
         if game_id > original_max:
             if result.status == "missing":
                 consecutive_forward_404 += 1
-            elif result.status == "ok":
+            else:
                 consecutive_forward_404 = 0
             if consecutive_forward_404 >= 500:
                 apply_result(database, game_id, result, now, stats)
                 break
         apply_result(database, game_id, result, now, stats)
 
-    due = database.due_ids(date.today(), max_refresh, touched)
+    due = database.due_ids(now.date(), max_refresh, touched)
+    consecutive_parser_errors = 0
     for game_id in due:
         result = client.fetch(game_id)
         on_result and on_result(game_id, result)
@@ -97,7 +101,15 @@ def update_database(
             database.set_metadata("retry_after_until", (now + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
+            apply_result(database, game_id, result, now, stats)
             raise CircuitBreakerError(f"HLTB stopped the updater with {result.status_code}")
+        if result.status == "parse_error":
+            consecutive_parser_errors += 1
+            if consecutive_parser_errors >= 5:
+                apply_result(database, game_id, result, now, stats)
+                raise CircuitBreakerError("Five consecutive HLTB parser failures")
+        else:
+            consecutive_parser_errors = 0
         apply_result(database, game_id, result, now, stats)
     database.set_metadata("last_update_at", now.isoformat())
     database.set_metadata("highest_seen_id", str(stats.highest_id))

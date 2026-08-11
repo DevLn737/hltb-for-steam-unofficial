@@ -20,8 +20,15 @@ else
   git rm -rf --ignore-unmatch .
 fi
 
-cp -R "$candidate/." "$work/repository/"
 cd "$work/repository"
+version="$(jq -r .snapshotVersion "$candidate/stable.json")"
+if test -d "versions/$version"; then
+  if ! diff -qr "versions/$version" "$candidate/versions/$version" >/dev/null; then
+    echo "Refusing to overwrite immutable snapshot version $version" >&2
+    exit 1
+  fi
+fi
+cp -R "$candidate/." "$work/repository/"
 
 # Retain only the three newest immutable versions.
 mapfile -t versions < <(find versions -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -r)
@@ -29,5 +36,5 @@ for version in "${versions[@]:3}"; do rm -rf -- "versions/$version"; done
 
 git add --all
 if git diff --cached --quiet; then exit 0; fi
-git -c user.name='HLTB snapshot updater' -c user.email='noreply@localhost' commit -m "data: publish $(jq -r .snapshotVersion stable.json)"
+git -c user.name='HLTB snapshot updater' -c user.email='noreply@localhost' commit -m "data: publish $version"
 git push origin gh-pages

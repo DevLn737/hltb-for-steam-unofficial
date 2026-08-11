@@ -10,8 +10,14 @@ from hltb_updater.model import GameRecord
 from hltb_updater.snapshot import build_snapshot, generate_key, normalize_title, snapshot_bucket, verify_candidate
 
 
-def test_normalization_and_utf16_bucket_are_deterministic() -> None:
+def legacy_normalization_and_utf16_bucket_fixture() -> None:
     assert normalize_title("Pokémon™ & Test") == "poke mon and test"
+    assert snapshot_bucket(normalize_title("😀 Game")) == snapshot_bucket(normalize_title("😀 Game"))
+
+
+def test_unicode_normalization_preserves_letters_and_removes_marks() -> None:
+    assert normalize_title("Pokémon™ & Test") == "pokemon and test"
+    assert normalize_title("Щёлк") == "щелк"
     assert snapshot_bucket(normalize_title("😀 Game")) == snapshot_bucket(normalize_title("😀 Game"))
 
 

@@ -63,6 +63,17 @@ def next_refresh(record: GameRecord, checked_at: datetime, changed: bool, first_
     return iso_day(checked_at + timedelta(days=days))
 
 
+def initial_refresh(record: GameRecord, checked_at: datetime) -> str:
+    """Spread imported records without delaying the highest-value rows for a year."""
+    if record.has_steam and not record.has_times:
+        days = record.hltb_id % 14
+    elif record.has_steam:
+        days = record.hltb_id % 120
+    else:
+        days = record.hltb_id % 365
+    return iso_day(checked_at + timedelta(days=days))
+
+
 class Database:
     def __init__(self, path: str | Path):
         self.path = Path(path)
@@ -92,7 +103,7 @@ class Database:
             changed = existing is None or existing["content_hash"] != record.content_hash
             first_seen = existing["first_seen_at"] if existing else checked_day
             if initial and existing is None:
-                due = iso_day(checked_at + timedelta(days=record.hltb_id % 365))
+                due = initial_refresh(record, checked_at)
             else:
                 due = next_refresh(record, checked_at, changed, first_seen)
             connection.execute(
@@ -133,7 +144,7 @@ class Database:
         checked_day = iso_day(checked_at)
         values = []
         for record in records:
-            due = iso_day(checked_at + timedelta(days=record.hltb_id % 365))
+            due = initial_refresh(record, checked_at)
             values.append((
                 record.hltb_id, record.title, record.main_minutes, record.extra_minutes,
                 record.completion_minutes, record.steam_app_id, record.steam_alt_app_id,
@@ -153,7 +164,8 @@ class Database:
                     title=excluded.title, main_minutes=excluded.main_minutes,
                     extra_minutes=excluded.extra_minutes, completion_minutes=excluded.completion_minutes,
                     steam_app_id=excluded.steam_app_id, steam_alt_app_id=excluded.steam_alt_app_id,
-                    last_checked_at=excluded.last_checked_at, last_changed_at=excluded.last_changed_at,
+                    last_checked_at=excluded.last_checked_at,
+                    last_changed_at=CASE WHEN games.content_hash <> excluded.content_hash THEN excluded.last_changed_at ELSE games.last_changed_at END,
                     next_refresh_at=excluded.next_refresh_at, content_hash=excluded.content_hash,
                     last_status='ok', status_code=200, error_count=0, missing_count=0,
                     first_missing_at=NULL, last_missing_at=NULL, tombstoned=0
@@ -161,6 +173,33 @@ class Database:
                 values,
             )
             connection.commit()
+
+    def rebalance_legacy_import_schedule(self) -> int:
+        """Replace only the old ID%365 import schedule, preserving live backoff state."""
+        changed = 0
+        with self.connect() as connection:
+            rows = connection.execute(
+                """SELECT hltb_id, title, main_minutes, extra_minutes, completion_minutes,
+                steam_app_id, steam_alt_app_id, first_seen_at, next_refresh_at
+                FROM games WHERE last_status='ok' AND last_checked_at=first_seen_at"""
+            ).fetchall()
+            for row in rows:
+                imported_at = datetime.combine(date.fromisoformat(row["first_seen_at"]), datetime.min.time(), timezone.utc)
+                legacy_due = iso_day(imported_at + timedelta(days=int(row["hltb_id"]) % 365))
+                if row["next_refresh_at"] != legacy_due:
+                    continue
+                record = GameRecord(
+                    hltb_id=int(row["hltb_id"]), title=str(row["title"]),
+                    main_minutes=row["main_minutes"], extra_minutes=row["extra_minutes"],
+                    completion_minutes=row["completion_minutes"], steam_app_id=row["steam_app_id"],
+                    steam_alt_app_id=row["steam_alt_app_id"],
+                )
+                due = initial_refresh(record, imported_at)
+                if due != row["next_refresh_at"]:
+                    connection.execute("UPDATE games SET next_refresh_at=? WHERE hltb_id=?", (due, record.hltb_id))
+                    changed += 1
+            connection.commit()
+        return changed
 
     def mark_missing(self, hltb_id: int, checked_at: datetime) -> None:
         checked_day = iso_day(checked_at)

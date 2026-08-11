@@ -25,9 +25,12 @@ def digest(value: bytes) -> str:
 
 
 def normalize_title(value: str) -> str:
-    cleaned = value.translate(str.maketrans("", "", "™®©â„¢Â"))
+    cleaned = value.translate(str.maketrans("", "", "™®©"))
     cleaned = unicodedata.normalize("NFKD", cleaned).replace("&", " and ")
-    cleaned = "".join(character if character.isalnum() else " " for character in cleaned)
+    cleaned = "".join(
+        "" if unicodedata.combining(character) else character if character.isalnum() else " "
+        for character in cleaned
+    )
     return " ".join(cleaned.lower().split())
 
 
@@ -94,6 +97,10 @@ def build_snapshot(
 ) -> dict[str, Any]:
     if not __import__("re").fullmatch(r"\d{4}\.\d{2}\.\d{2}\.\d+", version):
         raise ValueError("Snapshot version must use YYYY.MM.DD.N")
+    try:
+        datetime.strptime(version.rsplit(".", 1)[0], "%Y.%m.%d")
+    except ValueError as error:
+        raise ValueError("Snapshot version contains an invalid calendar date") from error
     rows = database.records()
     if not rows:
         raise ValueError("Cannot build an empty snapshot")
@@ -249,6 +256,12 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
     pointer_bytes = (root / "stable.json").read_bytes()
     pointer = json.loads(pointer_bytes)
     version = pointer.get("snapshotVersion")
+    if not isinstance(version, str) or not __import__("re").fullmatch(r"\d{4}\.\d{2}\.\d{2}\.\d+", version):
+        raise ValueError("Invalid stable snapshot version")
+    try:
+        datetime.strptime(version.rsplit(".", 1)[0], "%Y.%m.%d")
+    except ValueError as error:
+        raise ValueError("Invalid stable snapshot calendar date") from error
     expected_manifest_path = f"versions/{version}/manifest.json"
     if pointer.get("schema") != 1 or pointer.get("manifestPath") != expected_manifest_path:
         raise ValueError("Invalid stable snapshot pointer")
@@ -283,8 +296,11 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
         raise ValueError("Snapshot pack checksum mismatch")
 
     title_rows: dict[int, list[list[Any]]] = {}
+    seen_entries: set[tuple[str, int]] = set()
     expected_offset = 0
     for entry in entries:
+        if not isinstance(entry, dict) or entry.get("kind") not in {"title", "steam"}:
+            raise ValueError("Invalid snapshot entry kind")
         if entry["offset"] != expected_offset:
             raise ValueError(f"Invalid offset for {entry['path']}")
         compressed = pack[entry["offset"]:entry["offset"] + entry["compressedBytes"]]
@@ -297,10 +313,18 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
         expected_path = f"{entry['kind']}/{entry['name']}.{'json' if entry['kind'] == 'title' else 'bin'}.gz"
         if not 0 <= bucket < BUCKET_COUNT or entry["path"] != expected_path:
             raise ValueError(f"Invalid snapshot entry path {entry['path']}")
+        entry_key = (entry["kind"], bucket)
+        if entry_key in seen_entries:
+            raise ValueError(f"Duplicate snapshot entry {entry['path']}")
+        seen_entries.add(entry_key)
         if entry["kind"] == "title":
             rows = json.loads(raw)
             if not isinstance(rows, list) or len(rows) != entry["entries"] or any(
-                not isinstance(row, list) or len(row) != 5 for row in rows
+                not isinstance(row, list) or len(row) != 5
+                or not isinstance(row[0], str) or not row[0]
+                or not isinstance(row[1], int) or isinstance(row[1], bool) or row[1] <= 0
+                or any(value is not None and (not isinstance(value, int) or isinstance(value, bool) or value <= 0) for value in row[2:])
+                for row in rows
             ):
                 raise ValueError(f"Invalid title bucket {entry['path']}")
             title_rows[bucket] = rows
@@ -323,8 +347,8 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
                 if title_bucket not in title_rows or row_index >= len(title_rows[title_bucket]):
                     raise ValueError(f"Invalid packed title location in {entry['path']}")
         expected_offset += entry["compressedBytes"]
-    if expected_offset != len(pack) or len(title_rows) != BUCKET_COUNT:
-        raise ValueError("Snapshot pack has trailing data or missing title buckets")
+    if expected_offset != len(pack) or len(seen_entries) != BUCKET_COUNT * 2:
+        raise ValueError("Snapshot pack has trailing data or missing buckets")
     return manifest
 
 

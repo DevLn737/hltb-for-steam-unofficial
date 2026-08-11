@@ -46,7 +46,7 @@ jobs:
           trap 'rm -rf "$signing_dir"' EXIT
           chmod 700 "$signing_dir"
           printf '%s' "$SNAPSHOT_SIGNING_KEY_B64" | base64 --decode > "$signing_dir/key.pem"
-          rm -rf /var/lib/hltb-updater/shadow-candidate
+          rm -rf /var/lib/hltb-updater/shadow-candidate.next
           previous=()
           if test -f /var/lib/hltb-updater/shadow-previous-manifest.json; then
             previous=(--previous-manifest /var/lib/hltb-updater/shadow-previous-manifest.json)
@@ -54,13 +54,18 @@ jobs:
           version="$(date -u +%Y.%m.%d.1)"
           hltb-updater build \
             --database /var/lib/hltb-updater/hltb.sqlite \
-            --output /var/lib/hltb-updater/shadow-candidate \
+            --output /var/lib/hltb-updater/shadow-candidate.next \
             --version "$version" \
             --private-key "$signing_dir/key.pem" \
             --overrides config/overrides.json \
             "${previous[@]}"
           hltb-updater verify-candidate \
-            --candidate /var/lib/hltb-updater/shadow-candidate \
+            --candidate /var/lib/hltb-updater/shadow-candidate.next \
             --public-key config/snapshot-public-key.json
+          rm -rf /var/lib/hltb-updater/shadow-candidate.previous
+          if test -d /var/lib/hltb-updater/shadow-candidate; then
+            mv /var/lib/hltb-updater/shadow-candidate /var/lib/hltb-updater/shadow-candidate.previous
+          fi
+          mv /var/lib/hltb-updater/shadow-candidate.next /var/lib/hltb-updater/shadow-candidate
           cp "/var/lib/hltb-updater/shadow-candidate/versions/$version/manifest.json" \
             /var/lib/hltb-updater/shadow-previous-manifest.json

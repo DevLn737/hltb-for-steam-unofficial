@@ -27,6 +27,8 @@ class FetchResult:
 
 class HltbClient:
     def __init__(self, minimum_delay: float = 0.75, maximum_delay: float = 1.5) -> None:
+        if minimum_delay < 0 or maximum_delay < minimum_delay:
+            raise ValueError("Request delays must satisfy 0 <= minimum <= maximum")
         self.minimum_delay = minimum_delay
         self.maximum_delay = maximum_delay
         self._client = httpx.Client(
@@ -56,9 +58,10 @@ class HltbClient:
             time.sleep(delay - elapsed)
         try:
             response = self._client.get(f"/game/{game_id}")
-            self._last_request_at = time.monotonic()
         except httpx.HTTPError as error:
             return FetchResult("network_error", error=str(error))
+        finally:
+            self._last_request_at = time.monotonic()
         if response.status_code == 404:
             return FetchResult("missing", status_code=404)
         if response.status_code == 403:

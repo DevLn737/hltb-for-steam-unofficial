@@ -37,10 +37,19 @@ jobs:
             https://devln737.github.io/hltb-for-steam-data/stable.json \
             --output previous/stable.json; then
             manifest_path="$(python3 -c 'import json; p=json.load(open("previous/stable.json", encoding="utf-8")); v=p["snapshotVersion"]; expected=f"versions/{v}/manifest.json"; assert p["manifestPath"] == expected; print(expected)')"
+            version="$(python3 -c 'import json; print(json.load(open("previous/stable.json", encoding="utf-8"))["snapshotVersion"])')"
+            mkdir -p "previous/versions/$version"
+            curl --fail --silent --show-error --location \
+              https://devln737.github.io/hltb-for-steam-data/stable.sig \
+              --output previous/stable.sig
             curl --fail --silent --show-error --location \
               "https://devln737.github.io/hltb-for-steam-data/$manifest_path" \
-              --output previous/manifest.json
-            echo "argument=--previous-manifest previous/manifest.json" >> "$FORGEJO_OUTPUT"
+              --output "previous/$manifest_path"
+            curl --fail --silent --show-error --location \
+              "https://devln737.github.io/hltb-for-steam-data/versions/$version/snapshot.pack" \
+              --output "previous/versions/$version/snapshot.pack"
+            hltb-updater verify-candidate --candidate previous --public-key config/snapshot-public-key.json
+            echo "argument=--previous-manifest previous/$manifest_path" >> "$FORGEJO_OUTPUT"
           else
             echo "argument=" >> "$FORGEJO_OUTPUT"
           fi
