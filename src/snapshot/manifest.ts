@@ -10,6 +10,19 @@ const VERSION = /^\d{4}\.\d{2}\.\d{2}\.\d+$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const MANIFEST_PATH = /^versions\/\d{4}\.\d{2}\.\d{2}\.\d+\/manifest\.json$/;
 
+function isCalendarDate(value: string): boolean {
+  if (!DATE.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const parsed = new Date(Date.UTC(year!, month! - 1, day));
+  return parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month! - 1 && parsed.getUTCDate() === day;
+}
+
+function isSnapshotVersion(value: string): boolean {
+  if (!VERSION.test(value)) return false;
+  const [year, month, day] = value.split('.', 3);
+  return isCalendarDate(`${year}-${month}-${day}`);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -30,7 +43,7 @@ function nonNegativeInteger(value: unknown): value is number {
 export function parseRemoteSnapshotPointer(value: unknown): RemoteSnapshotPointer {
   if (!isRecord(value) || !exactKeys(value, ['schema', 'snapshotVersion', 'generatedAt', 'manifestPath', 'manifestSha256'])
     || value.schema !== 1
-    || typeof value.snapshotVersion !== 'string' || !VERSION.test(value.snapshotVersion)
+    || typeof value.snapshotVersion !== 'string' || !isSnapshotVersion(value.snapshotVersion)
     || typeof value.generatedAt !== 'string' || Number.isNaN(Date.parse(value.generatedAt))
     || typeof value.manifestPath !== 'string' || !MANIFEST_PATH.test(value.manifestPath)
     || !isSha256(value.manifestSha256)) {
@@ -68,9 +81,9 @@ export function parseSnapshotManifestV4(value: unknown, expectedVersion?: string
   ];
   if (!isRecord(value) || !exactKeys(value, keys)
     || value.schema !== 4 || value.compression !== 'gzip' || value.bucketCount !== 64
-    || typeof value.snapshotVersion !== 'string' || !VERSION.test(value.snapshotVersion)
+    || typeof value.snapshotVersion !== 'string' || !isSnapshotVersion(value.snapshotVersion)
     || (expectedVersion !== undefined && value.snapshotVersion !== expectedVersion)
-    || typeof value.sourceUpdatedAt !== 'string' || !DATE.test(value.sourceUpdatedAt)
+    || typeof value.sourceUpdatedAt !== 'string' || !isCalendarDate(value.sourceUpdatedAt)
     || typeof value.generatedAt !== 'string' || Number.isNaN(Date.parse(value.generatedAt))
     || typeof value.origin !== 'string' || value.origin.length === 0
     || !nonNegativeInteger(value.sourceEntryCount) || !nonNegativeInteger(value.timedEntryCount)

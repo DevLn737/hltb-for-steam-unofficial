@@ -1,9 +1,21 @@
 export const SNAPSHOT_BUCKET_COUNT = 64;
 
+export function normalizeTitleLegacy(value) {
+  return String(value ?? '')
+    .replace(/[™®©]/g, '')
+    .normalize('NFKD')
+    .replace(/&/g, ' and ')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()
+    .toLocaleLowerCase('en-US')
+    .replace(/\s+/g, ' ');
+}
+
 export function normalizeTitle(value) {
   return String(value ?? '')
     .replace(/[™®©]/g, '')
     .normalize('NFKD')
+    .replace(/\p{M}+/gu, '')
     .replace(/&/g, ' and ')
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()

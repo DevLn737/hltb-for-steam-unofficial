@@ -7,6 +7,11 @@ describe('strict title matching', () => {
     expect(normalizeTitle('Щелкунчик: Мой герой™')).toBe('щелкунчик мои герои');
   });
 
+  it('normalizes real Unicode marks and combining accents', () => {
+    expect(normalizeTitle('Pokémon™ & Test')).toBe('pokemon and test');
+    expect(normalizeTitle('Щёлк')).toBe('щелк');
+  });
+
   it('accepts an exact normalized title', () => {
     const match = findStrictMatch('Trails in the Sky 1st Chapter', [
       { id: 1, name: 'Trails in the Sky 1st Chapter' },

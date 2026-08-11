@@ -46,9 +46,13 @@ function parseJson(bytes: Uint8Array): unknown {
   return JSON.parse(new TextDecoder().decode(bytes));
 }
 
-async function responseBytes(response: Response, label: string): Promise<Uint8Array> {
+async function responseBytes(response: Response, label: string, maximumBytes: number): Promise<Uint8Array> {
   if (!response.ok) throw new Error(`${label} returned HTTP ${response.status}`);
-  return new Uint8Array(await response.arrayBuffer());
+  const length = Number(response.headers.get('content-length'));
+  if (Number.isFinite(length) && length > maximumBytes) throw new Error(`${label} exceeds its size limit`);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > maximumBytes) throw new Error(`${label} exceeds its size limit`);
+  return bytes;
 }
 
 export class SnapshotUpdateManager {
@@ -85,12 +89,12 @@ export class SnapshotUpdateManager {
       const pointerUrl = resolveSnapshotUrl(this.baseUrl, 'stable.json');
       const signatureUrl = resolveSnapshotUrl(this.baseUrl, 'stable.sig');
       const [pointerResponse, signatureResponse] = await Promise.all([
-        this.fetchImpl(pointerUrl, { cache: 'no-store', credentials: 'omit' }),
-        this.fetchImpl(signatureUrl, { cache: 'no-store', credentials: 'omit' }),
+        this.fetchImpl(pointerUrl, { cache: 'no-store', credentials: 'omit', redirect: 'error' }),
+        this.fetchImpl(signatureUrl, { cache: 'no-store', credentials: 'omit', redirect: 'error' }),
       ]);
       const [pointerBytes, signatureBytes] = await Promise.all([
-        responseBytes(pointerResponse, 'Snapshot pointer'),
-        responseBytes(signatureResponse, 'Snapshot signature'),
+        responseBytes(pointerResponse, 'Snapshot pointer', 64 * 1024),
+        responseBytes(signatureResponse, 'Snapshot signature', 4 * 1024),
       ]);
       if (!await verifyPointerSignature(pointerBytes, new TextDecoder().decode(signatureBytes), this.publicKey)) {
         throw new Error('Remote snapshot pointer signature is invalid');
@@ -103,15 +107,15 @@ export class SnapshotUpdateManager {
 
       const manifestUrl = resolveSnapshotUrl(this.baseUrl, pointer.manifestPath);
       const manifestBytes = await responseBytes(
-        await this.fetchImpl(manifestUrl, { cache: 'no-store', credentials: 'omit' }),
-        'Snapshot manifest',
+        await this.fetchImpl(manifestUrl, { cache: 'no-store', credentials: 'omit', redirect: 'error' }),
+        'Snapshot manifest', 2 * 1024 * 1024,
       );
       if (await sha256Hex(manifestBytes) !== pointer.manifestSha256) throw new Error('Remote snapshot manifest checksum mismatch');
       const manifest = parseSnapshotManifestV4(parseJson(manifestBytes), pointer.snapshotVersion);
       const packUrl = resolveSnapshotUrl(new URL('.', manifestUrl).toString(), manifest.pack.path);
       const pack = await responseBytes(
-        await this.fetchImpl(packUrl, { cache: 'no-store', credentials: 'omit' }),
-        'Snapshot pack',
+        await this.fetchImpl(packUrl, { cache: 'no-store', credentials: 'omit', redirect: 'error' }),
+        'Snapshot pack', manifest.pack.bytes,
       );
       const buckets = await validateAndExtractPack(manifest, pack);
       await this.store.install(manifest, buckets);

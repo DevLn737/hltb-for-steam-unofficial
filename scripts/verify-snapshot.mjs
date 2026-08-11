@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
 import { decodeSteamIndex, unpackSnapshotLocation } from '../shared/snapshot-codec.mjs';
-import { normalizeTitle, snapshotBucket } from '../shared/title-normalization.mjs';
+import { normalizeTitleLegacy, snapshotBucket } from '../shared/title-normalization.mjs';
 
 const EXPECTED = {
   sourceBytes: 755_986_614,
@@ -83,7 +83,7 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
         || row.slice(2).some((value) => value !== null && (!Number.isInteger(value) || value <= 0))) {
         throw new Error(`Invalid title row in bucket ${name}`);
       }
-      const normalized = normalizeTitle(row[0]);
+      const normalized = normalizeTitleLegacy(row[0]);
       if (snapshotBucket(normalized) !== index) throw new Error(`Misplaced title row in bucket ${name}`);
       normalizedCounts.set(normalized, (normalizedCounts.get(normalized) ?? 0) + 1);
     }

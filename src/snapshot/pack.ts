@@ -14,8 +14,9 @@ function validateTitleRows(bytes: Uint8Array, expectedEntries: number): void {
   const rows = JSON.parse(new TextDecoder().decode(bytes)) as unknown;
   if (!Array.isArray(rows) || rows.length !== expectedEntries) throw new Error('Invalid title bucket row count');
   for (const row of rows) {
-    if (!Array.isArray(row) || row.length !== 5 || typeof row[0] !== 'string' || !Number.isSafeInteger(row[1])
-      || row.slice(2).some((value) => value !== null && (!Number.isInteger(value) || value <= 0))) {
+    if (!Array.isArray(row) || row.length !== 5 || typeof row[0] !== 'string' || row[0].length === 0
+      || !Number.isSafeInteger(row[1]) || Number(row[1]) <= 0
+      || row.slice(2).some((value) => value !== null && (!Number.isSafeInteger(value) || Number(value) <= 0))) {
       throw new Error('Invalid title bucket row');
     }
   }

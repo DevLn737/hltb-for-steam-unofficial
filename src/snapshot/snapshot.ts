@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser';
 import { decodeSteamIndex, type SteamIndexPair, unpackSnapshotLocation } from '../../shared/snapshot-codec.mjs';
-import { normalizeTitle, snapshotBucket } from '../../shared/title-normalization.mjs';
+import { normalizeTitle, normalizeTitleLegacy, snapshotBucket } from '../../shared/title-normalization.mjs';
 import type { SnapshotLookupManifest } from './contracts';
 import { toLookupManifest } from './manifest';
 import type { RemoteSnapshotStore } from './remote-store';
@@ -90,10 +90,11 @@ export class HltbSnapshot {
       }
     }
 
-    const normalized = normalizeTitle(title);
+    const normalize = manifest.schema === 3 ? normalizeTitleLegacy : normalizeTitle;
+    const normalized = normalize(title);
     if (!normalized) return null;
     const rows = await this.getTitleBucket(bucketName(snapshotBucket(normalized)), manifest);
-    const matches = rows.filter((row) => normalizeTitle(row[0]) === normalized);
+    const matches = rows.filter((row) => normalize(row[0]) === normalized);
     return matches.length === 1 ? this.toResult(matches[0]!, manifest) : null;
   }
 
@@ -127,7 +128,12 @@ export class HltbSnapshot {
     if (!pending) {
       pending = this.loadGzip(`title/${name}.json.gz`).then((bytes) => {
         const rows = JSON.parse(new TextDecoder().decode(bytes)) as SnapshotRow[];
-        if (!Array.isArray(rows) || rows.length !== metadata.entries) throw new Error(`Invalid HLTB title bucket ${name}`);
+        if (!Array.isArray(rows) || rows.length !== metadata.entries || rows.some((row) =>
+          !Array.isArray(row) || row.length !== 5 || typeof row[0] !== 'string' || row[0].length === 0
+          || !Number.isSafeInteger(row[1]) || row[1] <= 0
+          || [row[2], row[3], row[4]].some((value) => value !== null && (!Number.isSafeInteger(value) || value <= 0)))) {
+          throw new Error(`Invalid HLTB title bucket ${name}`);
+        }
         return rows;
       });
       this.titleBucketPromises.set(name, pending);

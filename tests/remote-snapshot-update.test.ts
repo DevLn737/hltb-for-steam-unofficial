@@ -84,14 +84,18 @@ describe('remote snapshot updater', () => {
     const fixture = await remoteFixture();
     const store = new MemoryStore();
     const metadata = new MemoryMetadata();
+    const fetchImpl = fixtureFetch(fixture);
     const manager = new SnapshotUpdateManager(store, {
-      fetch: fixtureFetch(fixture), publicKey: fixture.publicKey, metadata, now: () => 1000,
+      fetch: fetchImpl, publicKey: fixture.publicKey, metadata, now: () => 1000,
       baseUrl: 'https://example.test/data/',
     });
     await expect(manager.check()).resolves.toEqual({ status: 'updated', checkedAt: 1000, activeVersion: '2026.09.01.1' });
     expect(store.active?.manifest).toEqual(fixture.manifest);
     expect(store.buckets.size).toBe(128);
     expect(metadata.value?.nextCheckAt).toBeGreaterThan(1000);
+    expect(vi.mocked(fetchImpl).mock.calls[0]?.[1]).toMatchObject({
+      credentials: 'omit', redirect: 'error', cache: 'no-store',
+    });
   });
 
   it('keeps the previous snapshot when the signature is invalid', async () => {
@@ -119,5 +123,21 @@ describe('remote snapshot updater', () => {
     });
     await expect(manager.check()).resolves.toMatchObject({ status: 'skipped' });
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('rejects oversized metadata before buffering its body', async () => {
+    const fixture = await remoteFixture();
+    const store = new MemoryStore();
+    const manager = new SnapshotUpdateManager(store, {
+      fetch: vi.fn(async (input: RequestInfo | URL) => String(input).endsWith('/stable.json')
+        ? new Response('{}', { headers: { 'content-length': String(65 * 1024) } })
+        : new Response(fixture.signature)) as unknown as typeof fetch,
+      publicKey: fixture.publicKey,
+      metadata: new MemoryMetadata(),
+      now: () => 3000,
+      baseUrl: 'https://example.test/data/',
+    });
+    await expect(manager.check()).resolves.toMatchObject({ status: 'failed', error: expect.stringContaining('size limit') });
+    expect(store.active).toBeNull();
   });
 });
