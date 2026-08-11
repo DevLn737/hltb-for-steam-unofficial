@@ -9,7 +9,7 @@ from .backup import create_backup
 from .client import HltbClient
 from .database import Database
 from .importer import import_json
-from .scheduler import check_canaries, update_database
+from .scheduler import UpdateStats, apply_result, check_canaries, update_database
 from .snapshot import build_snapshot, generate_key, verify_candidate
 
 
@@ -31,6 +31,9 @@ def parser() -> argparse.ArgumentParser:
     update.add_argument("--database", required=True)
     update.add_argument("--max-tail", type=int, default=2000)
     update.add_argument("--max-refresh", type=int, default=1000)
+    refresh = commands.add_parser("refresh-id")
+    refresh.add_argument("--database", required=True)
+    refresh.add_argument("--game-id", required=True, type=int)
     backup = commands.add_parser("backup")
     backup.add_argument("--database", required=True)
     backup.add_argument("--directory", required=True)
@@ -87,6 +90,17 @@ def main() -> None:
         with HltbClient() as client:
             stats = update_database(database, client, arguments.max_tail, arguments.max_refresh)
         print(json.dumps(asdict(stats), sort_keys=True))
+    elif arguments.command == "refresh-id":
+        from .database import utc_now
+        if arguments.game_id <= 0:
+            raise SystemExit("--game-id must be a positive integer")
+        with HltbClient() as client:
+            result = client.fetch(arguments.game_id)
+        stats = UpdateStats(highest_id=database.max_id())
+        apply_result(database, arguments.game_id, result, utc_now(), stats)
+        print(json.dumps({"gameId": arguments.game_id, "status": result.status, **asdict(stats)}, sort_keys=True))
+        if result.status != "ok":
+            raise SystemExit(f"HLTB ID {arguments.game_id} refresh failed with {result.status}")
     elif arguments.command == "backup":
         print(create_backup(arguments.database, arguments.directory))
     elif arguments.command == "build":
