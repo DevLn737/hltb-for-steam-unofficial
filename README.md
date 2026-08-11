@@ -10,6 +10,7 @@ Private updater for the signed data channel used by HLTB for Steam — Unofficia
 - An ECDSA P-256 private key stored as a Forgejo secret or protected runner file
 
 The dedicated runner job image is built from `runner/Dockerfile`. It combines Node.js 22 for JavaScript-based Forgejo actions with an isolated Python 3.11 environment for the updater.
+`runner/docker-compose.override.yaml` creates a repository-scoped runner with its own Docker-in-Docker daemon, image cache, TLS certificates, and private network. The SQLite state is never mounted into the shared runner or its Docker daemon.
 
 ## Bootstrap
 
@@ -42,7 +43,7 @@ Register a self-hosted runner with the dedicated `hltb-updater` label and mount 
 - `SNAPSHOT_SIGNING_KEY`: the PEM ECDSA P-256 private key matching `config/snapshot-public-key.json`;
 - `DATA_REPOSITORY_URL`: the HTTPS clone URL of the dedicated public data repository;
 - `DATA_REPOSITORY_TOKEN`: a fine-grained GitHub token limited to that repository;
-- `FORGEJO_ISSUE_TOKEN`: a token allowed to create issues only in this private updater repository.
+- `ISSUE_REPORT_TOKEN`: a token allowed to create issues only in this private updater repository.
 
 Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance. A failed publication job creates an internal issue and leaves the current stable channel untouched.
 
