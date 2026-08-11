@@ -26,6 +26,8 @@ jobs:
       - uses: https://data.forgejo.org/actions/checkout@v6
       - name: Install updater
         run: python3 -m pip install --disable-pip-version-check .
+      - name: Rebalance legacy import schedule
+        run: hltb-updater rebalance-schedule --database /var/lib/hltb-updater/hltb.sqlite
       - name: Verify parser canaries
         run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
       - name: Update frontier and due records
