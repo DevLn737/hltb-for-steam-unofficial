@@ -9,4 +9,4 @@ dist/
 *.sqlite-*
 *.pem
 .env
-
+.tmp/

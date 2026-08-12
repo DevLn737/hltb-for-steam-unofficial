@@ -50,8 +50,32 @@ jobs:
           printf '%s' "$SNAPSHOT_SIGNING_KEY_B64" | base64 --decode > "$signing_dir/key.pem"
           rm -rf /var/lib/hltb-updater/shadow-candidate.next
           previous=()
-          if test -f /var/lib/hltb-updater/shadow-previous-manifest.json; then
-            previous=(--previous-manifest /var/lib/hltb-updater/shadow-previous-manifest.json)
+          if test -f /var/lib/hltb-updater/shadow-candidate/stable.json; then
+            previous_path="$(python3 -c 'import json; print(json.load(open("/var/lib/hltb-updater/shadow-candidate/stable.json"))["manifestPath"])')"
+            previous_manifest="/var/lib/hltb-updater/shadow-candidate/$previous_path"
+            previous_schema="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["schema"])' "$previous_manifest")"
+            if test "$previous_schema" = 5 || test "$previous_schema" = 6; then
+              previous=(--previous-manifest "$previous_manifest")
+            fi
+          fi
+          if test "${#previous[@]}" -eq 0; then
+            baseline_database=/var/lib/hltb-updater/schema6-baseline-20260722.sqlite
+            if ! test -f "$baseline_database"; then
+              echo "Schema v6 baseline database is missing: $baseline_database" >&2
+              exit 1
+            fi
+            rm -rf /var/lib/hltb-updater/schema6-baseline-candidate.next
+            hltb-updater build \
+              --database "$baseline_database" \
+              --output /var/lib/hltb-updater/schema6-baseline-candidate.next \
+              --version 2026.07.22.1 \
+              --private-key "$signing_dir/key.pem" \
+              --overrides config/overrides.json \
+              --source-date 2026-07-22
+            hltb-updater verify-candidate \
+              --candidate /var/lib/hltb-updater/schema6-baseline-candidate.next \
+              --public-key config/snapshot-public-key.json
+            previous=(--previous-manifest /var/lib/hltb-updater/schema6-baseline-candidate.next/versions/2026.07.22.1/manifest.json)
           fi
           version="$(date -u +%Y.%m.%d.1)"
           hltb-updater build \
@@ -69,5 +93,3 @@ jobs:
             mv /var/lib/hltb-updater/shadow-candidate /var/lib/hltb-updater/shadow-candidate.previous
           fi
           mv /var/lib/hltb-updater/shadow-candidate.next /var/lib/hltb-updater/shadow-candidate
-          cp "/var/lib/hltb-updater/shadow-candidate/versions/$version/manifest.json" \
-            /var/lib/hltb-updater/shadow-previous-manifest.json
