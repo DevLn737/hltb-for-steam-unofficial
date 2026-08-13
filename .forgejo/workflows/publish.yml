@@ -51,7 +51,12 @@ jobs:
             hltb-updater verify-candidate --candidate previous --public-key config/snapshot-public-key.json
             echo "argument=--previous-manifest previous/$manifest_path" >> "$FORGEJO_OUTPUT"
           else
-            echo "argument=" >> "$FORGEJO_OUTPUT"
+            baseline=/var/lib/hltb-updater/schema6-baseline-candidate.next/versions/2026.07.22.1/manifest.json
+            if [ ! -f "$baseline" ]; then
+              echo "The initial publication requires the verified July 2026 baseline at $baseline" >&2
+              exit 1
+            fi
+            echo "argument=--previous-manifest $baseline" >> "$FORGEJO_OUTPUT"
           fi
       - name: Build signed candidate
         env:
