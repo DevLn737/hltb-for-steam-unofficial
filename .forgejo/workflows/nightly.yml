@@ -54,7 +54,7 @@ jobs:
             previous_path="$(python3 -c 'import json; print(json.load(open("/var/lib/hltb-updater/shadow-candidate/stable.json"))["manifestPath"])')"
             previous_manifest="/var/lib/hltb-updater/shadow-candidate/$previous_path"
             previous_schema="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["schema"])' "$previous_manifest")"
-            if test "$previous_schema" = 5 || test "$previous_schema" = 6; then
+            if test "$previous_schema" = 5 || test "$previous_schema" = 6 || test "$previous_schema" = 7; then
               previous=(--previous-manifest "$previous_manifest")
             fi
           fi

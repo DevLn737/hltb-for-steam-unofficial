@@ -40,8 +40,9 @@ def test_builds_signed_data_only_snapshot(tmp_path) -> None:
     assert manifest["excludedEntryCount"] == 1
     assert manifest["timedEntryCount"] == 1
     assert manifest["steamMappingCount"] == 2
-    assert manifest["schema"] == 6
-    assert manifest["format"] == "front-coded-uleb128-delta-v2"
+    assert manifest["schema"] == 7
+    assert manifest["format"] == "front-coded-uleb128-delta-v3"
+    assert manifest["checkedDates"] == ["2026-08-10"]
     assert manifest["baselineUpdatedAt"] == "2026-08-10"
     assert len(manifest["entries"]) == 32
     assert (output / "versions/2026.09.01.1/snapshot.pack").stat().st_size == manifest["pack"]["bytes"]
@@ -134,7 +135,7 @@ def test_build_compares_against_previous_v6_snapshot(tmp_path) -> None:
         source_updated_at="2026-09-01",
     )
     assert manifest["baselineUpdatedAt"] == "2026-08-01"
-    assert verify_candidate(candidate, public)["schema"] == 6
+    assert verify_candidate(candidate, public)["schema"] == 7
 
 
 def test_verifier_does_not_count_removed_only_history_as_current_time(tmp_path) -> None:

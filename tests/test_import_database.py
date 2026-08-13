@@ -72,3 +72,33 @@ def test_tombstone_requires_three_separate_404_days_over_thirty_days(tmp_path) -
     assert len(database.records()) == 1
     database.mark_missing(1, start + timedelta(days=31))
     assert database.records() == []
+
+
+def test_failed_checks_do_not_advance_last_success_date(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    record = GameRecord(1, "Example", 60, None, None, 100, None)
+    success = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    database.upsert(record, success)
+    database.mark_error(1, "rate_limited", 429, success + timedelta(days=5))
+    row = database.records()[0]
+    assert row["last_checked_at"] == "2026-01-06"
+    assert row["last_success_at"] == "2026-01-01"
+    database.mark_missing(1, success + timedelta(days=10))
+    row = database.records()[0]
+    assert row["last_checked_at"] == "2026-01-11"
+    assert row["last_success_at"] == "2026-01-01"
+
+
+def test_initialize_migrates_existing_database_with_conservative_success_date(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    with database.connect() as connection:
+        connection.execute("ALTER TABLE games RENAME TO games_current")
+        connection.execute("CREATE TABLE games AS SELECT hltb_id,title,main_minutes,extra_minutes,completion_minutes,steam_app_id,steam_alt_app_id,first_seen_at,last_checked_at,last_changed_at,next_refresh_at,content_hash,last_status,status_code,error_count,missing_count,first_missing_at,last_missing_at,tombstoned FROM games_current")
+        connection.execute("DROP TABLE games_current")
+        connection.execute("INSERT INTO games VALUES (1,'Example',60,NULL,NULL,100,NULL,'2026-01-01','2026-01-10','2026-01-01','2026-02-01','hash','error',403,1,0,NULL,NULL,0)")
+        connection.commit()
+    database.initialize()
+    row = database.records()[0]
+    assert row["last_success_at"] == "2026-01-01"

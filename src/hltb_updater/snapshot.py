@@ -18,8 +18,8 @@ from .database import Database
 
 
 BUCKET_COUNT = 16
-TITLE_MAGIC = b"HT6T"
-STEAM_MAGIC = b"HT6S"
+TITLE_MAGIC = b"HT7T"
+STEAM_MAGIC = b"HT7S"
 
 
 def digest(value: bytes) -> str:
@@ -116,7 +116,8 @@ def encode_title_bucket(rows: list[list[Any]]) -> bytes:
         output.extend(encode_unsigned(int(row[1])))
         for value in row[2:5]:
             output.extend(encode_unsigned(0 if value is None else int(value)))
-        for value in row[5:8]:
+        output.extend(encode_unsigned(int(row[5])))
+        for value in row[6:9]:
             output.extend(encode_unsigned(int(value)))
         previous = title
     return bytes(output)
@@ -136,6 +137,7 @@ def database_digest(rows: list[Any]) -> str:
         hasher.update(canonical_json([
             row["hltb_id"], row["title"], row["main_minutes"], row["extra_minutes"],
             row["completion_minutes"], row["steam_app_id"], row["steam_alt_app_id"],
+            row["last_success_at"],
         ]))
     return hasher.hexdigest()
 
@@ -146,18 +148,21 @@ def load_previous_times(manifest_path: str | Path | None) -> tuple[dict[int, tup
     path = Path(manifest_path)
     manifest = json.loads(path.read_text(encoding="utf-8"))
     schema = int(manifest.get("schema", 0))
-    if schema not in {5, 6}:
-        raise ValueError("Previous snapshot must use schema 5 or 6")
+    if schema not in {5, 6, 7}:
+        raise ValueError("Previous snapshot must use schema 5, 6, or 7")
     pack_path = path.parent / manifest.get("pack", {}).get("path", "snapshot.pack")
     pack = pack_path.read_bytes()
     result: dict[int, tuple[int | None, int | None, int | None]] = {}
-    magic = b"HT5T" if schema == 5 else TITLE_MAGIC
+    magic = {5: b"HT5T", 6: b"HT6T", 7: TITLE_MAGIC}[schema]
     for entry in manifest.get("entries", []):
         if entry.get("kind") != "title":
             continue
         start = int(entry["offset"])
         compressed = pack[start:start + int(entry["compressedBytes"])]
-        for row in decode_title_bucket(gzip.decompress(compressed), magic=magic, with_changes=schema == 6):
+        for row in decode_title_bucket(
+            gzip.decompress(compressed), magic=magic,
+            with_changes=schema >= 6, with_checked_date=schema >= 7,
+        ):
             result[int(row[1])] = (row[2], row[3], row[4])
     return result, manifest.get("sourceUpdatedAt")
 
@@ -211,6 +216,10 @@ def build_snapshot(
         game_id = int(override["hltbGameId"])
         steam_candidates[app_id] = {game_id}
 
+    checked_dates = sorted({str(row["last_success_at"]) for row in useful_rows})
+    for checked_date in checked_dates:
+        datetime.strptime(checked_date, "%Y-%m-%d")
+    checked_date_indexes = {value: index for index, value in enumerate(checked_dates)}
     locations: dict[int, int] = {}
     title_payloads: list[bytes] = []
     for bucket_index, bucket in enumerate(title_buckets):
@@ -223,7 +232,7 @@ def build_snapshot(
             locations[game_id] = (bucket_index << 16) | row_index
             current = (row["main_minutes"], row["extra_minutes"], row["completion_minutes"])
             baseline = previous_times.get(game_id, current)
-            compact.append([row["title"], game_id, *current, *(
+            compact.append([row["title"], game_id, *current, checked_date_indexes[str(row["last_success_at"])], *(
                 encode_time_change(baseline[index], current[index]) for index in range(3)
             )])
         title_payloads.append(encode_title_bucket(compact))
@@ -261,12 +270,13 @@ def build_snapshot(
     source_date = source_updated_at or now.date().isoformat()
     title_collisions = [ids for ids in title_candidates.values() if len(ids) > 1]
     manifest = {
-        "schema": 6,
+        "schema": 7,
         "snapshotVersion": version,
-        "format": "front-coded-uleb128-delta-v2",
+        "format": "front-coded-uleb128-delta-v3",
         "compression": "gzip",
         "sourceUpdatedAt": source_date,
         "baselineUpdatedAt": baseline_updated_at or source_date,
+        "checkedDates": checked_dates,
         "generatedAt": now.isoformat().replace("+00:00", "Z"),
         "sourceEntryCount": len(rows),
         "timedEntryCount": sum(1 for row in rows if any(row[key] is not None for key in (
@@ -351,7 +361,10 @@ def decode_header(value: bytes, magic: bytes) -> tuple[int, int]:
     return decode_unsigned(value, len(magic))
 
 
-def decode_title_bucket(value: bytes, magic: bytes = TITLE_MAGIC, with_changes: bool = True) -> list[list[Any]]:
+def decode_title_bucket(
+    value: bytes, magic: bytes = TITLE_MAGIC, with_changes: bool = True,
+    with_checked_date: bool = True,
+) -> list[list[Any]]:
     count, offset = decode_header(value, magic)
     rows: list[list[Any]] = []
     previous = b""
@@ -370,6 +383,9 @@ def decode_title_bucket(value: bytes, magic: bytes = TITLE_MAGIC, with_changes: 
         for index in range(4):
             number, offset = decode_unsigned(value, offset)
             values.append(number if index == 0 else number or None)
+        checked_date = None
+        if with_checked_date:
+            checked_date, offset = decode_unsigned(value, offset)
         changes = []
         if with_changes:
             for index in range(3):
@@ -377,7 +393,7 @@ def decode_title_bucket(value: bytes, magic: bytes = TITLE_MAGIC, with_changes: 
                 changes.append(decode_time_change(encoded, values[index + 1]))
         if not title or values[0] <= 0:
             raise ValueError("Invalid title row")
-        rows.append([title, *values, *changes])
+        rows.append([title, *values, checked_date, *changes] if with_checked_date else [title, *values, *changes])
         previous = title_bytes
     if offset != len(value):
         raise ValueError("Trailing title bucket data")
@@ -420,9 +436,16 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
         raise ValueError("Snapshot manifest checksum mismatch")
     manifest = json.loads(manifest_bytes)
     if (manifest.get("schema"), manifest.get("snapshotVersion"), manifest.get("format"), manifest.get("compression")) != (
-        6, version, "front-coded-uleb128-delta-v2", "gzip"
+        7, version, "front-coded-uleb128-delta-v3", "gzip"
     ) or manifest.get("bucketCount") != BUCKET_COUNT:
         raise ValueError("Unsupported snapshot manifest")
+    checked_dates = manifest.get("checkedDates")
+    if not isinstance(checked_dates, list) or not checked_dates or checked_dates != sorted(set(checked_dates)):
+        raise ValueError("Invalid snapshot checked-date dictionary")
+    for checked_date in checked_dates:
+        if not isinstance(checked_date, str):
+            raise ValueError("Invalid snapshot checked date")
+        datetime.strptime(checked_date, "%Y-%m-%d")
     entries = manifest.get("entries")
     if not isinstance(entries, list) or len(entries) != BUCKET_COUNT * 2:
         raise ValueError("Snapshot manifest must contain 32 pack entries")
@@ -456,13 +479,14 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
         if entry["kind"] == "title":
             rows = decode_title_bucket(raw)
             if not isinstance(rows, list) or len(rows) != entry["entries"] or any(
-                not isinstance(row, list) or len(row) != 8
+                not isinstance(row, list) or len(row) != 9
                 or not isinstance(row[0], str) or not row[0]
                 or not isinstance(row[1], int) or isinstance(row[1], bool) or row[1] <= 0
                 or any(value is not None and (not isinstance(value, int) or isinstance(value, bool) or value <= 0) for value in row[2:5])
+                or not isinstance(row[5], int) or isinstance(row[5], bool) or not 0 <= row[5] < len(checked_dates)
                 or any(value is not None and (
                     not isinstance(value, dict) or value.get("kind") not in {"new", "removed", "delta"}
-                ) for value in row[5:8])
+                ) for value in row[6:9])
                 for row in rows
             ):
                 raise ValueError(f"Invalid title bucket {entry['path']}")

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS games (
     steam_alt_app_id INTEGER,
     first_seen_at TEXT NOT NULL,
     last_checked_at TEXT NOT NULL,
+    last_success_at TEXT NOT NULL,
     last_changed_at TEXT NOT NULL,
     next_refresh_at TEXT NOT NULL,
     content_hash TEXT NOT NULL,
@@ -92,6 +93,12 @@ class Database:
     def initialize(self) -> None:
         with self.connect() as connection:
             connection.executescript(SCHEMA)
+            columns = {str(row[1]) for row in connection.execute("PRAGMA table_info(games)")}
+            if "last_success_at" not in columns:
+                connection.execute("ALTER TABLE games ADD COLUMN last_success_at TEXT")
+                connection.execute(
+                    "UPDATE games SET last_success_at=CASE WHEN last_status='ok' THEN last_checked_at ELSE last_changed_at END"
+                )
             connection.commit()
 
     def upsert(self, record: GameRecord, checked_at: datetime, initial: bool = False) -> bool:
@@ -111,10 +118,10 @@ class Database:
                 INSERT INTO games (
                     hltb_id, title, main_minutes, extra_minutes, completion_minutes,
                     steam_app_id, steam_alt_app_id, first_seen_at, last_checked_at,
-                    last_changed_at, next_refresh_at, content_hash, last_status,
+                    last_success_at, last_changed_at, next_refresh_at, content_hash, last_status,
                     status_code, error_count, missing_count, first_missing_at,
                     last_missing_at, tombstoned
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ok', 200, 0, 0, NULL, NULL, 0)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ok', 200, 0, 0, NULL, NULL, 0)
                 ON CONFLICT(hltb_id) DO UPDATE SET
                     title=excluded.title,
                     main_minutes=excluded.main_minutes,
@@ -123,6 +130,7 @@ class Database:
                     steam_app_id=excluded.steam_app_id,
                     steam_alt_app_id=excluded.steam_alt_app_id,
                     last_checked_at=excluded.last_checked_at,
+                    last_success_at=excluded.last_success_at,
                     last_changed_at=CASE WHEN games.content_hash <> excluded.content_hash THEN excluded.last_changed_at ELSE games.last_changed_at END,
                     next_refresh_at=excluded.next_refresh_at,
                     content_hash=excluded.content_hash,
@@ -132,7 +140,7 @@ class Database:
                 (
                     record.hltb_id, record.title, record.main_minutes, record.extra_minutes,
                     record.completion_minutes, record.steam_app_id, record.steam_alt_app_id,
-                    first_seen, checked_day, checked_day, due, record.content_hash,
+                    first_seen, checked_day, checked_day, checked_day, due, record.content_hash,
                 ),
             )
             connection.commit()
@@ -148,7 +156,7 @@ class Database:
             values.append((
                 record.hltb_id, record.title, record.main_minutes, record.extra_minutes,
                 record.completion_minutes, record.steam_app_id, record.steam_alt_app_id,
-                checked_day, checked_day, checked_day, due, record.content_hash,
+                checked_day, checked_day, checked_day, checked_day, due, record.content_hash,
             ))
         with self.connect() as connection:
             connection.executemany(
@@ -156,15 +164,16 @@ class Database:
                 INSERT INTO games (
                     hltb_id, title, main_minutes, extra_minutes, completion_minutes,
                     steam_app_id, steam_alt_app_id, first_seen_at, last_checked_at,
-                    last_changed_at, next_refresh_at, content_hash, last_status,
+                    last_success_at, last_changed_at, next_refresh_at, content_hash, last_status,
                     status_code, error_count, missing_count, first_missing_at,
                     last_missing_at, tombstoned
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ok', 200, 0, 0, NULL, NULL, 0)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ok', 200, 0, 0, NULL, NULL, 0)
                 ON CONFLICT(hltb_id) DO UPDATE SET
                     title=excluded.title, main_minutes=excluded.main_minutes,
                     extra_minutes=excluded.extra_minutes, completion_minutes=excluded.completion_minutes,
                     steam_app_id=excluded.steam_app_id, steam_alt_app_id=excluded.steam_alt_app_id,
                     last_checked_at=excluded.last_checked_at,
+                    last_success_at=excluded.last_success_at,
                     last_changed_at=CASE WHEN games.content_hash <> excluded.content_hash THEN excluded.last_changed_at ELSE games.last_changed_at END,
                     next_refresh_at=excluded.next_refresh_at, content_hash=excluded.content_hash,
                     last_status='ok', status_code=200, error_count=0, missing_count=0,
