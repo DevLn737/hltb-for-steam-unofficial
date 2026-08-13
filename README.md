@@ -34,7 +34,7 @@ hltb-updater backup --database state/hltb.sqlite --directory state/backups
 hltb-updater build --database state/hltb.sqlite --output candidate --version 2026.09.01.1 --private-key state/secrets/snapshot-signing-key.pem
 ```
 
-`build` creates `stable.json`, `stable.sig`, and an immutable `versions/<version>/` directory. Schema v7 stores a compact per-record last-successful-check date; failed HTTP or parser attempts never make stale completion times appear fresh. It does not publish anything by itself. The Forgejo publish workflow pushes the verified candidate to the dedicated GitHub Pages repository only after all gates pass. The initial public schema-v7 snapshot compares against the retained July 2026 schema-v6 baseline; later snapshots compare against the previous public stable version.
+`build` creates `stable.json`, `stable.sig`, and an immutable `versions/<version>/` directory. Schema v7 stores a compact per-record last-successful-check date; failed HTTP or parser attempts never make stale completion times appear fresh. It does not publish anything by itself. The Forgejo publish workflow pushes the verified candidate to the dedicated GitHub Pages repository only after all gates pass. The initial public schema-v7 snapshot compares against the retained July 2026 schema-v6 baseline; later snapshots compare against the previous public stable version. Publication uses a write-enabled GitHub deploy key scoped only to the data repository; no account-wide GitHub token is stored in Forgejo.
 
 ## Forgejo configuration
 

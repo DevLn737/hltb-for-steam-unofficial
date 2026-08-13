@@ -5,16 +5,19 @@ candidate="${1:?candidate directory is required}"
 test -f "$candidate/stable.json"
 test -f "$candidate/stable.sig"
 test -n "${DATA_REPOSITORY_URL:-}"
-test -n "${DATA_REPOSITORY_TOKEN:-}"
+test -n "${DATA_REPOSITORY_SSH_KEY:-}"
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
-authenticated_url="${DATA_REPOSITORY_URL/https:\/\//https:\/\/x-access-token:${DATA_REPOSITORY_TOKEN}@}"
+key_file="$work/data-repository-key"
+printf '%s\n' "$DATA_REPOSITORY_SSH_KEY" > "$key_file"
+chmod 600 "$key_file"
+export GIT_SSH_COMMAND="ssh -i $key_file -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
 
-if git ls-remote --exit-code --heads "$authenticated_url" gh-pages >/dev/null 2>&1; then
-  git clone --depth 1 --branch gh-pages "$authenticated_url" "$work/repository"
+if git ls-remote --exit-code --heads "$DATA_REPOSITORY_URL" gh-pages >/dev/null 2>&1; then
+  git clone --depth 1 --branch gh-pages "$DATA_REPOSITORY_URL" "$work/repository"
 else
-  git clone --depth 1 "$authenticated_url" "$work/repository"
+  git clone --depth 1 "$DATA_REPOSITORY_URL" "$work/repository"
   cd "$work/repository"
   git checkout --orphan gh-pages
   git rm -rf --ignore-unmatch .

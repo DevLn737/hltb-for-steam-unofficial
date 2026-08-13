@@ -74,7 +74,7 @@ jobs:
       - name: Publish GitHub Pages data branch
         env:
           DATA_REPOSITORY_URL: ${{ secrets.DATA_REPOSITORY_URL }}
-          DATA_REPOSITORY_TOKEN: ${{ secrets.DATA_REPOSITORY_TOKEN }}
+          DATA_REPOSITORY_SSH_KEY: ${{ secrets.DATA_REPOSITORY_SSH_KEY }}
         shell: bash
         run: scripts/publish-pages.sh candidate
 
