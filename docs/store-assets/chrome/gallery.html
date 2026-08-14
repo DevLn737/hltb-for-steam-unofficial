@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HLTB for Steam — store gallery</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, "Segoe UI", Arial, sans-serif; background: #0b1621; }
+    * { box-sizing: border-box; }
+    html, body { width: 1280px; height: 800px; margin: 0; overflow: hidden; }
+    body { color: #f5f8fa; background: radial-gradient(circle at 86% -12%, rgba(38,117,158,.3), transparent 42%), linear-gradient(145deg,#101e2b,#08121c 66%); }
+    .slide { position: relative; width: 1280px; height: 800px; padding: 31px 54px 48px; overflow: hidden; }
+    .topline { display: flex; align-items: center; gap: 10px; height: 23px; color: #dcebf4; font-size: 13px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+    .mark { width: 7px; height: 22px; border-radius: 3px; background: #4bbbf0; }
+    .unofficial { margin-left: 3px; color: #74c8ef; font-size: 10px; letter-spacing: .12em; opacity: .82; }
+    .heading { margin-top: 15px; }
+    h1 { margin: 0; font-size: 35px; line-height: 1.08; letter-spacing: -.025em; font-weight: 700; }
+    p { margin: 7px 0 0; color: #adc0cd; font-size: 17px; line-height: 1.35; }
+    .frame { position: absolute; left: 140px; top: 190px; width: 1000px; height: 380px; overflow: hidden; border: 1px solid #2c4659; border-radius: 13px; background: #17283a; box-shadow: 0 24px 60px rgba(0,0,0,.34); }
+    .capture { position: absolute; width: 2048px; height: auto; left: -516px; top: -448px; display: block; }
+    .frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.025); }
+    .slide-1 .capture { top: -402px; }
+    .slide-3 .capture { top: -612px; }
+    .slide-4 .frame { height: 530px; }
+    .slide-4 .capture { width: 1000px; left: 0; top: 0; }
+    .slide-5 { display: grid; grid-template-rows: auto 1fr; }
+    .slide-5 .heading, .slide-5 .frame { display: none; }
+    .trust { display: none; align-self: center; justify-self: center; width: 1030px; margin-top: 34px; text-align: center; }
+    .slide-5 .trust { display: block; }
+    .trust h1 { font-size: 49px; letter-spacing: -.035em; }
+    .trust p { margin-top: 15px; font-size: 19px; }
+    .trust-points { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 74px; border-top: 1px solid #294255; border-bottom: 1px solid #294255; }
+    .trust-point { padding: 29px 20px 31px; color: #eaf5fb; font-size: 20px; font-weight: 650; }
+    .trust-point + .trust-point { border-left: 1px solid #294255; }
+    .dot { display: inline-block; width: 8px; height: 8px; margin-right: 10px; border-radius: 50%; background: #4ac784; box-shadow: 0 0 14px rgba(74,199,132,.45); }
+  </style>
+</head>
+<body>
+  <main id="slide" class="slide">
+    <div class="topline"><span class="mark"></span>HLTB for Steam <span class="unofficial">Unofficial</span></div>
+    <div class="heading"><h1 id="headline"></h1><p id="subhead"></p></div>
+    <div class="frame"><img id="capture" class="capture" alt=""></div>
+    <section class="trust">
+      <h1 id="trust-headline">Simple and focused.</h1>
+      <p id="trust-subhead">No account, ads, or tracking.</p>
+      <div class="trust-points">
+        <div class="trust-point"><span class="dot"></span><span id="trust-point-1">Open source</span></div>
+        <div class="trust-point"><span class="dot"></span><span id="trust-point-2">Local settings</span></div>
+        <div class="trust-point"><span class="dot"></span><span id="trust-point-3">All features are free</span></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const slides = {
+      1: { image: 'raw-clean/01-stardew-valley-steam.png', headline: 'How long will it take to finish?', subhead: 'See completion times directly on Steam.' },
+      2: { image: 'raw-clean/02-palworld-steam.png', headline: 'How have completion times changed?', subhead: 'See the difference from previous estimates at a glance.' },
+      3: { image: 'raw-clean/03-kingdom-come-steam.png', headline: 'Plan your backlog.', subhead: 'Choose your next game with its completion time in mind.' },
+      4: { image: 'screenshots/03-settings.png', headline: 'Show only what matters to you.', subhead: 'Choose categories and time format.' },
+      5: { image: '' }
+    };
+    const russian = {
+      1: { headline: 'Сколько времени займёт прохождение?', subhead: 'Время прохождения прямо в Steam.' },
+      2: { headline: 'Как изменилось время прохождения?', subhead: 'Разница с предыдущими значениями видна сразу.' },
+      3: { headline: 'Планируйте свой бэклог.', subhead: 'Выбирайте следующую игру с учётом времени на прохождение.' },
+      4: { headline: 'Показывайте только нужное.', subhead: 'Выберите категории и формат времени.' },
+      5: {}
+    };
+    const number = new URLSearchParams(location.search).get('slide') ?? '1';
+    const locale = new URLSearchParams(location.search).get('lang') === 'ru' ? 'ru' : 'en';
+    const data = slides[number] ?? slides[1];
+    const copy = locale === 'ru' ? russian[number] : data;
+    const slide = document.querySelector('#slide');
+    document.documentElement.lang = locale;
+    slide.classList.add(`slide-${number}`);
+    document.querySelector('#capture').src = data.image;
+    document.querySelector('#headline').textContent = copy.headline ?? '';
+    document.querySelector('#subhead').textContent = copy.subhead ?? '';
+    if (locale === 'ru') {
+      document.querySelector('#trust-headline').textContent = 'Просто и без лишнего.';
+      document.querySelector('#trust-subhead').textContent = 'Без аккаунта, рекламы и отслеживания.';
+      document.querySelector('#trust-point-1').textContent = 'Открытый исходный код';
+      document.querySelector('#trust-point-2').textContent = 'Локальные настройки';
+      document.querySelector('#trust-point-3').textContent = 'Все функции бесплатны';
+    }
+  </script>
+</body>
+</html>
