@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
-import { encodeSteamIndex, packSnapshotLocation } from '../shared/snapshot-codec.mjs';
-import { normalizeTitle, SNAPSHOT_BUCKET_COUNT, snapshotBucket } from '../shared/title-normalization.mjs';
+import { encodeSteamIndex, encodeTitleBucket, packSnapshotLocation } from '../shared/snapshot-codec.mjs';
+import { compareNormalizedTitles, normalizeTitle, SNAPSHOT_BUCKET_COUNT, snapshotBucket } from '../shared/title-normalization.mjs';
 
-export const SNAPSHOT_SCHEMA = 3;
+export const SNAPSHOT_SCHEMA = 7;
 export const BUCKET_COUNT = SNAPSHOT_BUCKET_COUNT;
 
 export function sha256(value) {
@@ -65,21 +65,37 @@ export function buildSnapshot(records, overrides = { schema: 3, origin: 'unknown
   if (!Array.isArray(records)) throw new Error('Snapshot records must be an array');
   if (overrides?.schema !== 3 || !Array.isArray(overrides.entries)) throw new Error('Snapshot overrides must use schema 3');
 
-  const recordsById = new Map();
+  const allRecordsById = new Map();
+  const overrideTargets = new Set();
   const titleCandidates = new Map();
   const steamCandidates = new Map();
   let duplicateEntries = 0;
 
   for (const record of records) {
-    const normalized = normalizeTitle(record?.title);
     if (!positiveInteger(record?.gameId)) throw new Error('Invalid compact snapshot record');
-    const existing = recordsById.get(record.gameId);
+    const existing = allRecordsById.get(record.gameId);
     if (existing) {
       if (!sameRecord(existing, record)) throw new Error(`Conflicting duplicate HLTB game ID: ${record.gameId}`);
       duplicateEntries += 1;
       continue;
     }
-    recordsById.set(record.gameId, record);
+    allRecordsById.set(record.gameId, record);
+  }
+
+  for (const override of overrides.entries) {
+    const appId = positiveInteger(override?.appId);
+    const gameId = positiveInteger(override?.hltbGameId);
+    if (!appId || !gameId || !allRecordsById.has(gameId)) throw new Error(`Invalid snapshot mapping override: ${override?.appId ?? '<missing>'}`);
+    overrideTargets.add(gameId);
+  }
+
+  const recordsById = new Map([...allRecordsById].filter(([gameId, record]) =>
+    record.steamAppIds.length > 0
+    || [record.mainStory, record.mainPlusExtras, record.completionist].some((value) => value !== null)
+    || overrideTargets.has(gameId)));
+
+  for (const record of recordsById.values()) {
+    const normalized = normalizeTitle(record.title);
     const titleIds = titleCandidates.get(normalized) ?? new Set();
     titleIds.add(record.gameId);
     titleCandidates.set(normalized, titleIds);
@@ -103,13 +119,13 @@ export function buildSnapshot(records, overrides = { schema: 3, origin: 'unknown
     titleBuckets[snapshotBucket(normalized)].push({ normalized, record });
   }
   for (const bucket of titleBuckets) {
-    bucket.sort((left, right) => left.normalized.localeCompare(right.normalized, 'en') || left.record.gameId - right.record.gameId);
+    bucket.sort((left, right) => compareNormalizedTitles(left.normalized, right.normalized) || left.record.gameId - right.record.gameId);
   }
 
   const locations = new Map();
   const rows = titleBuckets.map((bucket, bucketIndex) => bucket.map(({ record }, rowIndex) => {
     locations.set(record.gameId, packSnapshotLocation(bucketIndex, rowIndex));
-    return [record.title, record.gameId, record.mainStory, record.mainPlusExtras, record.completionist];
+    return [record.title, record.gameId, record.mainStory, record.mainPlusExtras, record.completionist, 0, null, null, null];
   }));
 
   const titleCollisions = [...titleCandidates]
@@ -130,13 +146,17 @@ export function buildSnapshot(records, overrides = { schema: 3, origin: 'unknown
   for (const bucket of steamBuckets) bucket.sort((left, right) => left[0] - right[0]);
 
   return {
-    titleBuckets: rows,
+    titleBuckets: rows.map(encodeTitleBucket),
+    titleBucketEntryCounts: rows.map((bucket) => bucket.length),
     steamBuckets: steamBuckets.map(encodeSteamIndex),
     steamBucketEntryCounts: steamBuckets.map((bucket) => bucket.length),
     titleCollisions,
     metadata: {
       schema: SNAPSHOT_SCHEMA,
+      format: 'front-coded-uleb128-delta-v3',
       compression: 'gzip',
+      originalEntryCount: allRecordsById.size,
+      excludedEntryCount: allRecordsById.size - recordsById.size,
       entryCount: recordsById.size,
       normalizedTitleCount: titleCandidates.size,
       titleCollisionCount: titleCollisions.length,

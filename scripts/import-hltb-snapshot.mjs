@@ -42,11 +42,11 @@ function bucketInfo(name, entries, raw, compressed) {
 const titleBuckets = [];
 const steamBuckets = [];
 for (let index = 0; index < snapshot.titleBuckets.length; index += 1) {
-  const name = index.toString(16).padStart(2, '0');
-  const titleRaw = Buffer.from(JSON.stringify(snapshot.titleBuckets[index]));
+  const name = index.toString(16);
+  const titleRaw = Buffer.from(snapshot.titleBuckets[index]);
   const titleCompressed = gzipSync(titleRaw, { level: 9, mtime: 0 });
-  await writeFile(path.join(temporaryDirectory, 'title', `${name}.json.gz`), titleCompressed);
-  titleBuckets.push(bucketInfo(name, snapshot.titleBuckets[index].length, titleRaw, titleCompressed));
+  await writeFile(path.join(temporaryDirectory, 'title', `${name}.bin.gz`), titleCompressed);
+  titleBuckets.push(bucketInfo(name, snapshot.titleBucketEntryCounts[index], titleRaw, titleCompressed));
 
   const steamRaw = Buffer.from(snapshot.steamBuckets[index]);
   const steamCompressed = gzipSync(steamRaw, { level: 9, mtime: 0 });
@@ -57,6 +57,8 @@ for (let index = 0; index < snapshot.titleBuckets.length; index += 1) {
 const manifest = {
   ...snapshot.metadata,
   sourceUpdatedAt,
+  baselineUpdatedAt: sourceUpdatedAt,
+  checkedDates: [sourceUpdatedAt],
   source: {
     bytes: source.sourceBytes,
     sha256: digest,
@@ -93,4 +95,4 @@ await writeFile(path.join(reportDirectory, 'collisions.json'), `${JSON.stringify
 }, null, 2)}\n`);
 
 const compressedBytes = [...titleBuckets, ...steamBuckets].reduce((total, bucket) => total + bucket.compressedBytes, 0);
-console.log(`Generated schema v3: ${manifest.entryCount} known games (${timedEntryCount} timed) from ${sourceEntryCount} records (${compressedBytes} compressed bytes).`);
+console.log(`Generated schema v7: ${manifest.entryCount} useful games (${timedEntryCount} timed) from ${sourceEntryCount} records; excluded ${manifest.excludedEntryCount} empty unlinked games (${compressedBytes} compressed bytes).`);

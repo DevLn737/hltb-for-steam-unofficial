@@ -16,6 +16,7 @@ signed/
 .env
 .env.*
 !.env.example
+.acceptance/
 *.crx
 *.pem
 *.key

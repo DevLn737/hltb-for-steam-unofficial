@@ -2,11 +2,13 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased] — 2.2.0 development
+## [2.2.0] - 2026-08-14
 
 ### Added
 
-- Add independently versioned, ECDSA P-256 signed schema-v4 snapshot updates from a static GitHub Pages data channel.
+- Add independently versioned, ECDSA P-256 signed schema-v7 snapshot updates from a static GitHub Pages data channel.
+- Show compact per-category completion-time changes against the previous stable snapshot, including localized `NEW` and `REMOVED` states.
+- Show the last successful check date of each individual snapshot record instead of the publication date of the whole archive.
 - Add atomic IndexedDB installation with active/previous remote versions and packaged-snapshot fallback.
 - Add strict pointer, manifest, pack, bucket, SHA-256, and signature validation with no remote executable logic.
 - Add a separate private Forgejo/SQLite updater foundation for incremental ID discovery, adaptive refresh, retained backups, guarded monthly publication, and data-only pack generation.
@@ -16,6 +18,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Steam prefers the newest verified remote snapshot and remains fully functional offline through stored and packaged snapshots.
 - Chrome and Firefox retain live HLTB lookup while adding the verified current snapshot before the packaged fallback.
 - Snapshot update checks use fixed URLs at most once every 24 hours and never send a Steam App ID or title to the data host.
+- Store packaged and remote data in 16 gzip-compressed front-coded binary title buckets and 16 ULEB128 Steam indexes.
+- Preserve all 58,820 timed games and 58,288 unambiguous Steam mappings while omitting 88,270 empty unlinked cards, reducing the packaged snapshot payload from 3,265,957 to 1,628,940 bytes.
+- Rebuild development IndexedDB data during the schema-v7 migration and reject malformed binary buckets, invalid UTF-8, trailing bytes, and broken cross-references.
 
 ## [2.1.4] - 2026-08-02
 

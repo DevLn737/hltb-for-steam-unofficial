@@ -1,7 +1,7 @@
 import { browser } from 'wxt/browser';
 import type { RemoteSnapshotPointer, SnapshotUpdateState } from './contracts';
 import { sha256Hex, verifyPointerSignature } from './crypto';
-import { parseRemoteSnapshotPointer, parseSnapshotManifestV4, resolveSnapshotUrl } from './manifest';
+import { parseRemoteSnapshotPointer, parseSnapshotManifestV7, resolveSnapshotUrl } from './manifest';
 import { validateAndExtractPack } from './pack';
 import { REMOTE_SNAPSHOT_BASE_URL, REMOTE_SNAPSHOT_PUBLIC_KEY } from './remote-config';
 import type { RemoteSnapshotStore } from './remote-store';
@@ -111,7 +111,7 @@ export class SnapshotUpdateManager {
         'Snapshot manifest', 2 * 1024 * 1024,
       );
       if (await sha256Hex(manifestBytes) !== pointer.manifestSha256) throw new Error('Remote snapshot manifest checksum mismatch');
-      const manifest = parseSnapshotManifestV4(parseJson(manifestBytes), pointer.snapshotVersion);
+      const manifest = parseSnapshotManifestV7(parseJson(manifestBytes), pointer.snapshotVersion);
       const packUrl = resolveSnapshotUrl(new URL('.', manifestUrl).toString(), manifest.pack.path);
       const pack = await responseBytes(
         await this.fetchImpl(packUrl, { cache: 'no-store', credentials: 'omit', redirect: 'error' }),

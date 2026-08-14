@@ -1,5 +1,7 @@
 import { defineConfig } from 'wxt';
 
+const acceptanceSnapshotHost = process.env.WXT_REMOTE_SNAPSHOT_HOST_PERMISSION;
+
 export default defineConfig({
   manifestVersion: 3,
   zip: {
@@ -38,13 +40,14 @@ export default defineConfig({
     short_name: '__MSG_extensionShortName__',
     description: '__MSG_extensionDescription__',
     default_locale: 'en',
-    version: '2.1.4',
+    version: '2.2.0',
     homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
     ...(browser === 'firefox' ? {} : { minimum_chrome_version: '88' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
     host_permissions: [
       'https://howlongtobeat.com/*',
       'https://devln737.github.io/hltb-for-steam-data/*',
+      ...(acceptanceSnapshotHost ? [acceptanceSnapshotHost] : []),
     ],
     declarative_net_request: {
       rule_resources: [

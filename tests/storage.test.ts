@@ -14,10 +14,10 @@ describe('storage', () => {
 
   it('distinguishes fresh and stale cache entries', async () => {
     await setCachedGame({
-      appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
+      appId: '3375780', gameId: 123, requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
       availability: 'timed',
-      source: 'network', updatedAt: 1_000, stale: false,
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null, source: 'network', updatedAt: 1_000, stale: false,
     });
     await expect(getCachedGame('3375780', 'Trails in the Sky 1st Chapter', 7, 2_000)).resolves.toMatchObject({ fresh: true });
     await expect(getCachedGame('3375780', 'Trails in the Sky 1st Chapter', 1, 90_000_000)).resolves.toMatchObject({ fresh: false, data: { stale: true } });
@@ -28,7 +28,7 @@ describe('storage', () => {
       'game:v3:3375780:trails in the sky 1st chapter': {
         schema: 3,
         data: {
-          appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
+          appId: '3375780', gameId: 123, requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
           mainStory: 2400, mainPlusExtras: 3420, completionist: 3480,
           hltbUrl: 'https://howlongtobeat.com/game/155183', imageUrl: 'https://howlongtobeat.com/games/old.jpg', fetchedAt: 1_000,
         },
@@ -46,7 +46,7 @@ describe('storage', () => {
       'game:v4:3181220:av director life': {
         schema: 4,
         data: {
-          appId: '3181220', requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
+          appId: '3181220', gameId: 123, requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
           mainStory: null, mainPlusExtras: null, completionist: null,
           hltbUrl: 'https://howlongtobeat.com/game/175491', updatedAt: 1_000,
         },

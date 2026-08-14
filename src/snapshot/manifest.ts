@@ -2,7 +2,7 @@ import { isSha256 } from './crypto';
 import type {
   RemoteSnapshotPointer,
   SnapshotLookupManifest,
-  SnapshotManifestV4,
+  SnapshotManifestV7,
   SnapshotPackEntry,
 } from './contracts';
 
@@ -58,9 +58,9 @@ function parsePackEntry(value: unknown): SnapshotPackEntry {
   ])) throw new Error('Invalid snapshot pack entry');
   const kind = value.kind;
   const name = value.name;
-  const expectedPath = kind === 'title' ? `title/${name}.json.gz` : `steam/${name}.bin.gz`;
+  const expectedPath = `${kind}/${name}.bin.gz`;
   if ((kind !== 'title' && kind !== 'steam')
-    || typeof name !== 'string' || !/^[a-f0-9]{2}$/.test(name)
+    || typeof name !== 'string' || !/^[a-f0-9]$/.test(name)
     || value.path !== expectedPath
     || !nonNegativeInteger(value.offset)
     || !nonNegativeInteger(value.entries)
@@ -73,28 +73,34 @@ function parsePackEntry(value: unknown): SnapshotPackEntry {
   return value as unknown as SnapshotPackEntry;
 }
 
-export function parseSnapshotManifestV4(value: unknown, expectedVersion?: string): SnapshotManifestV4 {
+export function parseSnapshotManifestV7(value: unknown, expectedVersion?: string): SnapshotManifestV7 {
   const keys = [
-    'schema', 'snapshotVersion', 'compression', 'sourceUpdatedAt', 'generatedAt', 'sourceEntryCount',
-    'timedEntryCount', 'entryCount', 'normalizedTitleCount', 'titleCollisionCount', 'titleCollisionRecordCount',
+    'schema', 'snapshotVersion', 'format', 'compression', 'sourceUpdatedAt', 'baselineUpdatedAt', 'checkedDates', 'generatedAt', 'sourceEntryCount',
+    'timedEntryCount', 'entryCount', 'originalEntryCount', 'excludedEntryCount', 'normalizedTitleCount', 'titleCollisionCount', 'titleCollisionRecordCount',
     'steamMappingCount', 'steamCollisionCount', 'bucketCount', 'origin', 'source', 'pack', 'entries',
   ];
   if (!isRecord(value) || !exactKeys(value, keys)
-    || value.schema !== 4 || value.compression !== 'gzip' || value.bucketCount !== 64
+    || value.schema !== 7 || value.format !== 'front-coded-uleb128-delta-v3' || value.compression !== 'gzip' || value.bucketCount !== 16
     || typeof value.snapshotVersion !== 'string' || !isSnapshotVersion(value.snapshotVersion)
     || (expectedVersion !== undefined && value.snapshotVersion !== expectedVersion)
     || typeof value.sourceUpdatedAt !== 'string' || !isCalendarDate(value.sourceUpdatedAt)
+    || typeof value.baselineUpdatedAt !== 'string' || !isCalendarDate(value.baselineUpdatedAt)
+    || !Array.isArray(value.checkedDates) || value.checkedDates.length === 0
+    || value.checkedDates.some((date) => typeof date !== 'string' || !isCalendarDate(date))
+    || value.checkedDates.some((date, index, dates) => index > 0 && String(date) <= String(dates[index - 1]))
     || typeof value.generatedAt !== 'string' || Number.isNaN(Date.parse(value.generatedAt))
     || typeof value.origin !== 'string' || value.origin.length === 0
     || !nonNegativeInteger(value.sourceEntryCount) || !nonNegativeInteger(value.timedEntryCount)
-    || !nonNegativeInteger(value.entryCount) || !nonNegativeInteger(value.normalizedTitleCount)
+    || !nonNegativeInteger(value.entryCount) || !nonNegativeInteger(value.originalEntryCount)
+    || !nonNegativeInteger(value.excludedEntryCount) || Number(value.entryCount) + Number(value.excludedEntryCount) !== Number(value.originalEntryCount)
+    || !nonNegativeInteger(value.normalizedTitleCount)
     || !nonNegativeInteger(value.titleCollisionCount) || !nonNegativeInteger(value.titleCollisionRecordCount)
     || !nonNegativeInteger(value.steamMappingCount) || !nonNegativeInteger(value.steamCollisionCount)
     || !isRecord(value.source) || !exactKeys(value.source, ['lastGameId', 'databaseSha256'])
     || !nonNegativeInteger(value.source.lastGameId) || !isSha256(value.source.databaseSha256)
     || !isRecord(value.pack) || !exactKeys(value.pack, ['path', 'bytes', 'sha256'])
     || value.pack.path !== 'snapshot.pack' || !positiveInteger(value.pack.bytes) || !isSha256(value.pack.sha256)
-    || !Array.isArray(value.entries) || value.entries.length !== 128) {
+    || !Array.isArray(value.entries) || value.entries.length !== 32) {
     throw new Error('Invalid remote snapshot manifest');
   }
   const entries = value.entries.map(parsePackEntry).sort((left, right) => left.offset - right.offset);
@@ -107,25 +113,36 @@ export function parseSnapshotManifestV4(value: unknown, expectedVersion?: string
   }
   if (offset !== value.pack.bytes) throw new Error('Snapshot pack size does not match its entries');
   for (const kind of ['title', 'steam'] as const) {
-    for (let index = 0; index < 64; index += 1) {
-      const name = index.toString(16).padStart(2, '0');
-      const path = kind === 'title' ? `title/${name}.json.gz` : `steam/${name}.bin.gz`;
+    for (let index = 0; index < 16; index += 1) {
+      const name = index.toString(16);
+      const path = `${kind}/${name}.bin.gz`;
       if (!paths.has(path)) throw new Error(`Missing snapshot pack entry ${path}`);
     }
   }
-  return { ...(value as unknown as SnapshotManifestV4), entries };
+  const titleEntries = entries.filter((entry) => entry.kind === 'title').reduce((total, entry) => total + entry.entries, 0);
+  const steamEntries = entries.filter((entry) => entry.kind === 'steam').reduce((total, entry) => total + entry.entries, 0);
+  if (titleEntries !== value.entryCount || steamEntries !== value.steamMappingCount
+    || Number(value.timedEntryCount) > Number(value.entryCount)
+    || Number(value.normalizedTitleCount) > Number(value.entryCount)
+    || Number(value.titleCollisionRecordCount) > Number(value.entryCount)) {
+    throw new Error('Snapshot manifest aggregate counts do not match its entries');
+  }
+  return { ...(value as unknown as SnapshotManifestV7), entries };
 }
 
-export function toLookupManifest(manifest: SnapshotManifestV4): SnapshotLookupManifest {
+export function toLookupManifest(manifest: SnapshotManifestV7): SnapshotLookupManifest {
   const titleBuckets = manifest.entries.filter((entry) => entry.kind === 'title')
     .sort((left, right) => left.name.localeCompare(right.name));
   const steamBuckets = manifest.entries.filter((entry) => entry.kind === 'steam')
     .sort((left, right) => left.name.localeCompare(right.name));
   return {
-    schema: 4,
+    schema: 7,
+    format: 'front-coded-uleb128-delta-v3',
     compression: 'gzip',
     sourceUpdatedAt: manifest.sourceUpdatedAt,
-    bucketCount: 64,
+    baselineUpdatedAt: manifest.baselineUpdatedAt,
+    checkedDates: manifest.checkedDates,
+    bucketCount: 16,
     titleBuckets,
     steamBuckets,
   };

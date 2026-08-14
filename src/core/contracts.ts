@@ -1,6 +1,7 @@
 import type { SnapshotUpdateState } from '../snapshot/contracts';
 
 export type TimeCategory = 'mainStory' | 'mainPlusExtras' | 'completionist';
+export type TimeChange = null | { kind: 'new' } | { kind: 'removed'; previous: number } | { kind: 'delta'; minutes: number };
 export type TimeFormat = 'decimal' | 'hoursMinutes';
 export type CacheDurationDays = 1 | 7 | 30;
 
@@ -22,11 +23,14 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
 
 export interface GameTimes {
   appId: string;
+  gameId: number;
   requestedTitle: string;
   matchedTitle: string;
   mainStory: number | null;
   mainPlusExtras: number | null;
   completionist: number | null;
+  changes: Record<TimeCategory, TimeChange>;
+  baselineUpdatedAt: number | null;
   availability: 'timed' | 'known_without_times';
   hltbUrl: string;
   source: 'network' | 'cache' | 'snapshot';

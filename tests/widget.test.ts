@@ -20,10 +20,10 @@ describe('Steam widget', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
-      appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
+      appId: '3375780', gameId: 123, requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: 'Trails in the Sky 1st Chapter',
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: 'https://howlongtobeat.com/game/155183',
       availability: 'timed',
-      source: 'network', updatedAt: Date.UTC(2026, 6, 18), stale: false,
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null, source: 'network', updatedAt: Date.UTC(2026, 6, 18), stale: false,
     }, DEFAULT_SETTINGS, 'en',
     ['https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3375780/library_600x900_2x.jpg'],
     'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/header.jpg');
@@ -38,20 +38,21 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).not.toContain('Updated');
   });
 
-  it('shows only the snapshot update time and removes failed Steam artwork without a placeholder', () => {
+  it('shows the per-game snapshot check time and removes failed Steam artwork without a placeholder', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
-      appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
+      appId: '2258500', gameId: 123, requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
       mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
       availability: 'timed',
       hltbUrl: 'https://howlongtobeat.com/?q=CRYMACHINA', source: 'snapshot',
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null,
       updatedAt: Date.UTC(2026, 6, 20), stale: false,
     }, DEFAULT_SETTINGS, 'ru',
     ['https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2258500/library_600x900_2x.jpg'],
     'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2258500/header.jpg');
     expect(host.shadowRoot?.textContent).not.toContain('Локальный снимок');
-    expect(host.shadowRoot?.textContent).toContain('Обновлено');
+    expect(host.shadowRoot?.textContent).toContain('Проверено');
     const image = host.shadowRoot?.querySelector('img');
     image?.dispatchEvent(new Event('error'));
     expect(host.shadowRoot?.querySelector('.artwork')).toBeNull();
@@ -78,10 +79,11 @@ describe('Steam widget', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
-      appId: '3181220', requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
+      appId: '3181220', gameId: 123, requestedTitle: 'AV Director Life!', matchedTitle: 'AV Director Life!',
       mainStory: null, mainPlusExtras: 120, completionist: null,
       availability: 'timed',
       hltbUrl: 'https://howlongtobeat.com/game/175491', source: 'network',
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null,
       updatedAt: Date.UTC(2026, 6, 28), stale: false,
     }, DEFAULT_SETTINGS, 'en');
     expect(host.shadowRoot?.querySelectorAll('.time.is-unavailable')).toHaveLength(2);
@@ -93,9 +95,10 @@ describe('Steam widget', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
-      appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
+      appId: '2258500', gameId: 123, requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
       mainStory: 930, mainPlusExtras: 1170, completionist: 1740, availability: 'timed',
       hltbUrl: 'https://howlongtobeat.com/game/124771', source: 'cache',
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null,
       updatedAt: Date.UTC(2026, 6, 28), stale: true,
     }, DEFAULT_SETTINGS, 'en');
     expect(host.shadowRoot?.textContent).toContain('Saved result');
@@ -108,9 +111,9 @@ describe('Steam widget', () => {
     const vertical = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3639650/library_600x900_2x.jpg';
     const header = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3639650/header.jpg';
     renderResult(host, {
-      appId: '3639650', requestedTitle: 'Kotama and Academy Citadel', matchedTitle: 'Kotama and Academy Citadel',
+      appId: '3639650', gameId: 123, requestedTitle: 'Kotama and Academy Citadel', matchedTitle: 'Kotama and Academy Citadel',
       mainStory: 590, mainPlusExtras: 996, completionist: 1126, availability: 'timed',
-      hltbUrl: 'https://howlongtobeat.com/game/1', source: 'snapshot', updatedAt: Date.UTC(2026, 6, 22), stale: false,
+      hltbUrl: 'https://howlongtobeat.com/game/1', changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null, source: 'snapshot', updatedAt: Date.UTC(2026, 6, 22), stale: false,
     }, DEFAULT_SETTINGS, 'en', [vertical, header], header);
     const image = host.shadowRoot?.querySelector('img');
     image?.dispatchEvent(new Event('error'));
@@ -127,5 +130,38 @@ describe('Steam widget', () => {
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderError(host, 'network', 'CRYMACHINA', 'en', { stage: 'initialization', status: 403 });
     expect(host.shadowRoot?.textContent).toContain('initialization (HTTP 403)');
+  });
+
+  it('renders outlined change badges and hides decimal changes that round to zero', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderResult(host, {
+      appId: '2258500', gameId: 124_771, requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
+      mainStory: 960, mainPlusExtras: 1170, completionist: null, availability: 'timed',
+      changes: {
+        mainStory: { kind: 'delta', minutes: 30 },
+        mainPlusExtras: { kind: 'delta', minutes: 10 },
+        completionist: { kind: 'removed', previous: 1740 },
+      },
+      baselineUpdatedAt: Date.UTC(2026, 6, 22), hltbUrl: 'https://howlongtobeat.com/game/124771',
+      source: 'snapshot', updatedAt: Date.UTC(2026, 7, 12), stale: false,
+    }, DEFAULT_SETTINGS, 'en');
+    const badges = [...host.shadowRoot?.querySelectorAll('.time-change') ?? []];
+    expect(badges.map((badge) => badge.textContent)).toEqual(['▲ 0.5h', 'REMOVED']);
+    expect(badges[0]?.getAttribute('aria-label')).toContain('Increased');
+    expect(host.shadowRoot?.querySelector('.time-change-down')).toBeNull();
+  });
+
+  it('renders NEW as a localized badge', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderResult(host, {
+      appId: '1', gameId: 1, requestedTitle: 'Game', matchedTitle: 'Game',
+      mainStory: 60, mainPlusExtras: null, completionist: null, availability: 'timed',
+      changes: { mainStory: { kind: 'new' }, mainPlusExtras: null, completionist: null },
+      baselineUpdatedAt: Date.UTC(2026, 6, 22), hltbUrl: 'https://howlongtobeat.com/game/1',
+      source: 'snapshot', updatedAt: Date.UTC(2026, 7, 12), stale: false,
+    }, DEFAULT_SETTINGS, 'ru');
+    expect(host.shadowRoot?.querySelector('.time-change-new')?.textContent).toBe('НОВОЕ');
   });
 });

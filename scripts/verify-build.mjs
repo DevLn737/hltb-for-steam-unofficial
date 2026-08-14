@@ -6,7 +6,7 @@ const root = path.resolve('.output/chrome-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.1.4') throw new Error('Unexpected extension version');
+if (manifest.version !== '2.2.0') throw new Error('Unexpected extension version');
 if (Number(manifest.minimum_chrome_version) < 88) {
   throw new Error('Chrome Web Store requires minimum_chrome_version 88 or newer for Manifest V3');
 }
@@ -60,6 +60,6 @@ if (nestedManifests.length > 0) {
 const forbidden = files.find((file) => /fallback-data|hltb_data|scraper|collision|coverage|\.backup|[\\/]_metadata[\\/]/i.test(file));
 if (forbidden) throw new Error(`Forbidden legacy artifact in build: ${forbidden}`);
 const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size))).reduce((sum, size) => sum + size, 0);
-if (totalBytes > 4_500_000) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
+if (totalBytes > 2_097_152) throw new Error(`Extension build is unexpectedly large: ${totalBytes} bytes`);
 
 console.log(`Verified ${files.length} packaged files (${totalBytes} bytes).`);

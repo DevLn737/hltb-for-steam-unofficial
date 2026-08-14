@@ -1,7 +1,8 @@
 import { browser } from 'wxt/browser';
-import { decodeSteamIndex, type SteamIndexPair, unpackSnapshotLocation } from '../../shared/snapshot-codec.mjs';
-import { normalizeTitle, normalizeTitleLegacy, snapshotBucket } from '../../shared/title-normalization.mjs';
+import { decodeSteamIndex, decodeTitleBucket, type SteamIndexPair, unpackSnapshotLocation } from '../../shared/snapshot-codec.mjs';
+import { normalizeTitle, snapshotBucket } from '../../shared/title-normalization.mjs';
 import type { SnapshotLookupManifest } from './contracts';
+import type { TimeChange } from '../core/contracts';
 import { toLookupManifest } from './manifest';
 import type { RemoteSnapshotStore } from './remote-store';
 
@@ -11,6 +12,10 @@ type SnapshotRow = [
   mainStory: number | null,
   mainPlusExtras: number | null,
   completionist: number | null,
+  checkedDateIndex: number,
+  mainStoryChange: TimeChange,
+  mainPlusExtrasChange: TimeChange,
+  completionistChange: TimeChange,
 ];
 
 export interface SnapshotGameTimes {
@@ -19,6 +24,8 @@ export interface SnapshotGameTimes {
   mainStory: number | null;
   mainPlusExtras: number | null;
   completionist: number | null;
+  changes: Record<'mainStory' | 'mainPlusExtras' | 'completionist', TimeChange>;
+  baselineUpdatedAt: number;
   updatedAt: number;
 }
 
@@ -34,7 +41,7 @@ export interface SnapshotSource {
 }
 
 function bucketName(index: number): string {
-  return index.toString(16).padStart(2, '0');
+  return index.toString(16);
 }
 
 function findAppLocation(pairs: SteamIndexPair[], appId: number): number | null {
@@ -90,30 +97,34 @@ export class HltbSnapshot {
       }
     }
 
-    const normalize = manifest.schema === 3 ? normalizeTitleLegacy : normalizeTitle;
-    const normalized = normalize(title);
+    const normalized = normalizeTitle(title);
     if (!normalized) return null;
-    const rows = await this.getTitleBucket(bucketName(snapshotBucket(normalized)), manifest);
-    const matches = rows.filter((row) => normalize(row[0]) === normalized);
+    const rows = await this.getTitleBucket(bucketName(snapshotBucket(normalized, manifest.bucketCount)), manifest);
+    const matches = rows.filter((row) => normalizeTitle(row[0]) === normalized);
     return matches.length === 1 ? this.toResult(matches[0]!, manifest) : null;
   }
 
   private toResult(row: SnapshotRow, manifest: SnapshotLookupManifest): SnapshotGameTimes {
-    const parsedDate = Date.parse(manifest.sourceUpdatedAt);
     return {
       gameId: row[1],
       matchedTitle: row[0],
       mainStory: row[2],
       mainPlusExtras: row[3],
       completionist: row[4],
-      updatedAt: Number.isNaN(parsedDate) ? 0 : parsedDate,
+      changes: { mainStory: row[6], mainPlusExtras: row[7], completionist: row[8] },
+      baselineUpdatedAt: Date.parse(manifest.baselineUpdatedAt),
+      updatedAt: Date.parse(manifest.checkedDates[row[5]]!),
     };
   }
 
   private getManifest(): Promise<SnapshotLookupManifest> {
     this.manifestPromise ??= this.source.getManifest().then((manifest) => {
-      if ((manifest.schema !== 3 && manifest.schema !== 4) || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
-        || manifest.titleBuckets.length !== 64 || manifest.steamBuckets.length !== 64) {
+      if (manifest.schema !== 7 || manifest.format !== 'front-coded-uleb128-delta-v3'
+        || manifest.compression !== 'gzip' || manifest.bucketCount !== 16
+        || manifest.titleBuckets.length !== 16 || manifest.steamBuckets.length !== 16
+        || !Array.isArray(manifest.checkedDates) || manifest.checkedDates.length === 0
+        || manifest.checkedDates.some((date, index, dates) => Number.isNaN(Date.parse(`${date}T00:00:00Z`))
+          || (index > 0 && date <= dates[index - 1]!))) {
         throw new Error('Unsupported HLTB snapshot manifest');
       }
       return manifest;
@@ -126,12 +137,13 @@ export class HltbSnapshot {
     if (!metadata) return Promise.reject(new Error(`Missing HLTB title bucket ${name}`));
     let pending = this.titleBucketPromises.get(name);
     if (!pending) {
-      pending = this.loadGzip(`title/${name}.json.gz`).then((bytes) => {
-        const rows = JSON.parse(new TextDecoder().decode(bytes)) as SnapshotRow[];
+      pending = this.loadGzip(`title/${name}.bin.gz`).then((bytes) => {
+        const rows = decodeTitleBucket(bytes) as SnapshotRow[];
         if (!Array.isArray(rows) || rows.length !== metadata.entries || rows.some((row) =>
-          !Array.isArray(row) || row.length !== 5 || typeof row[0] !== 'string' || row[0].length === 0
+          !Array.isArray(row) || row.length !== 9 || typeof row[0] !== 'string' || row[0].length === 0
           || !Number.isSafeInteger(row[1]) || row[1] <= 0
-          || [row[2], row[3], row[4]].some((value) => value !== null && (!Number.isSafeInteger(value) || value <= 0)))) {
+          || [row[2], row[3], row[4]].some((value) => value !== null && (!Number.isSafeInteger(value) || value <= 0))
+          || !Number.isSafeInteger(row[5]) || row[5] < 0 || row[5] >= manifest.checkedDates.length)) {
           throw new Error(`Invalid HLTB title bucket ${name}`);
         }
         return rows;

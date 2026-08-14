@@ -11,6 +11,14 @@ function isNullableNumber(value: unknown): boolean {
   return value === null || (typeof value === 'number' && Number.isFinite(value));
 }
 
+function isTimeChange(value: unknown): boolean {
+  return value === null || (isRecord(value) && (
+    value.kind === 'new'
+    || (value.kind === 'removed' && typeof value.previous === 'number' && value.previous > 0)
+    || (value.kind === 'delta' && typeof value.minutes === 'number' && value.minutes !== 0)
+  ));
+}
+
 export function isExtensionSettings(value: unknown): value is ExtensionSettings {
   if (!isRecord(value) || !isRecord(value.categories)) return false;
   const categories = value.categories;
@@ -42,11 +50,14 @@ export function isLookupResult(value: unknown): value is LookupResult {
   const data = value.data;
   return isRecord(data)
     && typeof data.appId === 'string'
+    && typeof data.gameId === 'number' && data.gameId > 0
     && typeof data.requestedTitle === 'string'
     && typeof data.matchedTitle === 'string'
     && isNullableNumber(data.mainStory)
     && isNullableNumber(data.mainPlusExtras)
     && isNullableNumber(data.completionist)
+    && isRecord(data.changes) && CATEGORIES.every((category) => isTimeChange((data.changes as Record<string, unknown>)[category]))
+    && (data.baselineUpdatedAt === null || typeof data.baselineUpdatedAt === 'number')
     && (data.availability === 'timed' || data.availability === 'known_without_times')
     && typeof data.hltbUrl === 'string'
     && (data.source === 'network' || data.source === 'cache' || data.source === 'snapshot')

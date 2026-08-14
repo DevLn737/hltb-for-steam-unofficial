@@ -5,7 +5,7 @@ function record(gameId, title, times, steamAppIds = []) {
   return { gameId, title, mainStory: times[0], mainPlusExtras: times[1], completionist: times[2], steamAppIds };
 }
 
-describe('snapshot v3 importer', () => {
+describe('snapshot v7 importer', () => {
   it('extracts only useful fields and converts seconds to minutes', () => {
     expect(secondsToMinutes(55_066)).toBe(918);
     expect(secondsToMinutes(1)).toBe(1);
@@ -27,7 +27,7 @@ describe('snapshot v3 importer', () => {
       entryCount: 3, normalizedTitleCount: 2, titleCollisionCount: 1, titleCollisionRecordCount: 2,
       steamCandidateCount: 3, steamMappingCount: 2, steamCollisionCount: 1,
     });
-    expect(result.titleBuckets.flat()).toContainEqual(['Safe Game', 3, 90, 120, 180]);
+    expect(result.metadata.entryCount).toBe(3);
   });
 
   it('uses mapping-only overrides and rejects conflicting duplicate HLTB IDs', () => {
@@ -35,5 +35,15 @@ describe('snapshot v3 importer', () => {
     const result = buildSnapshot(records, { schema: 3, origin: 'test', entries: [{ appId: '10', hltbGameId: 2 }] });
     expect(result.metadata).toMatchObject({ steamMappingCount: 1, steamCollisionCount: 0 });
     expect(() => buildSnapshot([...records, record(1, 'Changed', [60, null, null])])).toThrow(/Conflicting duplicate/);
+  });
+
+  it('prunes only empty unlinked entries and retains override targets', () => {
+    const result = buildSnapshot([
+      record(1, 'Empty and unlinked', [null, null, null]),
+      record(2, 'Steam only', [null, null, null], [20]),
+      record(3, 'Timed only', [60, null, null]),
+      record(4, 'Override only', [null, null, null]),
+    ], { schema: 3, origin: 'test', entries: [{ appId: '40', hltbGameId: 4 }] });
+    expect(result.metadata).toMatchObject({ originalEntryCount: 4, entryCount: 3, excludedEntryCount: 1, steamMappingCount: 2 });
   });
 });

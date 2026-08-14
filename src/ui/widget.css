@@ -43,7 +43,12 @@ header span, .badge { color: #55b9f3; font-size: 10px; font-weight: 700; letter-
 .result-content h2 { margin: 1px 0 8px; overflow: hidden; color: #36aaf4; font-size: 18px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .times { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; }
 .time { display: grid; grid-template-rows: auto 36px; min-width: 0; }
-.time span { overflow: hidden; padding: 0 7px 5px; color: #f3f3f3; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.time > span { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 6px; overflow: hidden; padding: 0 7px 5px; color: #f3f3f3; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.time-label-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.time-change { flex: 0 0 auto; padding: 2px 5px; border: 1px solid currentColor; border-radius: 8px; font-size: 9px; font-weight: 700; line-height: 1; }
+.time-change-up, .time-change-new { color: #72d991; }
+.time-change-down { color: #ff7c83; }
+.time-change-removed { color: #b8c1c8; }
 .time strong { display: grid; min-width: 0; place-items: center; padding: 0 7px; color: #fff; font-size: 15px; font-weight: 700; text-align: center; white-space: nowrap; }
 .time-mainStory strong { background: #88498f; }
 .time-mainPlusExtras strong { background: #4d63b2; }
@@ -70,7 +75,7 @@ a:hover { color: #fff; }
   .result-content h2 { font-size: 17px; }
   .times { grid-template-columns: 1fr; gap: 4px; }
   .time { grid-template-columns: minmax(110px, 1fr) minmax(110px, 1fr); grid-template-rows: 32px; }
-  .time span { display: flex; align-items: center; padding: 0 8px 0 0; font-size: 11px; }
+  .time > span { padding: 0 8px 0 0; font-size: 11px; }
   .time strong { font-size: 14px; }
   .updated { display: none; }
 }

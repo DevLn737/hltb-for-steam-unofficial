@@ -1,4 +1,9 @@
-export const REMOTE_SNAPSHOT_BASE_URL = 'https://devln737.github.io/hltb-for-steam-data/';
+const PRODUCTION_SNAPSHOT_BASE_URL = 'https://devln737.github.io/hltb-for-steam-data/';
+
+// WXT replaces WXT_-prefixed variables at build time. This override is used by
+// local acceptance builds only; production builds always use GitHub Pages.
+export const REMOTE_SNAPSHOT_BASE_URL = import.meta.env.WXT_REMOTE_SNAPSHOT_BASE_URL
+  || PRODUCTION_SNAPSHOT_BASE_URL;
 
 // This key is generated for the v2.2 snapshot channel. Its matching private key
 // must remain only in the private Forgejo updater's secret store.

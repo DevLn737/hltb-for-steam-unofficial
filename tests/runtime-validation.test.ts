@@ -22,8 +22,9 @@ describe('runtime response validation', () => {
     expect(isLookupResult({
       ok: true,
       data: {
-        appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
+        appId: '2258500', gameId: 123, requestedTitle: 'CRYMACHINA', matchedTitle: 'CRYMACHINA',
         mainStory: 780, mainPlusExtras: 1020, completionist: 1500,
+        changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null,
         availability: 'timed', hltbUrl: 'https://howlongtobeat.com/game/123', source: 'snapshot', updatedAt: 1, stale: false,
       },
     })).toBe(true);

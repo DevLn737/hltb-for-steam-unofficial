@@ -2,7 +2,6 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HltbSnapshot } from '../src/snapshot/snapshot';
-
 function localSnapshot(): HltbSnapshot {
   return new HltbSnapshot({
     getUrl: (relative) => path.resolve('public', relative),
@@ -17,15 +16,16 @@ function localSnapshot(): HltbSnapshot {
   });
 }
 
-describe('packaged HLTB snapshot v3', () => {
-  it('contains the complete compact source', async () => {
+describe('packaged HLTB snapshot v7', () => {
+  it('contains all useful source records in the pruned binary format', async () => {
     const manifest = JSON.parse(await readFile('public/data/hltb-snapshot/snapshot.json', 'utf8')) as {
-      schema: number; sourceEntryCount: number; timedEntryCount: number; entryCount: number;
+      schema: number; format: string; sourceEntryCount: number; timedEntryCount: number; entryCount: number;
+      originalEntryCount: number; excludedEntryCount: number;
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };
     expect(manifest).toMatchObject({
-      schema: 3, sourceEntryCount: 171_889, timedEntryCount: 58_820, entryCount: 171_888,
-      normalizedTitleCount: 163_456, titleCollisionCount: 7_573, steamMappingCount: 58_288,
+      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 171_889, timedEntryCount: 58_820,
+      originalEntryCount: 171_888, steamMappingCount: 58_288,
     });
   });
 
@@ -42,6 +42,7 @@ describe('packaged HLTB snapshot v3', () => {
   it('uses Steam App ID before the page title and returns direct HLTB IDs', async () => {
     await expect(localSnapshot().lookup('2258500', 'Wrong page title')).resolves.toMatchObject({
       gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: 918, mainPlusExtras: 1164, completionist: 1726,
+      updatedAt: Date.UTC(2026, 6, 22),
     });
   });
 
@@ -65,3 +66,4 @@ describe('packaged HLTB snapshot v3', () => {
     await expect(localSnapshot().lookup('4294967295', 'Definitely Not A Real Game 987654')).resolves.toBeNull();
   });
 });
+

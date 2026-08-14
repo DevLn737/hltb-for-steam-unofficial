@@ -1,4 +1,4 @@
-import type { ClientContext, GameTimes, LookupResult } from '../core/contracts';
+import type { ClientContext, GameTimes, LookupResult, TimeCategory, TimeChange } from '../core/contracts';
 import { getLookupTitle } from '../core/aliases';
 import { HltbClient } from '../hltb/client';
 import { HltbNetworkError, HltbRateLimitError } from '../hltb/errors';
@@ -40,7 +40,7 @@ export class GameTimesService {
 
     const settings = await getSettings();
     const cached = await getCachedGame(appId, requestedTitle, settings.cacheDurationDays);
-    if (cached?.fresh) return { ok: true, data: cached.data };
+    if (cached?.fresh) return { ok: true, data: await this.addSnapshotHistory(cached.data, appId, lookupTitle) };
 
     await this.acquire();
     try {
@@ -51,19 +51,23 @@ export class GameTimesService {
       }
       const data: GameTimes = {
         appId,
+        gameId: found.gameId,
         requestedTitle,
         matchedTitle: found.matchedTitle,
         mainStory: found.mainStory,
         mainPlusExtras: found.mainPlusExtras,
         completionist: found.completionist,
+        changes: { mainStory: null, mainPlusExtras: null, completionist: null },
+        baselineUpdatedAt: null,
         availability: this.availability(found.mainStory, found.mainPlusExtras, found.completionist),
         hltbUrl: found.hltbUrl,
         source: 'network',
         updatedAt: Date.now(),
         stale: false,
       };
+      const enriched = await this.addSnapshotHistory(data, appId, lookupTitle);
       await setCachedGame(data);
-      return { ok: true, data };
+      return { ok: true, data: enriched };
     } catch (error) {
       const fallback = await this.getFallback(appId, requestedTitle, lookupTitle, cached?.data);
       if (fallback) return { ok: true, data: fallback };
@@ -89,7 +93,9 @@ export class GameTimesService {
   ): Promise<GameTimes | null> {
     const snapshotData = await this.getSnapshot(appId, requestedTitle, lookupTitle);
     if (!cached) return snapshotData;
-    if (!snapshotData || cached.updatedAt >= snapshotData.updatedAt) return { ...cached, source: 'cache', stale: true };
+    if (!snapshotData || cached.updatedAt >= snapshotData.updatedAt) {
+      return { ...(await this.addSnapshotHistory(cached, appId, lookupTitle)), source: 'cache', stale: true };
+    }
     return snapshotData;
   }
 
@@ -98,11 +104,14 @@ export class GameTimesService {
       const snapshot: SnapshotGameTimes | null = await this.snapshot.lookup(appId, lookupTitle);
       return snapshot ? {
         appId,
+        gameId: snapshot.gameId,
         requestedTitle,
         matchedTitle: snapshot.matchedTitle,
         mainStory: snapshot.mainStory,
         mainPlusExtras: snapshot.mainPlusExtras,
         completionist: snapshot.completionist,
+        changes: snapshot.changes,
+        baselineUpdatedAt: snapshot.baselineUpdatedAt,
         availability: this.availability(snapshot.mainStory, snapshot.mainPlusExtras, snapshot.completionist),
         hltbUrl: `https://howlongtobeat.com/game/${snapshot.gameId}`,
         source: 'snapshot',
@@ -112,6 +121,42 @@ export class GameTimesService {
     } catch {
       return null;
     }
+  }
+
+  private async addSnapshotHistory(data: GameTimes, appId: string, lookupTitle: string): Promise<GameTimes> {
+    try {
+      const snapshot = await this.snapshot.lookup(appId, lookupTitle);
+      if (!snapshot || snapshot.gameId !== data.gameId || data.updatedAt < snapshot.baselineUpdatedAt) {
+        return { ...data, changes: this.emptyChanges(), baselineUpdatedAt: null };
+      }
+      const categories: TimeCategory[] = ['mainStory', 'mainPlusExtras', 'completionist'];
+      const changes = this.emptyChanges();
+      for (const category of categories) {
+        const baseline = this.baselineValue(snapshot[category], snapshot.changes[category]);
+        changes[category] = this.compareTimes(baseline, data[category]);
+      }
+      return { ...data, changes, baselineUpdatedAt: snapshot.baselineUpdatedAt };
+    } catch {
+      return { ...data, changes: this.emptyChanges(), baselineUpdatedAt: null };
+    }
+  }
+
+  private baselineValue(current: number | null, change: TimeChange): number | null {
+    if (!change) return current;
+    if (change.kind === 'new') return null;
+    if (change.kind === 'removed') return change.previous;
+    return current === null ? null : current - change.minutes;
+  }
+
+  private compareTimes(previous: number | null, current: number | null): TimeChange {
+    if (previous === current) return null;
+    if (previous === null) return current === null ? null : { kind: 'new' };
+    if (current === null) return { kind: 'removed', previous };
+    return { kind: 'delta', minutes: current - previous };
+  }
+
+  private emptyChanges(): Record<TimeCategory, TimeChange> {
+    return { mainStory: null, mainPlusExtras: null, completionist: null };
   }
 
   private availability(...times: Array<number | null>): GameTimes['availability'] {

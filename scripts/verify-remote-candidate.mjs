@@ -2,7 +2,8 @@ import { createHash, createPublicKey, verify } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
-
+import { decodeSteamIndex, decodeTitleBucket, unpackSnapshotLocation } from '../shared/snapshot-codec.mjs';
+import { compareNormalizedTitles, normalizeTitle, snapshotBucket } from '../shared/title-normalization.mjs';
 const [candidateArgument, publicKeyArgument] = process.argv.slice(2);
 if (!candidateArgument || !publicKeyArgument) {
   throw new Error('Usage: npm run verify:remote-candidate -- <candidate-directory> <public-jwk.json>');
@@ -30,10 +31,10 @@ if (pointer.schema !== 1 || typeof pointer.snapshotVersion !== 'string'
 const manifestBytes = await readFile(path.join(candidate, ...pointer.manifestPath.split('/')));
 if (digest(manifestBytes) !== pointer.manifestSha256) throw new Error('Manifest hash mismatch');
 const manifest = JSON.parse(manifestBytes);
-if (manifest.schema !== 4 || manifest.snapshotVersion !== pointer.snapshotVersion
-  || manifest.compression !== 'gzip' || manifest.bucketCount !== 64
-  || manifest.pack?.path !== 'snapshot.pack' || manifest.entries?.length !== 128) {
-  throw new Error('Manifest does not match snapshot schema v4');
+if (manifest.schema !== 7 || manifest.snapshotVersion !== pointer.snapshotVersion
+  || manifest.format !== 'front-coded-uleb128-delta-v3' || manifest.compression !== 'gzip' || manifest.bucketCount !== 16
+  || manifest.pack?.path !== 'snapshot.pack' || manifest.entries?.length !== 32) {
+  throw new Error('Manifest does not match snapshot schema v7');
 }
 
 const versionDirectory = path.join(candidate, 'versions', pointer.snapshotVersion);
@@ -44,13 +45,15 @@ if (pack.byteLength !== manifest.pack.bytes || digest(pack) !== manifest.pack.sh
 
 let expectedOffset = 0;
 const paths = new Set();
+const titleRows = new Map();
+let timedEntries = 0;
 for (const entry of manifest.entries) {
-  if (entry.offset !== expectedOffset || entry.compressedBytes < 1
+  if ((entry.kind !== 'title' && entry.kind !== 'steam') || entry.offset !== expectedOffset || entry.compressedBytes < 1
     || entry.offset + entry.compressedBytes > pack.byteLength || paths.has(entry.path)) {
     throw new Error(`Invalid pack entry ${entry.path}`);
   }
-  const expectedPath = `${entry.kind}/${entry.name}.${entry.kind === 'title' ? 'json' : 'bin'}.gz`;
-  if (!/^[0-3][0-9a-f]$/.test(entry.name) || entry.path !== expectedPath) {
+  const expectedPath = `${entry.kind}/${entry.name}.bin.gz`;
+  if (!/^[0-9a-f]$/.test(entry.name) || entry.path !== expectedPath) {
     throw new Error(`Unexpected pack path ${entry.path}`);
   }
   paths.add(entry.path);
@@ -61,11 +64,38 @@ for (const entry of manifest.entries) {
     throw new Error(`Uncompressed checksum or size mismatch for ${entry.path}`);
   }
   if (entry.kind === 'title') {
-    const rows = JSON.parse(uncompressed);
-    if (!Array.isArray(rows) || rows.length !== entry.entries) throw new Error(`Invalid title rows in ${entry.path}`);
+    const rows = decodeTitleBucket(uncompressed);
+    if (rows.length !== entry.entries) throw new Error(`Invalid title rows in ${entry.path}`);
+    const bucket = Number.parseInt(entry.name, 16);
+    let previous = '';
+    let previousGameId = 0;
+    for (const row of rows) {
+      const normalized = normalizeTitle(row[0]);
+      if (snapshotBucket(normalized, 16) !== bucket
+        || compareNormalizedTitles(normalized, previous) < 0
+        || (normalized === previous && row[1] <= previousGameId)) {
+        throw new Error(`Invalid title ordering in ${entry.path}`);
+      }
+      previous = normalized;
+      previousGameId = row[1];
+      if (row.slice(2, 5).some((value) => value !== null)) timedEntries += 1;
+    }
+    titleRows.set(bucket, rows);
+  } else {
+    const pairs = decodeSteamIndex(uncompressed);
+    if (pairs.length !== entry.entries) throw new Error(`Invalid Steam index in ${entry.path}`);
+    const bucket = Number.parseInt(entry.name, 16);
+    for (const [appId, location] of pairs) {
+      const target = unpackSnapshotLocation(location);
+      if (appId % 16 !== bucket || target.bucket >= 16 || !titleRows.get(target.bucket)?.[target.rowIndex]) {
+        throw new Error(`Invalid Steam cross-reference in ${entry.path}`);
+      }
+    }
   }
   expectedOffset += entry.compressedBytes;
 }
 
-if (expectedOffset !== pack.byteLength) throw new Error('Pack contains trailing or missing bytes');
+if (expectedOffset !== pack.byteLength || paths.size !== 32) throw new Error('Pack contains trailing or missing bytes');
+if (timedEntries !== manifest.timedEntryCount) throw new Error('Snapshot timed-entry count mismatch');
 console.log(`Verified signed remote snapshot ${pointer.snapshotVersion}: ${manifest.entryCount} records, ${pack.byteLength} bytes`);
+

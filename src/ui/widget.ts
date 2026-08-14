@@ -2,6 +2,7 @@ import type { ExtensionSettings, GameTimes, LookupDiagnostic, LookupErrorCode } 
 import { safeSteamArtworkUrl, type WidgetPlacement } from '../steam/page';
 import { formatMinutes } from './format';
 import { detectLocale, translate, type Locale } from './i18n';
+import { describeTimeChange } from './time-change';
 import styles from './widget.css?inline';
 
 export const WIDGET_ID = 'hltb-for-steam-unofficial';
@@ -84,6 +85,8 @@ interface TimeCardData {
   mainStory: number | null;
   mainPlusExtras: number | null;
   completionist: number | null;
+  changes: GameTimes['changes'];
+  baselineUpdatedAt: number | null;
   hltbUrl: string;
   source: GameTimes['source'] | 'unavailable';
   updatedAt: number | null;
@@ -149,8 +152,17 @@ function renderTimeCard(
   for (const [setting, label, value] of categories) {
     if (!settings.categories[setting]) continue;
     const row = createElement(documentRef, 'div', `time time-${setting}${value === null ? ' is-unavailable' : ''}`);
+    const labelElement = createElement(documentRef, 'span');
+    labelElement.append(createElement(documentRef, 'span', 'time-label-text', translate(label, locale)));
+    const change = describeTimeChange(data.changes[setting], settings.timeFormat, locale, data.baselineUpdatedAt);
+    if (change) {
+      const badge = createElement(documentRef, 'small', `time-change time-change-${change.tone}`, change.text);
+      badge.title = change.description;
+      badge.setAttribute('aria-label', change.description);
+      labelElement.append(badge);
+    }
     row.append(
-      createElement(documentRef, 'span', undefined, translate(label, locale)),
+      labelElement,
       createElement(documentRef, 'strong', undefined, formatMinutes(value, settings.timeFormat, locale)),
     );
     times.append(row);
@@ -161,7 +173,7 @@ function renderTimeCard(
   if (!unavailable && data.updatedAt !== null && data.source !== 'network') {
     const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
     if (data.source === 'snapshot') {
-      footer.append(createElement(documentRef, 'span', 'updated', translate('updated', locale, { date })));
+      footer.append(createElement(documentRef, 'span', 'updated', translate('checked', locale, { date })));
     } else {
       footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
       footer.append(createElement(documentRef, 'span', 'updated', translate('checked', locale, { date })));
@@ -203,6 +215,8 @@ export function renderUnavailableResult(
     mainStory: null,
     mainPlusExtras: null,
     completionist: null,
+    changes: { mainStory: null, mainPlusExtras: null, completionist: null },
+    baselineUpdatedAt: null,
     hltbUrl: `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`,
     source: 'unavailable',
     updatedAt: null,

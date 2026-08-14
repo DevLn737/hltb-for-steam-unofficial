@@ -43,10 +43,10 @@ describe('GameTimesService', () => {
 
   it('returns an expired cached result only after a network failure', async () => {
     await setCachedGame({
-      appId: '3375780', requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: found.matchedTitle,
+      appId: '3375780', gameId: 123, requestedTitle: 'Trails in the Sky 1st Chapter', matchedTitle: found.matchedTitle,
       mainStory: 2400, mainPlusExtras: 3420, completionist: 3480, hltbUrl: found.hltbUrl,
       availability: 'timed',
-      source: 'network', updatedAt: 1, stale: false,
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null, source: 'network', updatedAt: 1, stale: false,
     });
     const result = await new GameTimesService(new StubClient(new HltbNetworkError('offline')), 2, new StubSnapshot()).getGameTimes('3375780', 'Trails in the Sky 1st Chapter');
     expect(result).toMatchObject({ ok: true, data: { source: 'cache', stale: true, completionist: 3480 } });
@@ -96,6 +96,7 @@ describe('GameTimesService', () => {
       gameId: 124_771,
       matchedTitle: 'CRYMACHINA', mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
       updatedAt: Date.UTC(2026, 6, 20),
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: Date.UTC(2026, 5, 22),
     });
     const result = await new GameTimesService(new CountingClient(found), 2, snapshot)
       .getGameTimes('2258500', 'CRYMACHINA', 'steam');
@@ -105,13 +106,14 @@ describe('GameTimesService', () => {
 
   it('uses only the snapshot in Steam even when a fresh network cache exists', async () => {
     await setCachedGame({
-      appId: '2258500', requestedTitle: 'CRYMACHINA', matchedTitle: 'Old cached title',
+      appId: '2258500', gameId: 123, requestedTitle: 'CRYMACHINA', matchedTitle: 'Old cached title',
       mainStory: 1, mainPlusExtras: 1, completionist: 1, availability: 'timed',
-      hltbUrl: 'https://howlongtobeat.com/game/1', source: 'network', updatedAt: Date.now(), stale: false,
+      hltbUrl: 'https://howlongtobeat.com/game/1', changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null, source: 'network', updatedAt: Date.now(), stale: false,
     });
     const snapshot = new StubSnapshot({
       gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: 930, mainPlusExtras: 1170, completionist: 1740,
       updatedAt: Date.UTC(2026, 6, 22),
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: Date.UTC(2026, 5, 22),
     });
     const result = await new GameTimesService(new StubClient(found), 2, snapshot)
       .getGameTimes('2258500', 'CRYMACHINA', 'steam');
@@ -122,6 +124,7 @@ describe('GameTimesService', () => {
     const snapshot = new StubSnapshot({
       gameId: 175_491, matchedTitle: 'AV Director Life!', mainStory: null, mainPlusExtras: null, completionist: null,
       updatedAt: Date.UTC(2026, 6, 22),
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: Date.UTC(2026, 5, 22),
     });
     const result = await new GameTimesService(new StubClient(null), 2, snapshot)
       .getGameTimes('3181220', 'AV Director Life!', 'steam');
@@ -136,6 +139,7 @@ describe('GameTimesService', () => {
       gameId: 124_771,
       matchedTitle: 'CRYMACHINA', mainStory: 870, mainPlusExtras: 1164, completionist: 1704,
       updatedAt: Date.UTC(2025, 9, 23),
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: Date.UTC(2025, 8, 23),
     });
     const result = await new GameTimesService(new StubClient(found), 2, snapshot)
       .getGameTimes('2258500', 'CRYMACHINA', 'browser');

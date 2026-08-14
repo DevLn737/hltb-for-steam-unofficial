@@ -1,11 +1,10 @@
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it, vi } from 'vitest';
-import { encodeSteamIndex } from '../shared/snapshot-codec.mjs';
-import type { SnapshotManifestV4, SnapshotPackEntry } from '../src/snapshot/contracts';
+import { encodeSteamIndex, encodeTitleBucket } from '../shared/snapshot-codec.mjs';
+import type { SnapshotManifestV7, SnapshotPackEntry } from '../src/snapshot/contracts';
 import { sha256Hex } from '../src/snapshot/crypto';
 import { SnapshotUpdateManager, type SnapshotUpdateMetadata, type SnapshotUpdateMetadataStore } from '../src/snapshot/remote-update';
 import type { ActiveRemoteSnapshot, RemoteSnapshotStore } from '../src/snapshot/remote-store';
-
 class MemoryMetadata implements SnapshotUpdateMetadataStore {
   value: SnapshotUpdateMetadata | null = null;
   async read(): Promise<SnapshotUpdateMetadata | null> { return this.value; }
@@ -19,7 +18,7 @@ class MemoryStore implements RemoteSnapshotStore {
   async getBucket(version: string, path: string): Promise<Uint8Array | null> {
     return this.buckets.get(`${version}:${path}`) ?? null;
   }
-  async install(manifest: SnapshotManifestV4, buckets: Map<string, Uint8Array>): Promise<void> {
+  async install(manifest: SnapshotManifestV7, buckets: Map<string, Uint8Array>): Promise<void> {
     const previousVersion = this.active?.activeVersion;
     this.active = { activeVersion: manifest.snapshotVersion, ...(previousVersion ? { previousVersion } : {}), manifest };
     for (const [path, bytes] of buckets) this.buckets.set(`${manifest.snapshotVersion}:${path}`, bytes);
@@ -32,10 +31,10 @@ async function remoteFixture(version = '2026.09.01.1') {
   const entries: SnapshotPackEntry[] = [];
   let offset = 0;
   for (const kind of ['title', 'steam'] as const) {
-    for (let index = 0; index < 64; index += 1) {
-      const name = index.toString(16).padStart(2, '0');
-      const path = kind === 'title' ? `title/${name}.json.gz` : `steam/${name}.bin.gz`;
-      const raw = kind === 'title' ? new TextEncoder().encode('[]') : encodeSteamIndex([]);
+    for (let index = 0; index < 16; index += 1) {
+      const name = index.toString(16);
+      const path = `${kind}/${name}.bin.gz`;
+      const raw = kind === 'title' ? encodeTitleBucket([]) : encodeSteamIndex([]);
       const compressed = new Uint8Array(gzipSync(raw, { level: 9 }));
       parts.push(compressed);
       entries.push({
@@ -48,11 +47,11 @@ async function remoteFixture(version = '2026.09.01.1') {
   const pack = new Uint8Array(offset);
   let cursor = 0;
   for (const part of parts) { pack.set(part, cursor); cursor += part.length; }
-  const manifest: SnapshotManifestV4 = {
-    schema: 4, snapshotVersion: version, compression: 'gzip', sourceUpdatedAt: '2026-09-01',
-    generatedAt: '2026-09-01T00:00:00.000Z', sourceEntryCount: 0, timedEntryCount: 0, entryCount: 0,
+  const manifest: SnapshotManifestV7 = {
+    schema: 7, snapshotVersion: version, format: 'front-coded-uleb128-delta-v3', compression: 'gzip', sourceUpdatedAt: '2026-09-01', baselineUpdatedAt: '2026-08-01', checkedDates: ['2026-09-01'],
+    generatedAt: '2026-09-01T00:00:00.000Z', sourceEntryCount: 0, timedEntryCount: 0, entryCount: 0, originalEntryCount: 0, excludedEntryCount: 0,
     normalizedTitleCount: 0, titleCollisionCount: 0, titleCollisionRecordCount: 0,
-    steamMappingCount: 0, steamCollisionCount: 0, bucketCount: 64, origin: 'test',
+    steamMappingCount: 0, steamCollisionCount: 0, bucketCount: 16, origin: 'test',
     source: { lastGameId: 0, databaseSha256: '1'.repeat(64) },
     pack: { path: 'snapshot.pack', bytes: pack.length, sha256: await sha256Hex(pack) }, entries,
   };
@@ -91,7 +90,7 @@ describe('remote snapshot updater', () => {
     });
     await expect(manager.check()).resolves.toEqual({ status: 'updated', checkedAt: 1000, activeVersion: '2026.09.01.1' });
     expect(store.active?.manifest).toEqual(fixture.manifest);
-    expect(store.buckets.size).toBe(128);
+    expect(store.buckets.size).toBe(32);
     expect(metadata.value?.nextCheckAt).toBeGreaterThan(1000);
     expect(vi.mocked(fetchImpl).mock.calls[0]?.[1]).toMatchObject({
       credentials: 'omit', redirect: 'error', cache: 'no-store',
@@ -141,3 +140,4 @@ describe('remote snapshot updater', () => {
     expect(store.active).toBeNull();
   });
 });
+

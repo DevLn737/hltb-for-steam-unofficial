@@ -1,7 +1,7 @@
-import type { SnapshotManifestV4 } from './contracts';
+import type { SnapshotManifestV7 } from './contracts';
 
 const DATABASE_NAME = 'hltb-remote-snapshots';
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 4;
 const META_STORE = 'meta';
 const MANIFEST_STORE = 'manifests';
 const BUCKET_STORE = 'buckets';
@@ -23,13 +23,13 @@ interface BucketRecord {
 export interface ActiveRemoteSnapshot {
   activeVersion: string;
   previousVersion?: string;
-  manifest: SnapshotManifestV4;
+  manifest: SnapshotManifestV7;
 }
 
 export interface RemoteSnapshotStore {
   getActive(): Promise<ActiveRemoteSnapshot | null>;
   getBucket(version: string, path: string): Promise<Uint8Array | null>;
-  install(manifest: SnapshotManifestV4, buckets: Map<string, Uint8Array>): Promise<void>;
+  install(manifest: SnapshotManifestV7, buckets: Map<string, Uint8Array>): Promise<void>;
   clear(): Promise<void>;
 }
 
@@ -64,7 +64,7 @@ export class IndexedDbRemoteSnapshotStore implements RemoteSnapshotStore {
     await transactionDone(metaTransaction);
     if (!active?.activeVersion) return null;
     const manifestTransaction = database.transaction(MANIFEST_STORE, 'readonly');
-    const manifest = await requestResult(manifestTransaction.objectStore(MANIFEST_STORE).get(active.activeVersion)) as SnapshotManifestV4 | undefined;
+    const manifest = await requestResult(manifestTransaction.objectStore(MANIFEST_STORE).get(active.activeVersion)) as SnapshotManifestV7 | undefined;
     await transactionDone(manifestTransaction);
     if (!manifest) throw new Error(`Missing active remote snapshot manifest ${active.activeVersion}`);
     return {
@@ -82,7 +82,7 @@ export class IndexedDbRemoteSnapshotStore implements RemoteSnapshotStore {
     return record ? new Uint8Array(record.bytes) : null;
   }
 
-  async install(manifest: SnapshotManifestV4, buckets: Map<string, Uint8Array>): Promise<void> {
+  async install(manifest: SnapshotManifestV7, buckets: Map<string, Uint8Array>): Promise<void> {
     if (buckets.size !== manifest.entries.length) throw new Error('Remote snapshot bucket set is incomplete');
     const current = await this.getActive();
     const database = await this.open();
@@ -143,8 +143,14 @@ export class IndexedDbRemoteSnapshotStore implements RemoteSnapshotStore {
   private open(): Promise<IDBDatabase> {
     this.databasePromise ??= new Promise((resolve, reject) => {
       const request = indexedDB.open(this.databaseName, DATABASE_VERSION);
-      request.addEventListener('upgradeneeded', () => {
+      request.addEventListener('upgradeneeded', (event) => {
         const database = request.result;
+        const oldVersion = (event as IDBVersionChangeEvent).oldVersion;
+        if (oldVersion > 0 && oldVersion < DATABASE_VERSION) {
+          for (const name of [META_STORE, MANIFEST_STORE, BUCKET_STORE]) {
+            if (database.objectStoreNames.contains(name)) database.deleteObjectStore(name);
+          }
+        }
         if (!database.objectStoreNames.contains(META_STORE)) database.createObjectStore(META_STORE, { keyPath: 'key' });
         if (!database.objectStoreNames.contains(MANIFEST_STORE)) database.createObjectStore(MANIFEST_STORE, { keyPath: 'snapshotVersion' });
         if (!database.objectStoreNames.contains(BUCKET_STORE)) database.createObjectStore(BUCKET_STORE, { keyPath: 'id' });
@@ -156,4 +162,3 @@ export class IndexedDbRemoteSnapshotStore implements RemoteSnapshotStore {
     return this.databasePromise;
   }
 }
-

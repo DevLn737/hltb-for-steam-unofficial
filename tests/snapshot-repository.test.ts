@@ -1,23 +1,23 @@
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it, vi } from 'vitest';
-import type { SnapshotManifestV4, SnapshotLookupManifest, SnapshotPackEntry } from '../src/snapshot/contracts';
+import { encodeSteamIndex, encodeTitleBucket } from '../shared/snapshot-codec.mjs';
+import type { SnapshotManifestV7, SnapshotLookupManifest, SnapshotPackEntry } from '../src/snapshot/contracts';
 import type { RemoteSnapshotStore } from '../src/snapshot/remote-store';
 import { SnapshotRepository, type SnapshotSource } from '../src/snapshot/snapshot';
-
 const digest = '0'.repeat(64);
-const emptyTitle = new Uint8Array(gzipSync(Buffer.from('[]')));
-const emptySteam = new Uint8Array(gzipSync(new Uint8Array()));
-const packagedTitle = new Uint8Array(gzipSync(Buffer.from(JSON.stringify([
-  ['Packaged Game', 123, 60, 120, 180],
-]))));
+const emptyTitle = new Uint8Array(gzipSync(encodeTitleBucket([])));
+const emptySteam = new Uint8Array(gzipSync(encodeSteamIndex([])));
+const packagedTitle = new Uint8Array(gzipSync(encodeTitleBucket([
+  ['Packaged Game', 123, 60, 120, 180, 0, null, null, null],
+])));
 
 function bucketEntries(kind: 'title' | 'steam', count: number): SnapshotPackEntry[] {
-  return Array.from({ length: 64 }, (_, index) => {
-    const name = index.toString(16).padStart(2, '0');
+  return Array.from({ length: 16 }, (_, index) => {
+    const name = index.toString(16);
     const compressed = kind === 'title' ? emptyTitle : emptySteam;
     return {
       name,
-      path: `${kind}/${name}.${kind === 'title' ? 'json' : 'bin'}.gz`,
+      path: `${kind}/${name}.bin.gz`,
       kind,
       offset: 0,
       entries: count,
@@ -29,22 +29,25 @@ function bucketEntries(kind: 'title' | 'steam', count: number): SnapshotPackEntr
   });
 }
 
-function remoteManifest(): SnapshotManifestV4 {
+function remoteManifest(): SnapshotManifestV7 {
   return {
-    schema: 4,
+    schema: 7,
+    format: 'front-coded-uleb128-delta-v3',
     snapshotVersion: '2026.09.01.1',
     compression: 'gzip',
     sourceUpdatedAt: '2026-09-01',
+    baselineUpdatedAt: '2026-08-01',
+    checkedDates: ['2026-09-01'],
     generatedAt: '2026-09-01T00:00:00Z',
     sourceEntryCount: 0,
     timedEntryCount: 0,
-    entryCount: 0,
+    entryCount: 0, originalEntryCount: 0, excludedEntryCount: 0,
     normalizedTitleCount: 0,
     titleCollisionCount: 0,
     titleCollisionRecordCount: 0,
     steamMappingCount: 0,
     steamCollisionCount: 0,
-    bucketCount: 64,
+    bucketCount: 16,
     origin: 'test',
     source: { lastGameId: 0, databaseSha256: digest },
     pack: { path: 'snapshot.pack', bytes: 0, sha256: digest },
@@ -53,8 +56,8 @@ function remoteManifest(): SnapshotManifestV4 {
 }
 
 function packagedSource(): SnapshotSource {
-  const buckets = Array.from({ length: 64 }, (_, index) => ({
-    name: index.toString(16).padStart(2, '0'),
+  const buckets = Array.from({ length: 16 }, (_, index) => ({
+    name: index.toString(16),
     entries: 1,
     compressedBytes: packagedTitle.byteLength,
     uncompressedBytes: 39,
@@ -62,10 +65,13 @@ function packagedSource(): SnapshotSource {
     uncompressedSha256: digest,
   }));
   const manifest: SnapshotLookupManifest = {
-    schema: 3,
+    schema: 7,
+    format: 'front-coded-uleb128-delta-v3',
     compression: 'gzip',
     sourceUpdatedAt: '2026-07-22',
-    bucketCount: 64,
+    baselineUpdatedAt: '2026-07-22',
+    checkedDates: ['2026-07-22'],
+    bucketCount: 16,
     titleBuckets: buckets,
     steamBuckets: buckets.map((bucket) => ({ ...bucket, entries: 0 })),
   };
@@ -108,3 +114,4 @@ describe('SnapshotRepository', () => {
     });
   });
 });
+

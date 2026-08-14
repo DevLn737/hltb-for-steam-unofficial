@@ -7,19 +7,24 @@ export interface SnapshotBucketInfo {
   uncompressedSha256: string;
 }
 
-export interface SnapshotManifestV3 {
-  schema: 3;
+export interface PackagedSnapshotManifestV7 {
+  schema: 7;
+  format: 'front-coded-uleb128-delta-v3';
   compression: 'gzip';
   sourceUpdatedAt: string;
+  baselineUpdatedAt: string;
+  checkedDates: string[];
   sourceEntryCount: number;
   timedEntryCount: number;
   entryCount: number;
+  originalEntryCount: number;
+  excludedEntryCount: number;
   normalizedTitleCount: number;
   titleCollisionCount: number;
   titleCollisionRecordCount: number;
   steamMappingCount: number;
   steamCollisionCount: number;
-  bucketCount: 64;
+  bucketCount: 16;
   origin: string;
   titleBuckets: SnapshotBucketInfo[];
   steamBuckets: SnapshotBucketInfo[];
@@ -31,21 +36,26 @@ export interface SnapshotPackEntry extends SnapshotBucketInfo {
   offset: number;
 }
 
-export interface SnapshotManifestV4 {
-  schema: 4;
+export interface SnapshotManifestV7 {
+  schema: 7;
+  format: 'front-coded-uleb128-delta-v3';
   snapshotVersion: string;
   compression: 'gzip';
   sourceUpdatedAt: string;
+  baselineUpdatedAt: string;
+  checkedDates: string[];
   generatedAt: string;
   sourceEntryCount: number;
   timedEntryCount: number;
   entryCount: number;
+  originalEntryCount: number;
+  excludedEntryCount: number;
   normalizedTitleCount: number;
   titleCollisionCount: number;
   titleCollisionRecordCount: number;
   steamMappingCount: number;
   steamCollisionCount: number;
-  bucketCount: 64;
+  bucketCount: 16;
   origin: string;
   source: {
     lastGameId: number;
@@ -77,11 +87,13 @@ export interface SnapshotUpdateState {
 }
 
 export interface SnapshotLookupManifest {
-  schema: 3 | 4;
+  schema: 7;
+  format: 'front-coded-uleb128-delta-v3';
   compression: 'gzip';
   sourceUpdatedAt: string;
-  bucketCount: 64;
+  baselineUpdatedAt: string;
+  checkedDates: string[];
+  bucketCount: 16;
   titleBuckets: SnapshotBucketInfo[];
   steamBuckets: SnapshotBucketInfo[];
 }
-
