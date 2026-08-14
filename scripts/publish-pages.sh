@@ -4,6 +4,7 @@ set -euo pipefail
 candidate="${1:?candidate directory is required}"
 test -f "$candidate/stable.json"
 test -f "$candidate/stable.sig"
+candidate="$(cd "$candidate" && pwd)"
 test -n "${DATA_REPOSITORY_URL:-}"
 test -n "${DATA_REPOSITORY_SSH_KEY:-}"
 
