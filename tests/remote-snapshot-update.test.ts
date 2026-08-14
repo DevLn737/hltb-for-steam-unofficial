@@ -67,13 +67,18 @@ async function remoteFixture(version = '2026.09.01.1') {
   return { manifest, manifestBytes, pack, pointerBytes, signature: Buffer.from(signature).toString('base64'), publicKey };
 }
 
-function fixtureFetch(fixture: Awaited<ReturnType<typeof remoteFixture>>): typeof fetch {
+function fixtureFetch(fixture: Awaited<ReturnType<typeof remoteFixture>>, encodedPack = false): typeof fetch {
   return vi.fn(async (input: RequestInfo | URL) => {
     const url = String(input);
     if (url.endsWith('/stable.json')) return new Response(fixture.pointerBytes);
     if (url.endsWith('/stable.sig')) return new Response(fixture.signature);
     if (url.endsWith('/manifest.json')) return new Response(fixture.manifestBytes);
-    if (url.endsWith('/snapshot.pack')) return new Response(fixture.pack);
+    if (url.endsWith('/snapshot.pack')) return new Response(fixture.pack, encodedPack ? {
+      headers: {
+        'content-encoding': 'gzip',
+        'content-length': String(fixture.pack.byteLength + 512),
+      },
+    } : undefined);
     return new Response('', { status: 404 });
   }) as unknown as typeof fetch;
 }
@@ -95,6 +100,19 @@ describe('remote snapshot updater', () => {
     expect(vi.mocked(fetchImpl).mock.calls[0]?.[1]).toMatchObject({
       credentials: 'omit', redirect: 'error', cache: 'no-store',
     });
+  });
+
+  it('validates the decoded pack when its encoded transfer is larger', async () => {
+    const fixture = await remoteFixture();
+    const store = new MemoryStore();
+    const manager = new SnapshotUpdateManager(store, {
+      fetch: fixtureFetch(fixture, true), publicKey: fixture.publicKey, metadata: new MemoryMetadata(), now: () => 1500,
+      baseUrl: 'https://example.test/data/',
+    });
+    await expect(manager.check()).resolves.toEqual({
+      status: 'updated', checkedAt: 1500, activeVersion: '2026.09.01.1',
+    });
+    expect(store.active?.activeVersion).toBe('2026.09.01.1');
   });
 
   it('keeps the previous snapshot when the signature is invalid', async () => {

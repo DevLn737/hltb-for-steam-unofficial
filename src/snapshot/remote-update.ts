@@ -49,9 +49,15 @@ function parseJson(bytes: Uint8Array): unknown {
 async function responseBytes(response: Response, label: string, maximumBytes: number): Promise<Uint8Array> {
   if (!response.ok) throw new Error(`${label} returned HTTP ${response.status}`);
   const length = Number(response.headers.get('content-length'));
-  if (Number.isFinite(length) && length > maximumBytes) throw new Error(`${label} exceeds its size limit`);
+  // With Content-Encoding, Content-Length describes the encoded transfer while
+  // fetch() exposes the decoded body. Enforce the limit against the body below.
+  if (!response.headers.has('content-encoding') && Number.isFinite(length) && length > maximumBytes) {
+    throw new Error(`${label} exceeds its size limit`);
+  }
   const bytes = new Uint8Array(await response.arrayBuffer());
-  if (bytes.byteLength > maximumBytes) throw new Error(`${label} exceeds its size limit`);
+  if (bytes.byteLength > maximumBytes) {
+    throw new Error(`${label} exceeds its size limit`);
+  }
   return bytes;
 }
 
