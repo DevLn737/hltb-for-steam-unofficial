@@ -1,6 +1,6 @@
 {
-  "extensionName": { "message": "HLTB per Steam — Non ufficiale" },
-  "extensionShortName": { "message": "HLTB per Steam" },
-  "extensionDescription": { "message": "Mostra i tempi di HowLongToBeat nelle pagine dei giochi Steam." },
-  "extensionActionTitle": { "message": "HLTB per Steam — Non ufficiale" }
+  "extensionName": { "message": "HLTB for Steam" },
+  "extensionShortName": { "message": "HLTB for Steam" },
+  "extensionDescription": { "message": "Consulta i tempi di HowLongToBeat direttamente su Steam, senza ricerche o schede aggiuntive." },
+  "extensionActionTitle": { "message": "HLTB for Steam" }
 }

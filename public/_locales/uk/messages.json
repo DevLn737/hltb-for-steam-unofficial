@@ -1,6 +1,6 @@
 {
-  "extensionName": { "message": "HLTB для Steam — Неофіційно" },
-  "extensionShortName": { "message": "HLTB для Steam" },
-  "extensionDescription": { "message": "Показує час проходження HowLongToBeat на сторінках ігор Steam." },
-  "extensionActionTitle": { "message": "HLTB для Steam — Неофіційно" }
+  "extensionName": { "message": "HLTB for Steam" },
+  "extensionShortName": { "message": "HLTB for Steam" },
+  "extensionDescription": { "message": "Переглядайте час проходження HowLongToBeat прямо в Steam — без пошуку гри в окремій вкладці." },
+  "extensionActionTitle": { "message": "HLTB for Steam" }
 }

@@ -1,6 +1,6 @@
 {
-  "extensionName": { "message": "Steam 版 HLTB — 非官方" },
-  "extensionShortName": { "message": "Steam 版 HLTB" },
-  "extensionDescription": { "message": "在 Steam 遊戲頁面顯示 HowLongToBeat 通關時間。" },
-  "extensionActionTitle": { "message": "Steam 版 HLTB — 非官方" }
+  "extensionName": { "message": "HLTB for Steam" },
+  "extensionShortName": { "message": "HLTB for Steam" },
+  "extensionDescription": { "message": "直接在 Steam 中查看 HowLongToBeat 通關時間，無需額外搜尋或切換分頁。" },
+  "extensionActionTitle": { "message": "HLTB for Steam" }
 }

@@ -2,6 +2,13 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.2.1] - 2026-08-14
+
+### Changed
+
+- Use the concise `HLTB for Steam` product name consistently in every packaged locale.
+- Replace the functional package summaries with user-focused descriptions that emphasize viewing HowLongToBeat times directly in Steam without extra searching or tabs.
+
 ## [2.2.0] - 2026-08-14
 
 ### Added

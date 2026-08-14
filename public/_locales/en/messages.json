@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "HLTB for Steam — Unofficial",
+    "message": "HLTB for Steam",
     "description": "Extension name shown in the browser and Chrome Web Store."
   },
   "extensionShortName": {
@@ -8,11 +8,11 @@
     "description": "Short extension name used when space is limited."
   },
   "extensionDescription": {
-    "message": "Shows HowLongToBeat completion times on Steam game pages.",
+    "message": "See HowLongToBeat completion times directly on Steam — no extra searching or tabs.",
     "description": "Short extension description shown in the browser and Chrome Web Store."
   },
   "extensionActionTitle": {
-    "message": "HLTB for Steam — Unofficial",
+    "message": "HLTB for Steam",
     "description": "Tooltip for the extension toolbar button."
   }
 }

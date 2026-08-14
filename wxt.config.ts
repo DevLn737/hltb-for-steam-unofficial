@@ -40,7 +40,7 @@ export default defineConfig({
     short_name: '__MSG_extensionShortName__',
     description: '__MSG_extensionDescription__',
     default_locale: 'en',
-    version: '2.2.0',
+    version: '2.2.1',
     homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
     ...(browser === 'firefox' ? {} : { minimum_chrome_version: '88' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],

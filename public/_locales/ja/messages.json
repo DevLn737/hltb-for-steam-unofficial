@@ -1,6 +1,6 @@
 {
-  "extensionName": { "message": "Steam向けHLTB — 非公式" },
-  "extensionShortName": { "message": "Steam向けHLTB" },
-  "extensionDescription": { "message": "SteamのゲームページにHowLongToBeatのクリア時間を表示します。" },
-  "extensionActionTitle": { "message": "Steam向けHLTB — 非公式" }
+  "extensionName": { "message": "HLTB for Steam" },
+  "extensionShortName": { "message": "HLTB for Steam" },
+  "extensionDescription": { "message": "HowLongToBeatのクリア時間をSteamで直接確認。検索や別タブは不要です。" },
+  "extensionActionTitle": { "message": "HLTB for Steam" }
 }

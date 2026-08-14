@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "HLTB для Steam — неофициальное расширение",
+    "message": "HLTB for Steam",
     "description": "Название расширения в браузере и Интернет-магазине Chrome."
   },
   "extensionShortName": {
-    "message": "HLTB для Steam",
+    "message": "HLTB for Steam",
     "description": "Короткое название расширения для интерфейсов с ограниченным местом."
   },
   "extensionDescription": {
-    "message": "Показывает время прохождения HowLongToBeat на страницах игр Steam.",
+    "message": "Смотрите время прохождения HowLongToBeat прямо в Steam — без поиска игры в отдельной вкладке.",
     "description": "Краткое описание расширения в браузере и Интернет-магазине Chrome."
   },
   "extensionActionTitle": {
-    "message": "HLTB для Steam — неофициальное расширение",
+    "message": "HLTB for Steam",
     "description": "Подсказка для кнопки расширения на панели инструментов."
   }
 }

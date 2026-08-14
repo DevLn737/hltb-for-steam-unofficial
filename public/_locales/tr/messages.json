@@ -1,6 +1,6 @@
 {
-  "extensionName": { "message": "HLTB for Steam — Resmî değil" },
+  "extensionName": { "message": "HLTB for Steam" },
   "extensionShortName": { "message": "HLTB for Steam" },
-  "extensionDescription": { "message": "Steam oyun sayfalarında HowLongToBeat oynama sürelerini gösterir." },
-  "extensionActionTitle": { "message": "HLTB for Steam — Resmî değil" }
+  "extensionDescription": { "message": "HowLongToBeat tamamlama sürelerini ek arama veya sekme olmadan doğrudan Steam'de görün." },
+  "extensionActionTitle": { "message": "HLTB for Steam" }
 }
