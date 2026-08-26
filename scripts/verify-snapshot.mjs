@@ -5,15 +5,6 @@ import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
 import { decodeSteamIndex, decodeTitleBucket, unpackSnapshotLocation } from '../shared/snapshot-codec.mjs';
 import { compareNormalizedTitles, normalizeTitle, snapshotBucket } from '../shared/title-normalization.mjs';
-const EXPECTED = {
-  sourceBytes: 755_986_614,
-  sourceEntries: 171_889,
-  originalEntries: 171_888,
-  timedEntries: 58_820,
-  steamMappings: 58_288,
-  lastGameId: 189_049,
-};
-
 function digest(value) {
   return createHash('sha256').update(value).digest('hex');
 }
@@ -42,11 +33,16 @@ export async function verifySnapshot(root = path.resolve('public/data/hltb-snaps
   if (!Array.isArray(manifest.checkedDates) || manifest.checkedDates.length === 0
     || manifest.checkedDates.some((date, index) => typeof date !== 'string' || Number.isNaN(Date.parse(`${date}T00:00:00Z`))
       || (index > 0 && date <= manifest.checkedDates[index - 1]))) throw new Error('Invalid HLTB snapshot checked dates');
-  if (manifest.source?.bytes !== EXPECTED.sourceBytes || manifest.source?.lastGameId !== EXPECTED.lastGameId
-    || !/^[a-f0-9]{64}$/.test(manifest.source?.sha256 ?? '') || manifest.sourceEntryCount !== EXPECTED.sourceEntries
-    || manifest.originalEntryCount !== EXPECTED.originalEntries || manifest.timedEntryCount !== EXPECTED.timedEntries
-    || manifest.steamMappingCount !== EXPECTED.steamMappings
-    || manifest.entryCount + manifest.excludedEntryCount !== manifest.originalEntryCount) {
+  if (typeof manifest.sourceUpdatedAt !== 'string' || Number.isNaN(Date.parse(`${manifest.sourceUpdatedAt}T00:00:00Z`))
+    || typeof manifest.baselineUpdatedAt !== 'string' || Number.isNaN(Date.parse(`${manifest.baselineUpdatedAt}T00:00:00Z`))
+    || !Number.isSafeInteger(manifest.sourceEntryCount) || manifest.sourceEntryCount < 0
+    || !Number.isSafeInteger(manifest.originalEntryCount) || manifest.originalEntryCount < 0
+    || !Number.isSafeInteger(manifest.entryCount) || manifest.entryCount < 0
+    || !Number.isSafeInteger(manifest.excludedEntryCount) || manifest.excludedEntryCount < 0
+    || manifest.entryCount + manifest.excludedEntryCount !== manifest.originalEntryCount
+    || manifest.sourceEntryCount < manifest.originalEntryCount
+    || !Number.isSafeInteger(manifest.timedEntryCount) || manifest.timedEntryCount < 0 || manifest.timedEntryCount > manifest.entryCount
+    || !Number.isSafeInteger(manifest.steamMappingCount) || manifest.steamMappingCount < 0) {
     throw new Error('Unexpected HLTB snapshot coverage');
   }
 

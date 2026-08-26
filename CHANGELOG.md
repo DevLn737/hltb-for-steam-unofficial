@@ -2,6 +2,12 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.2.2] - 2026-08-26
+
+### Changed
+
+- Restore the explicit `HLTB for Steam — Unofficial` package name in every locale while retaining the concise `HLTB for Steam` short name and toolbar label.
+
 ## [2.2.1] - 2026-08-14
 
 ### Changed

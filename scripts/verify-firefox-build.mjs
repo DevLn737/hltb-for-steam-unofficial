@@ -4,9 +4,10 @@ import { verifySnapshot } from './verify-snapshot.mjs';
 
 const root = path.resolve('.output/firefox-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
+const packageManifest = JSON.parse(await readFile(path.resolve('package.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Firefox Manifest V3');
-if (manifest.version !== '2.2.1') throw new Error('Unexpected Firefox extension version');
+if (manifest.version !== packageManifest.version) throw new Error('Unexpected Firefox extension version');
 if (manifest.default_locale !== 'en'
   || manifest.name !== '__MSG_extensionName__'
   || manifest.description !== '__MSG_extensionDescription__') {

@@ -4,9 +4,10 @@ import { verifySnapshot } from './verify-snapshot.mjs';
 
 const root = path.resolve('.output/chrome-mv3');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
+const packageManifest = JSON.parse(await readFile(path.resolve('package.json'), 'utf8'));
 
 if (manifest.manifest_version !== 3) throw new Error('Expected Manifest V3');
-if (manifest.version !== '2.2.1') throw new Error('Unexpected extension version');
+if (manifest.version !== packageManifest.version) throw new Error('Unexpected extension version');
 if (Number(manifest.minimum_chrome_version) < 88) {
   throw new Error('Chrome Web Store requires minimum_chrome_version 88 or newer for Manifest V3');
 }

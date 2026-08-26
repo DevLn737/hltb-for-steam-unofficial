@@ -24,8 +24,8 @@ describe('packaged HLTB snapshot v7', () => {
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };
     expect(manifest).toMatchObject({
-      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 171_889, timedEntryCount: 58_820,
-      originalEntryCount: 171_888, steamMappingCount: 58_288,
+      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 172_588, timedEntryCount: 58_955,
+      originalEntryCount: 172_588, steamMappingCount: 58_517,
     });
   });
 
