@@ -1,11 +1,11 @@
-# HLTB for Steam — Unofficial
+# HLTB for Steam
 
 [English](README.md) | **Русский**
 
 Независимое и ориентированное на приватность расширение для Chrome и Firefox. Оно показывает время прохождения HowLongToBeat непосредственно на страницах игр Steam, в том числе открытых внутри настольного клиента Steam.
 
 <p align="center">
-  <img src="docs/store-assets/chrome/promo-small-440x280.png" alt="HLTB for Steam — Unofficial" width="440">
+  <img src="docs/store-assets/chrome/promo-small-440x280.png" alt="HLTB for Steam" width="440">
 </p>
 
 ## Возможности

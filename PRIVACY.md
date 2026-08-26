@@ -2,7 +2,7 @@
 
 Last updated: August 10, 2026
 
-HLTB for Steam — Unofficial has no accounts, analytics, advertising, telemetry, or dynamic developer-operated backend. The developer does not receive, collect, sell, or analyze user data. A public GitHub Pages endpoint distributes signed static snapshot files.
+HLTB for Steam has no accounts, analytics, advertising, telemetry, or dynamic developer-operated backend. The developer does not receive, collect, sell, or analyze user data. A public GitHub Pages endpoint distributes signed static snapshot files.
 
 ## Data processed
 

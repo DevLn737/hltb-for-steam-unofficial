@@ -37,7 +37,7 @@ Mozilla signs both listed and self-distributed extensions. A GitHub release or r
 
 - Channel: listed on addons.mozilla.org
 - Platform: Firefox Desktop only
-- Name: `HLTB for Steam — Unofficial`
+- Name: `HLTB for Steam`
 - Summary: `Shows HowLongToBeat completion times directly on Steam game pages.`
 - Category: Games & Entertainment
 - Experimental: no

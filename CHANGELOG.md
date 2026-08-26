@@ -6,7 +6,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ### Changed
 
-- Restore the explicit `HLTB for Steam — Unofficial` package name in every locale while retaining the concise `HLTB for Steam` short name and toolbar label.
+- Refresh the packaged fallback database and keep the concise `HLTB for Steam` product name in every locale.
 
 ## [2.2.1] - 2026-08-14
 

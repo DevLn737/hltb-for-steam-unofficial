@@ -1,5 +1,5 @@
 {
-  "extensionName": { "message": "HLTB for Steam — Unofficial" },
+  "extensionName": { "message": "HLTB for Steam" },
   "extensionShortName": { "message": "HLTB for Steam" },
   "extensionDescription": { "message": "Consulta los tiempos de HowLongToBeat directamente en Steam, sin búsquedas ni pestañas adicionales." },
   "extensionActionTitle": { "message": "HLTB for Steam" }

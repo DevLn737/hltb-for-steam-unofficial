@@ -1,11 +1,11 @@
-# HLTB for Steam — Unofficial
+# HLTB for Steam
 
 **English** | [Русский](README.ru.md)
 
 An independent, privacy-conscious Chrome and Firefox extension that displays HowLongToBeat completion times directly on Steam game pages, including pages opened in the Steam desktop client.
 
 <p align="center">
-  <img src="docs/store-assets/chrome/promo-small-440x280.png" alt="HLTB for Steam — Unofficial" width="440">
+  <img src="docs/store-assets/chrome/promo-small-440x280.png" alt="HLTB for Steam" width="440">
 </p>
 
 ## Features

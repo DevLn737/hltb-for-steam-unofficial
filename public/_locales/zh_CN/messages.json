@@ -1,5 +1,5 @@
 {
-  "extensionName": { "message": "HLTB for Steam — Unofficial" },
+  "extensionName": { "message": "HLTB for Steam" },
   "extensionShortName": { "message": "HLTB for Steam" },
   "extensionDescription": { "message": "直接在 Steam 中查看 HowLongToBeat 通关时间，无需额外搜索或切换标签页。" },
   "extensionActionTitle": { "message": "HLTB for Steam" }

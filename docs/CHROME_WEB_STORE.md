@@ -4,7 +4,7 @@ This is a submission draft and checklist, not evidence that the extension is alr
 
 ## Listing copy
 
-**Name:** HLTB for Steam — Unofficial
+**Name:** HLTB for Steam
 
 **Short description:** See HowLongToBeat completion times directly on Steam game pages.
 
@@ -12,7 +12,7 @@ This is a submission draft and checklist, not evidence that the extension is alr
 
 **Detailed description:**
 
-HLTB for Steam — Unofficial adds a compact completion-time card to supported Steam game pages. It shows Main Story, Main + Extras, and Completionist estimates, with configurable categories and time formats.
+HLTB for Steam adds a compact completion-time card to supported Steam game pages. It shows Main Story, Main + Extras, and Completionist estimates, with configurable categories and time formats.
 
 Chrome requests current completion-time data from HowLongToBeat and keeps a local cache. If the service is unavailable, the extension can use an independently versioned, signed static snapshot. Inside Steam's embedded browser, lookup uses the verified current snapshot and packaged fallback because HLTB rejects that browser's requests. Matching is deliberately strict: the extension does not substitute an uncertain game's estimates.
 
