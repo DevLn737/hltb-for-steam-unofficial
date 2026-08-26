@@ -16,9 +16,11 @@ if (manifest.default_locale !== 'en'
 if (manifest.browser_specific_settings?.gecko?.id !== 'hltb-for-steam-unofficial@devln737.github.io') {
   throw new Error('Firefox add-on ID is missing');
 }
-if (manifest.browser_specific_settings?.gecko?.strict_min_version !== '140.0'
-  || manifest.browser_specific_settings?.gecko_android?.strict_min_version !== '142.0') {
-  throw new Error('Firefox desktop or Android minimum version is incorrect');
+if (manifest.browser_specific_settings?.gecko?.strict_min_version !== '140.0') {
+  throw new Error('Firefox desktop minimum version is incorrect');
+}
+if (manifest.browser_specific_settings?.gecko_android) {
+  throw new Error('Firefox for Android must not be declared for a desktop-only release');
 }
 if (!manifest.browser_specific_settings?.gecko?.data_collection_permissions?.required?.includes('websiteContent')) {
   throw new Error('Firefox website-content disclosure is missing');

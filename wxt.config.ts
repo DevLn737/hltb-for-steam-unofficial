@@ -82,9 +82,6 @@ export default defineConfig({
             required: ['websiteContent'],
           },
         },
-        gecko_android: {
-          strict_min_version: '142.0',
-        },
       },
     } : {}),
   }),
