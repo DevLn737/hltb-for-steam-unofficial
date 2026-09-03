@@ -14,13 +14,13 @@ jobs:
     steps:
       - name: Check nightly workflow health
         env:
-          ISSUE_REPORT_TOKEN: ${{ secrets.ISSUE_REPORT_TOKEN }}
+          FORGEJO_TOKEN: ${{ forgejo.token }}
           FORGEJO_API_URL: http://server:3000
           FORGEJO_REPOSITORY: ${{ forgejo.repository }}
         shell: bash
         run: |
           node <<'NODE'
-          const token = process.env.ISSUE_REPORT_TOKEN;
+          const token = process.env.FORGEJO_TOKEN;
           const base = process.env.FORGEJO_API_URL;
           const repository = process.env.FORGEJO_REPOSITORY;
           const title = '[monitor] HLTB updater requires attention';
