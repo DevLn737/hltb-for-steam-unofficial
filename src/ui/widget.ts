@@ -1,4 +1,4 @@
-import type { ExtensionSettings, GameTimes, LookupDiagnostic, LookupErrorCode } from '../core/contracts';
+import type { ClientContext, ExtensionSettings, GameTimes, LookupDiagnostic, LookupErrorCode } from '../core/contracts';
 import { safeSteamArtworkUrl, type WidgetPlacement } from '../steam/page';
 import { formatMinutes } from './format';
 import { detectLocale, translate, type Locale } from './i18n';
@@ -51,6 +51,16 @@ function createElement<K extends keyof HTMLElementTagNameMap>(
   return element;
 }
 
+function configureHltbLink(link: HTMLAnchorElement, client: ClientContext): void {
+  if (client === 'steam') {
+    link.target = '_self';
+    link.removeAttribute('rel');
+    return;
+  }
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+}
+
 function frame(host: HTMLElement, className = ''): HTMLElement {
   if (!host.shadowRoot) throw new Error('Widget host has no shadow root');
   const documentRef = host.ownerDocument;
@@ -100,6 +110,7 @@ function renderTimeCard(
   locale: Locale,
   steamArtworkUrls: readonly string[],
   steamBackdropUrl: string | null,
+  client: ClientContext,
 ): void {
   const documentRef = host.ownerDocument;
   const unavailable = data.source === 'unavailable';
@@ -181,8 +192,7 @@ function renderTimeCard(
   }
   const link = createElement(documentRef, 'a', undefined, `${translate(unavailable ? 'searchHltb' : 'openHltb', locale)} ↗`);
   link.href = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
+  configureHltbLink(link, client);
   footer.append(link);
   content.append(footer);
   if (imageUrls.length > 0) layout.append(artwork);
@@ -197,8 +207,9 @@ export function renderResult(
   locale = detectLocale(),
   steamArtworkUrls: readonly string[] = [],
   steamBackdropUrl: string | null = null,
+  client: ClientContext = 'browser',
 ): void {
-  renderTimeCard(host, data, settings, locale, steamArtworkUrls, steamBackdropUrl);
+  renderTimeCard(host, data, settings, locale, steamArtworkUrls, steamBackdropUrl, client);
 }
 
 export function renderUnavailableResult(
@@ -208,6 +219,7 @@ export function renderUnavailableResult(
   locale = detectLocale(),
   steamArtworkUrls: readonly string[] = [],
   steamBackdropUrl: string | null = null,
+  client: ClientContext = 'browser',
 ): void {
   renderTimeCard(host, {
     requestedTitle: title,
@@ -221,7 +233,7 @@ export function renderUnavailableResult(
     source: 'unavailable',
     updatedAt: null,
     stale: false,
-  }, settings, locale, steamArtworkUrls, steamBackdropUrl);
+  }, settings, locale, steamArtworkUrls, steamBackdropUrl, client);
 }
 
 export function renderError(
@@ -230,6 +242,7 @@ export function renderError(
   title: string,
   locale = detectLocale(),
   diagnostic?: LookupDiagnostic,
+  client: ClientContext = 'browser',
 ): void {
   const documentRef = host.ownerDocument;
   const article = frame(host);
@@ -244,7 +257,6 @@ export function renderError(
   }
   const link = createElement(documentRef, 'a', 'search', `${translate('searchHltb', locale)} ↗`);
   link.href = `https://howlongtobeat.com/?q=${encodeURIComponent(title)}`;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
+  configureHltbLink(link, client);
   article.append(link);
 }

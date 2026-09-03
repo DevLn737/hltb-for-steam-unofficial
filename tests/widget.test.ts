@@ -32,6 +32,8 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).toContain('58 Hours');
     expect(host.shadowRoot?.textContent).not.toContain('4.6');
     expect(host.shadowRoot?.querySelector('a')?.href).toBe('https://howlongtobeat.com/game/155183');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_blank');
+    expect(host.shadowRoot?.querySelector('a')?.rel).toBe('noopener noreferrer');
     expect(host.shadowRoot?.querySelector('img')?.src).toContain('steamstatic.com');
     expect(host.shadowRoot?.querySelector('.cover-backdrop')).not.toBeNull();
     expect(host.shadowRoot?.querySelector('.time-mainStory')).not.toBeNull();
@@ -73,6 +75,8 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).not.toContain('Надёжное совпадение');
     expect(host.shadowRoot?.textContent).not.toContain('Обновлено');
     expect(host.shadowRoot?.querySelector('a')?.href).toContain('Unknown%20%26%20Game');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_blank');
+    expect(host.shadowRoot?.querySelector('a')?.rel).toBe('noopener noreferrer');
   });
 
   it('uses gray only for missing categories in a partial HLTB result', () => {
@@ -130,6 +134,8 @@ describe('Steam widget', () => {
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderError(host, 'network', 'CRYMACHINA', 'en', { stage: 'initialization', status: 403 });
     expect(host.shadowRoot?.textContent).toContain('initialization (HTTP 403)');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_blank');
+    expect(host.shadowRoot?.querySelector('a')?.rel).toBe('noopener noreferrer');
   });
 
   it('renders outlined change badges and hides decimal changes that round to zero', () => {
@@ -163,5 +169,24 @@ describe('Steam widget', () => {
       source: 'snapshot', updatedAt: Date.UTC(2026, 7, 12), stale: false,
     }, DEFAULT_SETTINGS, 'ru');
     expect(host.shadowRoot?.querySelector('.time-change-new')?.textContent).toBe('НОВОЕ');
+  });
+
+  it('opens every HLTB link in the current Steam window', () => {
+    const anchor = document.body.appendChild(document.createElement('div'));
+    const host = ensureWidgetHost(document, { anchor, position: 'before' });
+    renderResult(host, {
+      appId: '1', gameId: 1, requestedTitle: 'Game', matchedTitle: 'Game',
+      mainStory: 60, mainPlusExtras: null, completionist: null, availability: 'timed',
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null }, baselineUpdatedAt: null,
+      hltbUrl: 'https://howlongtobeat.com/game/1', source: 'snapshot', updatedAt: Date.UTC(2026, 8, 4), stale: false,
+    }, DEFAULT_SETTINGS, 'en', [], null, 'steam');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_self');
+    expect(host.shadowRoot?.querySelector('a')?.hasAttribute('rel')).toBe(false);
+
+    renderUnavailableResult(host, 'Unknown', DEFAULT_SETTINGS, 'en', [], null, 'steam');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_self');
+
+    renderError(host, 'network', 'Unknown', 'en', undefined, 'steam');
+    expect(host.shadowRoot?.querySelector('a')?.target).toBe('_self');
   });
 });

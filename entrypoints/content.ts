@@ -31,6 +31,7 @@ export default defineContentScript({
       if (pageKey === currentPage) return;
       currentPage = pageKey;
       const locale = detectLocale();
+      const client = detectClientContext(navigator.userAgent);
       renderLoading(host, locale);
 
       let lookup: unknown;
@@ -41,25 +42,25 @@ export default defineContentScript({
             type: 'GET_GAME_TIMES',
             appId: page.appId,
             title: page.title,
-            client: detectClientContext(navigator.userAgent),
+            client,
           }, 20_000),
           send({ type: 'GET_SETTINGS' }, 3_000)
             .then((response) => isSettingsResponse(response) ? response.settings : DEFAULT_SETTINGS)
             .catch(() => DEFAULT_SETTINGS),
         ]);
       } catch {
-        if (currentPage === pageKey) renderError(host, 'service_error', page.title, locale);
+        if (currentPage === pageKey) renderError(host, 'service_error', page.title, locale, undefined, client);
         return;
       }
       if (currentPage !== pageKey) return;
       if (!isLookupResult(lookup)) {
-        renderError(host, 'service_error', page.title, locale);
+        renderError(host, 'service_error', page.title, locale, undefined, client);
       } else if (lookup.ok) {
-        renderResult(host, lookup.data, settings, locale, page.artworkUrls, page.backdropUrl);
+        renderResult(host, lookup.data, settings, locale, page.artworkUrls, page.backdropUrl, client);
       } else if (lookup.error === 'not_found') {
-        renderUnavailableResult(host, page.title, settings, locale, page.artworkUrls, page.backdropUrl);
+        renderUnavailableResult(host, page.title, settings, locale, page.artworkUrls, page.backdropUrl, client);
       } else {
-        renderError(host, lookup.error, page.title, locale, lookup.diagnostic);
+        renderError(host, lookup.error, page.title, locale, lookup.diagnostic, client);
       }
     };
 

@@ -53,6 +53,7 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   await expect(widget).toContainText('57 Hours');
   await expect(widget).toContainText('75 Hours');
   await expect(widget.locator('a')).toHaveAttribute('href', /howlongtobeat\.com\/game\/156025/);
+  await expect(widget.locator('a')).toHaveAttribute('target', '_self');
   await expect(widget).not.toContainText('4.6');
   await expect(widget).not.toContainText('Local snapshot');
   expect(hltbRequests).toEqual([]);
@@ -70,6 +71,7 @@ test('renders a known untimed Steam game as a gray result card with a direct HLT
   await expect(widget.locator('.time.is-unavailable')).toHaveCount(3);
   await expect(widget.locator('.time strong')).toHaveText(['—', '—', '—']);
   await expect(widget.locator('a')).toHaveAttribute('href', 'https://howlongtobeat.com/game/175491');
+  await expect(widget.locator('a')).toHaveAttribute('target', '_self');
   await expect(widget).not.toContainText('No confident title match');
   expect(hltbRequests).toEqual([]);
 });
