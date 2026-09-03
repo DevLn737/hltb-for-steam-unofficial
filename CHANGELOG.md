@@ -2,6 +2,12 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+
+- Open HowLongToBeat links in the current window inside the Steam desktop client while keeping normal new-tab behavior in Chrome and Firefox.
+
 ## [2.2.2] - 2026-08-26
 
 ### Changed
