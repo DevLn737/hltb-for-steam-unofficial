@@ -65,7 +65,8 @@ def test_candidate_verifier_rejects_corrupt_pack(tmp_path) -> None:
     private, public = tmp_path / "key.pem", tmp_path / "public.json"
     generate_key(private, public)
     output = tmp_path / "candidate"
-    build_snapshot(database, output, "2026.09.01.1", private)
+    manifest = build_snapshot(database, output, "2026.09.01.1", private)
+    assert manifest["sourceUpdatedAt"] == "2026-08-10"
     pack = output / "versions/2026.09.01.1/snapshot.pack"
     pack.write_bytes(pack.read_bytes()[:-1])
     import pytest

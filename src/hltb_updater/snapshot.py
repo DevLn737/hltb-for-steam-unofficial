@@ -285,7 +285,7 @@ def build_snapshot(
         append_entry("steam", f"{index:x}", encode_steam_index(pairs), len(pairs))
 
     now = datetime.now(timezone.utc)
-    source_date = source_updated_at or now.date().isoformat()
+    source_date = source_updated_at or max(str(row["last_success_at"]) for row in useful_rows)
     title_collisions = [ids for ids in title_candidates.values() if len(ids) > 1]
     manifest = {
         "schema": 7,
