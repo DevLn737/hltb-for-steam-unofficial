@@ -57,7 +57,7 @@ Register a self-hosted runner with the dedicated `hltb-updater` label and mount 
 - `DATA_REPOSITORY_TOKEN`: a fine-grained GitHub token limited to that repository;
 - `ISSUE_REPORT_TOKEN`: a token allowed to create issues only in this private updater repository.
 
-Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. Successful job startup proves access to the isolated Docker daemon; the in-job preflight then checks Forgejo, persistent storage, and required DNS before touching the database. Both nightly and publication failures create an internal issue and leave the current stable channel untouched. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance.
+Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. Successful job startup proves access to the isolated Docker daemon; the in-job preflight then checks Forgejo, persistent storage, and required DNS before touching the database. Nightly and publication failures leave the current stable channel untouched and are reported by the independent monitor. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance.
 
 Workflows fetch this private repository directly over Forgejo's internal network with the run-scoped ephemeral token. They do not depend on an externally hosted checkout action, a long-lived repository credential, or public access to updater sources.
 

@@ -43,12 +43,25 @@ jobs:
 
           const now = Date.now();
           const runsResponse = await request(`/api/v1/repos/${repository}/actions/runs?limit=50`);
-          const nightly = runsResponse.workflow_runs.filter((run) => run.workflow_id === 'nightly.yml');
+          const updaterRuns = runsResponse.workflow_runs.filter((run) => (
+            run.workflow_id === 'nightly.yml' || run.workflow_id === 'publish.yml'
+          ));
+          const nightly = updaterRuns.filter((run) => run.workflow_id === 'nightly.yml');
           const running = nightly.filter((run) => run.status === 'running');
           const waiting = nightly.filter((run) => run.status === 'waiting');
           const successes = nightly.filter((run) => run.status === 'success');
           const ageMs = (value) => now - Date.parse(value);
           const reasons = [];
+
+          for (const workflowId of ['nightly.yml', 'publish.yml']) {
+            const latestTerminal = updaterRuns.find((run) => (
+              run.workflow_id === workflowId
+              && ['success', 'failure', 'cancelled', 'skipped'].includes(run.status)
+            ));
+            if (latestTerminal?.status === 'failure') {
+              reasons.push(`${workflowId} run ${latestTerminal.index_in_repo} failed`);
+            }
+          }
 
           const staleRunning = running.find((run) => ageMs(run.started) > 3.25 * 60 * 60 * 1000);
           if (staleRunning) {

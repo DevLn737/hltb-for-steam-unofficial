@@ -125,26 +125,3 @@ jobs:
             mv /var/lib/hltb-updater/shadow-candidate /var/lib/hltb-updater/shadow-candidate.previous
           fi
           mv /var/lib/hltb-updater/shadow-candidate.next /var/lib/hltb-updater/shadow-candidate
-
-  report-failure:
-    needs: update
-    if: ${{ always() && needs.update.result == 'failure' }}
-    runs-on: hltb-updater
-    steps:
-      - name: Create internal Forgejo issue
-        env:
-          ISSUE_REPORT_TOKEN: ${{ secrets.ISSUE_REPORT_TOKEN }}
-          FORGEJO_SERVER_URL: ${{ forgejo.server_url }}
-          FORGEJO_REPOSITORY: ${{ forgejo.repository }}
-          FORGEJO_RUN_URL: ${{ forgejo.server_url }}/${{ forgejo.repository }}/actions/runs/${{ forgejo.run_id }}
-        shell: bash
-        run: |
-          payload="$(jq -n \
-            --arg title "Nightly updater failed on $(date -u +%Y-%m-%d)" \
-            --arg body "The database was not fully updated. The stable channel was not changed. Run: $FORGEJO_RUN_URL" \
-            '{title: $title, body: $body}')"
-          curl --fail --silent --show-error \
-            -H "Authorization: token $ISSUE_REPORT_TOKEN" \
-            -H 'Content-Type: application/json' \
-            --data "$payload" \
-            "$FORGEJO_SERVER_URL/api/v1/repos/$FORGEJO_REPOSITORY/issues"
