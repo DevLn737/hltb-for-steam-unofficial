@@ -59,6 +59,8 @@ Register a self-hosted runner with the dedicated `hltb-updater` label and mount 
 
 Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. The runner preflight checks Forgejo, Docker, persistent storage, and required DNS before touching the database. Both nightly and publication failures create an internal issue and leave the current stable channel untouched. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance.
 
+Workflows fetch this private repository directly over Forgejo's internal network with the run-scoped ephemeral token. They do not depend on an externally hosted checkout action, a long-lived repository credential, or public access to updater sources.
+
 An independent ten-minute health monitor runs on the shared `docker` runner. It opens one deduplicated internal issue when the dedicated runner queue is stalled, a nightly exceeds its runner timeout margin, or no successful nightly has completed within 36 hours. It closes that issue automatically after recovery.
 
 ## Safety
