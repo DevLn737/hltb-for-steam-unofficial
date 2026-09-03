@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import asdict
+from datetime import date
 import json
 from pathlib import Path
 
@@ -9,8 +10,22 @@ from .backup import create_backup
 from .client import HltbClient
 from .database import Database
 from .importer import import_json
-from .scheduler import UpdateStats, apply_result, check_canaries, update_database
+from .scheduler import (
+    UpdateStats,
+    apply_result,
+    check_canaries,
+    refresh_catch_up,
+    run_update_cycle,
+    update_database,
+)
 from .snapshot import build_snapshot, generate_key, verify_candidate
+
+
+def positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("value must be a positive integer")
+    return parsed
 
 
 def parser() -> argparse.ArgumentParser:
@@ -31,6 +46,21 @@ def parser() -> argparse.ArgumentParser:
     update.add_argument("--database", required=True)
     update.add_argument("--max-tail", type=int, default=2000)
     update.add_argument("--max-refresh", type=int, default=1000)
+    cycle = commands.add_parser("update-cycle")
+    cycle.add_argument("--database", required=True)
+    cycle.add_argument("--max-tail", type=int, default=2000)
+    cycle.add_argument("--max-refresh", type=int, default=1000)
+    cycle.add_argument("--catch-up-limit", type=positive_int, default=5000)
+    catch_up_init = commands.add_parser("catch-up-init")
+    catch_up_init.add_argument("--database", required=True)
+    catch_up_init.add_argument("--cutoff", required=True, type=date.fromisoformat)
+    catch_up_run = commands.add_parser("catch-up-run")
+    catch_up_run.add_argument("--database", required=True)
+    catch_up_run.add_argument("--cutoff", required=True, type=date.fromisoformat)
+    catch_up_run.add_argument("--max-refresh", type=positive_int, default=5000)
+    catch_up_status = commands.add_parser("catch-up-status")
+    catch_up_status.add_argument("--database", required=True)
+    catch_up_status.add_argument("--cutoff", required=True, type=date.fromisoformat)
     refresh = commands.add_parser("refresh-id")
     refresh.add_argument("--database", required=True)
     refresh.add_argument("--game-id", required=True, type=int)
@@ -90,6 +120,27 @@ def main() -> None:
         with HltbClient() as client:
             stats = update_database(database, client, arguments.max_tail, arguments.max_refresh)
         print(json.dumps(asdict(stats), sort_keys=True))
+    elif arguments.command == "update-cycle":
+        with HltbClient() as client:
+            mode, cutoff, stats = run_update_cycle(
+                database, client, arguments.max_tail, arguments.max_refresh, arguments.catch_up_limit,
+            )
+        output = {"mode": mode, "cutoffDate": cutoff.isoformat() if cutoff else None, **asdict(stats)}
+        if cutoff is not None:
+            output["catchUp"] = database.catch_up_status(cutoff)
+        print(json.dumps(output, sort_keys=True))
+    elif arguments.command == "catch-up-init":
+        from .database import utc_now
+        print(json.dumps(database.initialize_catch_up(arguments.cutoff, utc_now()), sort_keys=True))
+    elif arguments.command == "catch-up-run":
+        status = database.catch_up_status(arguments.cutoff)
+        if status["createdAt"] is None:
+            raise SystemExit(f"Catch-up {arguments.cutoff.isoformat()} has not been initialized")
+        with HltbClient() as client:
+            stats = refresh_catch_up(database, client, arguments.cutoff, arguments.max_refresh)
+        print(json.dumps({**asdict(stats), "catchUp": database.catch_up_status(arguments.cutoff)}, sort_keys=True))
+    elif arguments.command == "catch-up-status":
+        print(json.dumps(database.catch_up_status(arguments.cutoff), sort_keys=True))
     elif arguments.command == "refresh-id":
         from .database import utc_now
         if arguments.game_id <= 0:

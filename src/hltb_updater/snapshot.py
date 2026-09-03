@@ -202,6 +202,24 @@ def build_snapshot(
     useful_rows = [row for row in rows if any(row[key] is not None for key in (
         "main_minutes", "extra_minutes", "completion_minutes", "steam_app_id", "steam_alt_app_id"
     )) or int(row["hltb_id"]) in override_targets]
+    current_times = {
+        int(row["hltb_id"]): (row["main_minutes"], row["extra_minutes"], row["completion_minutes"])
+        for row in useful_rows
+    }
+    previous_ids = set(previous_times)
+    current_ids = set(current_times)
+    changed_count = sum(
+        1 for game_id in previous_ids & current_ids
+        if previous_times[game_id] != current_times[game_id]
+    )
+    removed_count = len(previous_ids - current_ids)
+    change_denominator = max(1, len(previous_ids))
+    change_summary = {
+        "addedRecordCount": len(current_ids - previous_ids),
+        "removedRecordCount": removed_count,
+        "changedRecordCount": changed_count,
+        "changedOrRemovedRatio": (changed_count + removed_count) / change_denominator if previous_ids else 0,
+    }
     title_candidates: dict[str, set[int]] = defaultdict(set)
     steam_candidates: dict[int, set[int]] = defaultdict(set)
     title_buckets: list[list[tuple[str, Any]]] = [[] for _ in range(BUCKET_COUNT)]
@@ -293,6 +311,7 @@ def build_snapshot(
         "bucketCount": BUCKET_COUNT,
         "origin": "Incremental HLTB detail snapshot maintained by the private Forgejo updater",
         "source": {"lastGameId": max(records), "databaseSha256": database_digest(rows)},
+        "changeSummary": change_summary,
         "pack": {"path": "snapshot.pack", "bytes": len(pack), "sha256": digest(pack)},
         "entries": entries,
     }
@@ -340,6 +359,9 @@ def validate_delta(previous: dict[str, Any], candidate: dict[str, Any]) -> None:
     new_bytes = int(candidate["pack"]["bytes"])
     if old_bytes and not old_bytes * 0.8 <= new_bytes <= old_bytes * 1.2:
         raise ValueError("Snapshot pack size changed by more than 20%")
+    summary = candidate.get("changeSummary", {})
+    if int(previous.get("entryCount", 0)) >= 20 and float(summary.get("changedOrRemovedRatio", 0)) > 0.05:
+        raise ValueError("More than 5% of previous snapshot records changed or were removed")
 
 
 def decode_unsigned(value: bytes, offset: int) -> tuple[int, int]:
@@ -439,6 +461,17 @@ def verify_candidate(candidate: str | Path, public_key_path: str | Path) -> dict
         7, version, "front-coded-uleb128-delta-v3", "gzip"
     ) or manifest.get("bucketCount") != BUCKET_COUNT:
         raise ValueError("Unsupported snapshot manifest")
+    change_summary = manifest.get("changeSummary")
+    if change_summary is not None and (
+        not isinstance(change_summary, dict) or any(
+            not isinstance(change_summary.get(field), int) or isinstance(change_summary.get(field), bool)
+            or change_summary[field] < 0
+            for field in ("addedRecordCount", "removedRecordCount", "changedRecordCount")
+        ) or not isinstance(change_summary.get("changedOrRemovedRatio"), (int, float))
+        or isinstance(change_summary.get("changedOrRemovedRatio"), bool)
+        or not 0 <= float(change_summary["changedOrRemovedRatio"]) <= 1
+    ):
+        raise ValueError("Invalid snapshot change summary")
     checked_dates = manifest.get("checkedDates")
     if not isinstance(checked_dates, list) or not checked_dates or checked_dates != sorted(set(checked_dates)):
         raise ValueError("Invalid snapshot checked-date dictionary")

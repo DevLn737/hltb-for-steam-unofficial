@@ -1,6 +1,6 @@
 # HLTB snapshot updater
 
-Private updater for the signed data channel used by HLTB for Steam — Unofficial v2.2. It keeps the canonical working dataset in SQLite, incrementally discovers new HLTB IDs, refreshes existing records on an adaptive schedule, and emits a strict data-only snapshot. It is intentionally separate from the public extension repository.
+Private updater for the signed data channel used by HLTB for Steam v2.2. It keeps the canonical working dataset in SQLite, incrementally discovers new HLTB IDs, refreshes existing records on an adaptive schedule, and emits a strict data-only snapshot. It is intentionally separate from the public extension repository.
 
 ## Requirements
 
@@ -34,6 +34,16 @@ hltb-updater backup --database state/hltb.sqlite --directory state/backups
 hltb-updater build --database state/hltb.sqlite --output candidate --version 2026.09.01.1 --private-key state/secrets/snapshot-signing-key.pem
 ```
 
+For a one-time full refresh, freeze the overdue cohort and let the nightly workflow process it in resumable chunks:
+
+```bash
+hltb-updater catch-up-init --database state/hltb.sqlite --cutoff 2026-09-04
+hltb-updater catch-up-status --database state/hltb.sqlite --cutoff 2026-09-04
+hltb-updater catch-up-run --database state/hltb.sqlite --cutoff 2026-09-04 --max-refresh 5000
+```
+
+Transient failures remain pending and obey the normal retry schedule. Successful responses and genuine 404 responses complete a cohort member. `update-cycle` automatically processes the oldest active catch-up instead of the regular tail/due queues and returns to normal operation when the cohort is complete.
+
 `build` creates `stable.json`, `stable.sig`, and an immutable `versions/<version>/` directory. Schema v7 stores a compact per-record last-successful-check date; failed HTTP or parser attempts never make stale completion times appear fresh. It does not publish anything by itself. The Forgejo publish workflow pushes the verified candidate to the dedicated GitHub Pages repository only after all gates pass. The initial public schema-v7 snapshot compares against the retained July 2026 schema-v6 baseline; later snapshots compare against the previous public stable version. Publication uses a write-enabled GitHub deploy key scoped only to the data repository; no account-wide GitHub token is stored in Forgejo.
 
 ## Forgejo configuration
@@ -45,7 +55,7 @@ Register a self-hosted runner with the dedicated `hltb-updater` label and mount 
 - `DATA_REPOSITORY_TOKEN`: a fine-grained GitHub token limited to that repository;
 - `ISSUE_REPORT_TOKEN`: a token allowed to create issues only in this private updater repository.
 
-Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance. A failed publication job creates an internal issue and leaves the current stable channel untouched.
+Nightly runs update SQLite, create retained backups, and build a fully verified shadow candidate without publishing it. The runner preflight checks Forgejo, Docker, persistent storage, and required DNS before touching the database. Both nightly and publication failures create an internal issue and leave the current stable channel untouched. Stable publication is disabled by default. Set the Forgejo repository variable `ENABLE_STABLE_PUBLISH=true` only after the planned shadow period and data-channel acceptance.
 
 ## Safety
 
@@ -53,4 +63,5 @@ Nightly runs update SQLite, create retained backups, and build a fully verified 
 - `429` honors `Retry-After`; `403`, repeated parse errors, and canary failures stop the run.
 - A game becomes a tombstone only after three 404 responses on separate days over at least 30 days.
 - The stable channel is not modified when coverage, size, parser, checksum, or contract gates fail.
+- Publication stops when changed or removed records exceed 5% of the previous stable snapshot.
 - Raw HTML, descriptions, reviews, and images are never stored.

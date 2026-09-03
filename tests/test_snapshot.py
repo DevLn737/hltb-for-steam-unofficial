@@ -79,6 +79,31 @@ def test_format_migration_allows_expected_size_reduction() -> None:
     validate_delta(previous, candidate)
 
 
+def test_delta_gate_blocks_mass_record_changes() -> None:
+    import pytest
+    previous = {
+        "schema": 7,
+        "entryCount": 100,
+        "timedEntryCount": 100,
+        "steamMappingCount": 100,
+        "pack": {"bytes": 1000},
+    }
+    candidate = {
+        "schema": 7,
+        "timedEntryCount": 100,
+        "steamMappingCount": 100,
+        "pack": {"bytes": 1000},
+        "changeSummary": {
+            "addedRecordCount": 0,
+            "removedRecordCount": 1,
+            "changedRecordCount": 5,
+            "changedOrRemovedRatio": 0.06,
+        },
+    }
+    with pytest.raises(ValueError, match="More than 5%"):
+        validate_delta(previous, candidate)
+
+
 def test_time_change_codes_cover_delta_new_removed_and_unchanged() -> None:
     assert encode_time_change(60, 90) > 2
     assert encode_time_change(90, 60) > 2

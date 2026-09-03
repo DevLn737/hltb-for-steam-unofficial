@@ -40,6 +40,22 @@ CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS catch_up_runs (
+    cutoff_date TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    completed_at TEXT
+);
+CREATE TABLE IF NOT EXISTS catch_up_members (
+    cutoff_date TEXT NOT NULL REFERENCES catch_up_runs(cutoff_date) ON DELETE CASCADE,
+    hltb_id INTEGER NOT NULL REFERENCES games(hltb_id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'success', 'missing')),
+    attempts INTEGER NOT NULL DEFAULT 0,
+    last_attempt_at TEXT,
+    last_error TEXT,
+    PRIMARY KEY (cutoff_date, hltb_id)
+);
+CREATE INDEX IF NOT EXISTS catch_up_pending
+    ON catch_up_members(cutoff_date, status, hltb_id);
 """
 
 
@@ -255,11 +271,137 @@ class Database:
         with self.connect() as connection:
             rows = connection.execute(
                 """SELECT hltb_id FROM games WHERE tombstoned=0 AND next_refresh_at <= ?
-                ORDER BY next_refresh_at, CASE WHEN steam_app_id IS NOT NULL OR steam_alt_app_id IS NOT NULL THEN 0 ELSE 1 END,
+                ORDER BY CASE WHEN steam_app_id IS NOT NULL OR steam_alt_app_id IS NOT NULL THEN 0 ELSE 1 END,
+                next_refresh_at,
                 hltb_id LIMIT ?""",
                 (today.isoformat(), limit + len(excluded)),
             ).fetchall()
         return [int(row["hltb_id"]) for row in rows if int(row["hltb_id"]) not in excluded][:limit]
+
+    def initialize_catch_up(self, cutoff: date, created_at: datetime) -> dict[str, int | str | None]:
+        cutoff_day = iso_day(cutoff)
+        with self.connect() as connection:
+            existing = connection.execute(
+                "SELECT cutoff_date FROM catch_up_runs WHERE cutoff_date=?", (cutoff_day,)
+            ).fetchone()
+            if existing is None:
+                connection.execute(
+                    "INSERT INTO catch_up_runs(cutoff_date, created_at) VALUES(?, ?)",
+                    (cutoff_day, created_at.isoformat()),
+                )
+                connection.execute(
+                    """INSERT INTO catch_up_members(cutoff_date, hltb_id)
+                    SELECT ?, hltb_id FROM games
+                    WHERE tombstoned=0 AND next_refresh_at <= ?""",
+                    (cutoff_day, cutoff_day),
+                )
+                member_count = int(connection.execute(
+                    "SELECT COUNT(*) FROM catch_up_members WHERE cutoff_date=?", (cutoff_day,)
+                ).fetchone()[0])
+                if member_count == 0:
+                    connection.execute(
+                        "UPDATE catch_up_runs SET completed_at=? WHERE cutoff_date=?",
+                        (created_at.isoformat(), cutoff_day),
+                    )
+                connection.commit()
+        return self.catch_up_status(cutoff)
+
+    def active_catch_up(self) -> date | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                """SELECT cutoff_date FROM catch_up_runs
+                WHERE completed_at IS NULL ORDER BY cutoff_date LIMIT 1"""
+            ).fetchone()
+        return date.fromisoformat(str(row["cutoff_date"])) if row else None
+
+    def catch_up_ids(self, cutoff: date, today: date, limit: int) -> list[int]:
+        if limit <= 0:
+            return []
+        with self.connect() as connection:
+            rows = connection.execute(
+                """SELECT members.hltb_id
+                FROM catch_up_members AS members
+                JOIN games ON games.hltb_id=members.hltb_id
+                WHERE members.cutoff_date=? AND members.status='pending'
+                  AND (members.last_attempt_at IS NULL OR games.next_refresh_at <= ?)
+                ORDER BY CASE WHEN games.steam_app_id IS NOT NULL OR games.steam_alt_app_id IS NOT NULL THEN 0 ELSE 1 END,
+                         games.next_refresh_at, members.hltb_id
+                LIMIT ?""",
+                (iso_day(cutoff), iso_day(today), limit),
+            ).fetchall()
+        return [int(row["hltb_id"]) for row in rows]
+
+    def record_catch_up_result(self, cutoff: date, hltb_id: int, status: str, attempted_at: datetime) -> None:
+        if status == "ok":
+            member_status, error = "success", None
+        elif status == "missing":
+            member_status, error = "missing", None
+        else:
+            member_status, error = "pending", status
+        cutoff_day = iso_day(cutoff)
+        with self.connect() as connection:
+            connection.execute(
+                """UPDATE catch_up_members
+                SET status=?, attempts=attempts+1, last_attempt_at=?, last_error=?
+                WHERE cutoff_date=? AND hltb_id=?""",
+                (member_status, attempted_at.isoformat(), error, cutoff_day, hltb_id),
+            )
+            pending = int(connection.execute(
+                "SELECT COUNT(*) FROM catch_up_members WHERE cutoff_date=? AND status='pending'",
+                (cutoff_day,),
+            ).fetchone()[0])
+            if pending == 0:
+                connection.execute(
+                    "UPDATE catch_up_runs SET completed_at=COALESCE(completed_at, ?) WHERE cutoff_date=?",
+                    (attempted_at.isoformat(), cutoff_day),
+                )
+            connection.commit()
+
+    def catch_up_status(self, cutoff: date | None = None) -> dict[str, int | str | None]:
+        with self.connect() as connection:
+            if cutoff is None:
+                run = connection.execute(
+                    "SELECT * FROM catch_up_runs ORDER BY cutoff_date DESC LIMIT 1"
+                ).fetchone()
+            else:
+                run = connection.execute(
+                    "SELECT * FROM catch_up_runs WHERE cutoff_date=?", (iso_day(cutoff),)
+                ).fetchone()
+            if run is None:
+                return {
+                    "cutoffDate": iso_day(cutoff) if cutoff else None,
+                    "createdAt": None,
+                    "completedAt": None,
+                    "total": 0,
+                    "pending": 0,
+                    "successful": 0,
+                    "missing": 0,
+                    "failedPending": 0,
+                }
+            counts = {
+                str(row["status"]): int(row["count"])
+                for row in connection.execute(
+                    """SELECT status, COUNT(*) AS count FROM catch_up_members
+                    WHERE cutoff_date=? GROUP BY status""",
+                    (run["cutoff_date"],),
+                ).fetchall()
+            }
+            failed_pending = int(connection.execute(
+                """SELECT COUNT(*) FROM catch_up_members
+                WHERE cutoff_date=? AND status='pending' AND last_error IS NOT NULL""",
+                (run["cutoff_date"],),
+            ).fetchone()[0])
+        total = sum(counts.values())
+        return {
+            "cutoffDate": str(run["cutoff_date"]),
+            "createdAt": str(run["created_at"]),
+            "completedAt": str(run["completed_at"]) if run["completed_at"] else None,
+            "total": total,
+            "pending": counts.get("pending", 0),
+            "successful": counts.get("success", 0),
+            "missing": counts.get("missing", 0),
+            "failedPending": failed_pending,
+        }
 
     def records(self) -> list[sqlite3.Row]:
         with self.connect() as connection:

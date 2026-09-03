@@ -102,3 +102,44 @@ def test_initialize_migrates_existing_database_with_conservative_success_date(tm
     database.initialize()
     row = database.records()[0]
     assert row["last_success_at"] == "2026-01-01"
+
+
+def test_due_queue_prioritizes_steam_games_before_older_unlinked_games(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    checked = datetime(2025, 1, 1, tzinfo=timezone.utc)
+    database.upsert(GameRecord(1, "Unlinked", 60, None, None, None, None), checked)
+    database.upsert(GameRecord(2, "Steam", 60, None, None, 200, None), checked)
+    with database.connect() as connection:
+        connection.execute("UPDATE games SET next_refresh_at='2025-01-01' WHERE hltb_id=1")
+        connection.execute("UPDATE games SET next_refresh_at='2025-02-01' WHERE hltb_id=2")
+        connection.commit()
+
+    assert database.due_ids(datetime(2026, 1, 1).date(), 2, set()) == [2, 1]
+
+
+def test_catch_up_cohort_is_fixed_and_tracks_terminal_results(tmp_path) -> None:
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    checked = datetime(2025, 1, 1, tzinfo=timezone.utc)
+    database.upsert(GameRecord(1, "Unlinked", 60, None, None, None, None), checked)
+    database.upsert(GameRecord(2, "Steam", 60, None, None, 200, None), checked)
+    status = database.initialize_catch_up(datetime(2026, 9, 4).date(), datetime(2026, 9, 4, tzinfo=timezone.utc))
+    assert status["total"] == 2
+    assert database.catch_up_ids(datetime(2026, 9, 4).date(), datetime(2026, 9, 4).date(), 2) == [2, 1]
+
+    database.upsert(GameRecord(3, "Late", 60, None, None, 300, None), checked)
+    assert database.catch_up_status(datetime(2026, 9, 4).date())["total"] == 2
+
+    attempted = datetime(2026, 9, 4, tzinfo=timezone.utc)
+    database.record_catch_up_result(datetime(2026, 9, 4).date(), 2, "network_error", attempted)
+    status = database.catch_up_status(datetime(2026, 9, 4).date())
+    assert status["pending"] == 2
+    assert status["failedPending"] == 1
+    database.record_catch_up_result(datetime(2026, 9, 4).date(), 2, "ok", attempted)
+    database.record_catch_up_result(datetime(2026, 9, 4).date(), 1, "missing", attempted)
+    status = database.catch_up_status(datetime(2026, 9, 4).date())
+    assert status["successful"] == 1
+    assert status["missing"] == 1
+    assert status["pending"] == 0
+    assert status["completedAt"] is not None

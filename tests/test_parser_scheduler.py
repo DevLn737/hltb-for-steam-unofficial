@@ -6,7 +6,13 @@ from hltb_updater.client import FetchResult
 from hltb_updater.database import Database
 from hltb_updater.model import GameRecord
 from hltb_updater.parser import parse_game_page
-from hltb_updater.scheduler import CircuitBreakerError, check_canaries, update_database
+from hltb_updater.scheduler import (
+    CircuitBreakerError,
+    check_canaries,
+    refresh_catch_up,
+    run_update_cycle,
+    update_database,
+)
 
 
 def html(record: dict) -> str:
@@ -88,3 +94,66 @@ def test_refresh_parser_failures_open_circuit_breaker(tmp_path) -> None:
     client = FakeClient([FetchResult("missing", status_code=404)] * 249 + tail + [FetchResult("parse_error")] * 5)
     with pytest.raises(CircuitBreakerError, match="parser failures"):
         update_database(database, client, max_tail=0, max_refresh=5)  # type: ignore[arg-type]
+
+
+def test_catch_up_refresh_completes_success_and_missing_records(tmp_path) -> None:
+    from datetime import date, datetime, timezone
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    checked = datetime(2025, 1, 1, tzinfo=timezone.utc)
+    database.upsert(GameRecord(1, "First", 1, None, None, 101, None), checked)
+    database.upsert(GameRecord(2, "Second", 1, None, None, 102, None), checked)
+    cutoff = date(2026, 9, 4)
+    database.initialize_catch_up(cutoff, datetime(2026, 9, 4, tzinfo=timezone.utc))
+    client = FakeClient([
+        FetchResult("ok", GameRecord(1, "First", 2, None, None, 101, None), 200),
+        FetchResult("missing", status_code=404),
+    ])
+
+    stats = refresh_catch_up(database, client, cutoff, max_refresh=2)  # type: ignore[arg-type]
+
+    assert stats.attempted == 2
+    status = database.catch_up_status(cutoff)
+    assert status["pending"] == 0
+    assert status["successful"] == 1
+    assert status["missing"] == 1
+
+
+def test_catch_up_keeps_transient_failures_pending_and_obeys_circuit_breaker(tmp_path) -> None:
+    from datetime import date, datetime, timezone
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    database.upsert(GameRecord(1, "First", 1, None, None, 101, None), datetime(2025, 1, 1, tzinfo=timezone.utc))
+    cutoff = date(2026, 9, 4)
+    database.initialize_catch_up(cutoff, datetime(2026, 9, 4, tzinfo=timezone.utc))
+
+    with pytest.raises(CircuitBreakerError, match="rate limit"):
+        refresh_catch_up(
+            database,
+            FakeClient([FetchResult("rate_limited", status_code=429, retry_after=60)]),
+            cutoff,
+            max_refresh=1,
+        )  # type: ignore[arg-type]
+
+    status = database.catch_up_status(cutoff)
+    assert status["pending"] == 1
+    assert status["failedPending"] == 1
+
+
+def test_update_cycle_prefers_an_active_catch_up(tmp_path) -> None:
+    from datetime import date, datetime, timezone
+    database = Database(tmp_path / "state.sqlite")
+    database.initialize()
+    database.upsert(GameRecord(1, "First", 1, None, None, 101, None), datetime(2025, 1, 1, tzinfo=timezone.utc))
+    cutoff = date(2026, 9, 4)
+    database.initialize_catch_up(cutoff, datetime(2026, 9, 4, tzinfo=timezone.utc))
+
+    mode, selected_cutoff, stats = run_update_cycle(
+        database,
+        FakeClient([FetchResult("ok", GameRecord(1, "First", 1, None, None, 101, None), 200)]),
+        catch_up_limit=1,
+    )  # type: ignore[arg-type]
+
+    assert mode == "catch_up"
+    assert selected_cutoff == cutoff
+    assert stats.attempted == 1

@@ -14,6 +14,10 @@ on:
         description: Maximum due records to refresh
         default: 1000
         type: number
+      catchUpLimit:
+        description: Maximum records from an active catch-up cohort
+        default: 5000
+        type: number
       buildOnly:
         description: Skip database updates and rebuild the shadow candidate only
         default: false
@@ -23,20 +27,23 @@ jobs:
   update:
     runs-on: hltb-updater
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v6
+      - uses: https://git.local/forgejo/actions-checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - name: Verify runner and network prerequisites
+        run: scripts/preflight.sh
       - name: Install updater
         run: python3 -m pip install --disable-pip-version-check .
       - name: Rebalance legacy import schedule
         run: hltb-updater rebalance-schedule --database /var/lib/hltb-updater/hltb.sqlite
       - name: Verify parser canaries
         run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
-      - name: Update frontier and due records
+      - name: Update active catch-up or regular queues
         if: ${{ !inputs.buildOnly }}
         run: >-
-          hltb-updater update
+          hltb-updater update-cycle
           --database /var/lib/hltb-updater/hltb.sqlite
           --max-tail ${{ inputs.maxTail || 2000 }}
           --max-refresh ${{ inputs.maxRefresh || 1000 }}
+          --catch-up-limit ${{ inputs.catchUpLimit || 5000 }}
       - name: Create retained backup
         run: hltb-updater backup --database /var/lib/hltb-updater/hltb.sqlite --directory /var/lib/hltb-updater/backups
       - name: Build and verify shadow candidate
@@ -93,3 +100,26 @@ jobs:
             mv /var/lib/hltb-updater/shadow-candidate /var/lib/hltb-updater/shadow-candidate.previous
           fi
           mv /var/lib/hltb-updater/shadow-candidate.next /var/lib/hltb-updater/shadow-candidate
+
+  report-failure:
+    needs: update
+    if: ${{ always() && needs.update.result == 'failure' }}
+    runs-on: hltb-updater
+    steps:
+      - name: Create internal Forgejo issue
+        env:
+          ISSUE_REPORT_TOKEN: ${{ secrets.ISSUE_REPORT_TOKEN }}
+          FORGEJO_SERVER_URL: ${{ forgejo.server_url }}
+          FORGEJO_REPOSITORY: ${{ forgejo.repository }}
+          FORGEJO_RUN_URL: ${{ forgejo.server_url }}/${{ forgejo.repository }}/actions/runs/${{ forgejo.run_id }}
+        shell: bash
+        run: |
+          payload="$(jq -n \
+            --arg title "Nightly updater failed on $(date -u +%Y-%m-%d)" \
+            --arg body "The database was not fully updated. The stable channel was not changed. Run: $FORGEJO_RUN_URL" \
+            '{title: $title, body: $body}')"
+          curl --fail --silent --show-error \
+            -H "Authorization: token $ISSUE_REPORT_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data "$payload" \
+            "$FORGEJO_SERVER_URL/api/v1/repos/$FORGEJO_REPOSITORY/issues"

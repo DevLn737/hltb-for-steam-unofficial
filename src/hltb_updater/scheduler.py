@@ -68,7 +68,8 @@ def update_database(
         if result.status == "rate_limited":
             apply_result(database, game_id, result, now, stats)
             retry_seconds = max(60, result.retry_after or 3600)
-            database.set_metadata("retry_after_until", (now + timedelta(seconds=retry_seconds)).isoformat())
+            limited_at = datetime.now(timezone.utc)
+            database.set_metadata("retry_after_until", (limited_at + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
             apply_result(database, game_id, result, now, stats)
@@ -98,7 +99,8 @@ def update_database(
         if result.status == "rate_limited":
             apply_result(database, game_id, result, now, stats)
             retry_seconds = max(60, result.retry_after or 3600)
-            database.set_metadata("retry_after_until", (now + timedelta(seconds=retry_seconds)).isoformat())
+            limited_at = datetime.now(timezone.utc)
+            database.set_metadata("retry_after_until", (limited_at + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
             apply_result(database, game_id, result, now, stats)
@@ -114,6 +116,61 @@ def update_database(
     database.set_metadata("last_update_at", now.isoformat())
     database.set_metadata("highest_seen_id", str(stats.highest_id))
     return stats
+
+
+def refresh_catch_up(
+    database: Database,
+    client: HltbClient,
+    cutoff: date,
+    max_refresh: int = 5000,
+    on_result: Callable[[int, FetchResult], None] | None = None,
+) -> UpdateStats:
+    now = datetime.now(timezone.utc)
+    retry_after_until = database.get_metadata("retry_after_until")
+    if retry_after_until:
+        try:
+            if datetime.fromisoformat(retry_after_until) > now:
+                raise CircuitBreakerError(f"HLTB Retry-After remains active until {retry_after_until}")
+            database.set_metadata("retry_after_until", "")
+        except ValueError:
+            database.set_metadata("retry_after_until", "")
+
+    stats = UpdateStats(highest_id=database.max_id())
+    consecutive_parser_errors = 0
+    for game_id in database.catch_up_ids(cutoff, now.date(), max_refresh):
+        result = client.fetch(game_id)
+        on_result and on_result(game_id, result)
+        apply_result(database, game_id, result, now, stats)
+        database.record_catch_up_result(cutoff, game_id, result.status, now)
+        if result.status == "rate_limited":
+            retry_seconds = max(60, result.retry_after or 3600)
+            limited_at = datetime.now(timezone.utc)
+            database.set_metadata("retry_after_until", (limited_at + timedelta(seconds=retry_seconds)).isoformat())
+            raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
+        if result.status == "forbidden":
+            raise CircuitBreakerError(f"HLTB stopped the updater with {result.status_code}")
+        if result.status == "parse_error":
+            consecutive_parser_errors += 1
+            if consecutive_parser_errors >= 5:
+                raise CircuitBreakerError("Five consecutive HLTB parser failures")
+        else:
+            consecutive_parser_errors = 0
+
+    database.set_metadata("last_update_at", now.isoformat())
+    return stats
+
+
+def run_update_cycle(
+    database: Database,
+    client: HltbClient,
+    max_tail: int = 2000,
+    max_refresh: int = 1000,
+    catch_up_limit: int = 5000,
+) -> tuple[str, date | None, UpdateStats]:
+    cutoff = database.active_catch_up()
+    if cutoff is not None:
+        return "catch_up", cutoff, refresh_catch_up(database, client, cutoff, catch_up_limit)
+    return "normal", None, update_database(database, client, max_tail, max_refresh)
 
 
 def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> None:
