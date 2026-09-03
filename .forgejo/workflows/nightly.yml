@@ -18,6 +18,10 @@ on:
         description: Maximum records from an active catch-up cohort
         default: 5000
         type: number
+      catchUpCutoff:
+        description: Initialize a catch-up cohort for records not successfully checked since this YYYY-MM-DD date
+        required: false
+        type: string
       buildOnly:
         description: Skip database updates and rebuild the shadow candidate only
         default: false
@@ -36,6 +40,12 @@ jobs:
         run: hltb-updater rebalance-schedule --database /var/lib/hltb-updater/hltb.sqlite
       - name: Verify parser canaries
         run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
+      - name: Initialize requested catch-up cohort
+        if: ${{ inputs.catchUpCutoff != '' }}
+        run: >-
+          hltb-updater catch-up-init
+          --database /var/lib/hltb-updater/hltb.sqlite
+          --cutoff ${{ inputs.catchUpCutoff }}
       - name: Update active catch-up or regular queues
         if: ${{ !inputs.buildOnly }}
         run: >-

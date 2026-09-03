@@ -44,6 +44,8 @@ hltb-updater catch-up-run --database state/hltb.sqlite --cutoff 2026-09-04 --max
 
 Transient failures remain pending and obey the normal retry schedule. Successful responses and genuine 404 responses complete a cohort member. `update-cycle` automatically processes the oldest active catch-up instead of the regular tail/due queues and returns to normal operation when the cohort is complete.
 
+The same operation is available from Forgejo through the nightly workflow's optional `catchUpCutoff` input. Initializing an existing cutoff is idempotent, so retrying a failed dispatch does not duplicate or reset the cohort.
+
 `build` creates `stable.json`, `stable.sig`, and an immutable `versions/<version>/` directory. Schema v7 stores a compact per-record last-successful-check date; failed HTTP or parser attempts never make stale completion times appear fresh. It does not publish anything by itself. The Forgejo publish workflow pushes the verified candidate to the dedicated GitHub Pages repository only after all gates pass. The initial public schema-v7 snapshot compares against the retained July 2026 schema-v6 baseline; later snapshots compare against the previous public stable version. Publication uses a write-enabled GitHub deploy key scoped only to the data repository; no account-wide GitHub token is stored in Forgejo.
 
 ## Forgejo configuration
