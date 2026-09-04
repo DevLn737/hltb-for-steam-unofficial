@@ -44,7 +44,7 @@ hltb-updater catch-up-run --database state/hltb.sqlite --cutoff 2026-09-04 --max
 
 Transient failures remain pending and obey the normal retry schedule. Successful responses and genuine 404 responses complete a cohort member. `update-cycle` automatically processes the oldest active catch-up instead of the regular tail/due queues and returns to normal operation when the cohort is complete.
 
-The same operation is available from Forgejo through the nightly workflow's optional `catchUpCutoff` input. Initializing an existing cutoff is idempotent, so retrying a failed dispatch does not duplicate or reset the cohort.
+The same operation is available from Forgejo through the nightly workflow's optional `catchUpCutoff` input. Initializing an existing cutoff is idempotent, so retrying a failed dispatch does not duplicate or reset the cohort. For a supervised one-time drain, `catchUpLimit` may be raised to cover the remaining cohort; progress is committed after every response, and all request pacing and circuit breakers still apply.
 
 `build` creates `stable.json`, `stable.sig`, and an immutable `versions/<version>/` directory. Schema v7 stores a compact per-record last-successful-check date; failed HTTP or parser attempts never make stale completion times appear fresh. It does not publish anything by itself. The Forgejo publish workflow pushes the verified candidate to the dedicated GitHub Pages repository only after all gates pass. The initial public schema-v7 snapshot compares against the retained July 2026 schema-v6 baseline; later snapshots compare against the previous public stable version. Publication uses a write-enabled GitHub deploy key scoped only to the data repository; no account-wide GitHub token is stored in Forgejo.
 
@@ -61,7 +61,7 @@ Nightly runs update SQLite, create retained backups, and build a fully verified 
 
 Workflows fetch this private repository directly over Forgejo's internal network with the run-scoped ephemeral token. They do not depend on an externally hosted checkout action, a long-lived repository credential, or public access to updater sources.
 
-An independent ten-minute health monitor runs on the shared `docker` runner. It opens one deduplicated internal issue when the dedicated runner queue is stalled, a nightly exceeds its runner timeout margin, or no successful nightly has completed within 36 hours. It closes that issue automatically after recovery.
+An independent ten-minute health monitor runs on the shared `docker` runner. It opens one deduplicated internal issue when the dedicated runner queue is stalled, a scheduled nightly runs for more than 3 hours 15 minutes, a manually dispatched catch-up runs for more than 26 hours, or no successful nightly has completed within 36 hours. It closes that issue automatically after recovery.
 
 ## Safety
 
