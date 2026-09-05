@@ -138,6 +138,7 @@ def test_catch_up_keeps_transient_failures_pending_and_obeys_circuit_breaker(tmp
     status = database.catch_up_status(cutoff)
     assert status["pending"] == 1
     assert status["failedPending"] == 1
+    assert status["readyPending"] == 0
 
 
 def test_update_cycle_prefers_an_active_catch_up(tmp_path) -> None:

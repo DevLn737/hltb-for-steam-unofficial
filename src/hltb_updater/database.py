@@ -357,7 +357,11 @@ class Database:
                 )
             connection.commit()
 
-    def catch_up_status(self, cutoff: date | None = None) -> dict[str, int | str | None]:
+    def catch_up_status(
+        self,
+        cutoff: date | None = None,
+        today: date | None = None,
+    ) -> dict[str, int | str | None]:
         with self.connect() as connection:
             if cutoff is None:
                 run = connection.execute(
@@ -377,6 +381,7 @@ class Database:
                     "successful": 0,
                     "missing": 0,
                     "failedPending": 0,
+                    "readyPending": 0,
                 }
             counts = {
                 str(row["status"]): int(row["count"])
@@ -391,6 +396,13 @@ class Database:
                 WHERE cutoff_date=? AND status='pending' AND last_error IS NOT NULL""",
                 (run["cutoff_date"],),
             ).fetchone()[0])
+            ready_pending = int(connection.execute(
+                """SELECT COUNT(*) FROM catch_up_members AS members
+                JOIN games ON games.hltb_id=members.hltb_id
+                WHERE members.cutoff_date=? AND members.status='pending'
+                  AND (members.last_attempt_at IS NULL OR games.next_refresh_at <= ?)""",
+                (run["cutoff_date"], iso_day(today or utc_now().date())),
+            ).fetchone()[0])
         total = sum(counts.values())
         return {
             "cutoffDate": str(run["cutoff_date"]),
@@ -401,6 +413,7 @@ class Database:
             "successful": counts.get("success", 0),
             "missing": counts.get("missing", 0),
             "failedPending": failed_pending,
+            "readyPending": ready_pending,
         }
 
     def records(self) -> list[sqlite3.Row]:

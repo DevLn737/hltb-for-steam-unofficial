@@ -144,10 +144,10 @@ jobs:
           catch_up_status="$(hltb-updater catch-up-status \
             --database /var/lib/hltb-updater/hltb.sqlite \
             --cutoff "$CATCH_UP_CUTOFF")"
-          pending="$(CATCH_UP_STATUS="$catch_up_status" python3 -c \
-            'import json, os; print(json.loads(os.environ["CATCH_UP_STATUS"])["pending"])')"
-          if test "$pending" -eq 0; then
-            echo "Catch-up $CATCH_UP_CUTOFF is complete."
+          ready_pending="$(CATCH_UP_STATUS="$catch_up_status" python3 -c \
+            'import json, os; print(json.loads(os.environ["CATCH_UP_STATUS"])["readyPending"])')"
+          if test "$ready_pending" -eq 0; then
+            echo "No catch-up records are ready now; completion or backoff will be handled by the next nightly run."
             exit 0
           fi
           payload="$(python3 -c \
@@ -158,4 +158,4 @@ jobs:
             -H 'Content-Type: application/json' \
             --data "$payload" \
             "$FORGEJO_API_URL/api/v1/repos/$FORGEJO_REPOSITORY/actions/workflows/nightly.yml/dispatches"
-          echo "Queued the next catch-up chunk; $pending records remain."
+          echo "Queued the next catch-up chunk; $ready_pending records are ready."

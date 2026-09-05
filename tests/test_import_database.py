@@ -136,10 +136,12 @@ def test_catch_up_cohort_is_fixed_and_tracks_terminal_results(tmp_path) -> None:
     status = database.catch_up_status(datetime(2026, 9, 4).date())
     assert status["pending"] == 2
     assert status["failedPending"] == 1
+    assert status["readyPending"] == 2
     database.record_catch_up_result(datetime(2026, 9, 4).date(), 2, "ok", attempted)
     database.record_catch_up_result(datetime(2026, 9, 4).date(), 1, "missing", attempted)
     status = database.catch_up_status(datetime(2026, 9, 4).date())
     assert status["successful"] == 1
     assert status["missing"] == 1
     assert status["pending"] == 0
+    assert status["readyPending"] == 0
     assert status["completedAt"] is not None
