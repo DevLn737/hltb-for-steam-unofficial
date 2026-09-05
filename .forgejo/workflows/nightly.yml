@@ -22,6 +22,10 @@ on:
         description: Initialize a catch-up cohort for records not successfully checked since this YYYY-MM-DD date
         required: false
         type: string
+      continueCatchUp:
+        description: Queue another resumable catch-up chunk after a successful run while records remain
+        default: false
+        type: boolean
       buildOnly:
         description: Skip database updates and rebuild the shadow candidate only
         default: false
@@ -125,3 +129,33 @@ jobs:
             mv /var/lib/hltb-updater/shadow-candidate /var/lib/hltb-updater/shadow-candidate.previous
           fi
           mv /var/lib/hltb-updater/shadow-candidate.next /var/lib/hltb-updater/shadow-candidate
+      - name: Queue next catch-up chunk
+        if: ${{ inputs.continueCatchUp && inputs.catchUpCutoff != '' }}
+        env:
+          FORGEJO_TOKEN: ${{ forgejo.token }}
+          FORGEJO_API_URL: http://server:3000
+          FORGEJO_REPOSITORY: ${{ forgejo.repository }}
+          CATCH_UP_CUTOFF: ${{ inputs.catchUpCutoff }}
+          CATCH_UP_LIMIT: ${{ inputs.catchUpLimit || 5000 }}
+          MAX_TAIL: ${{ inputs.maxTail || 2000 }}
+          MAX_REFRESH: ${{ inputs.maxRefresh || 1000 }}
+        shell: bash
+        run: |
+          catch_up_status="$(hltb-updater catch-up-status \
+            --database /var/lib/hltb-updater/hltb.sqlite \
+            --cutoff "$CATCH_UP_CUTOFF")"
+          pending="$(CATCH_UP_STATUS="$catch_up_status" python3 -c \
+            'import json, os; print(json.loads(os.environ["CATCH_UP_STATUS"])["pending"])')"
+          if test "$pending" -eq 0; then
+            echo "Catch-up $CATCH_UP_CUTOFF is complete."
+            exit 0
+          fi
+          payload="$(python3 -c \
+            'import json, os; print(json.dumps({"ref": "main", "inputs": {"maxTail": os.environ["MAX_TAIL"], "maxRefresh": os.environ["MAX_REFRESH"], "catchUpLimit": os.environ["CATCH_UP_LIMIT"], "catchUpCutoff": os.environ["CATCH_UP_CUTOFF"], "continueCatchUp": "true", "buildOnly": "false"}}))')"
+          curl --fail --silent --show-error \
+            -X POST \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data "$payload" \
+            "$FORGEJO_API_URL/api/v1/repos/$FORGEJO_REPOSITORY/actions/workflows/nightly.yml/dispatches"
+          echo "Queued the next catch-up chunk; $pending records remain."

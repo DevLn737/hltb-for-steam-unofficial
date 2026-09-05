@@ -63,14 +63,9 @@ jobs:
             }
           }
 
-          const staleLimitHours = (run) => run.event === 'workflow_dispatch' ? 26 : 3.25;
-          const staleRunning = running.find((run) => (
-            ageMs(run.started) > staleLimitHours(run) * 60 * 60 * 1000
-          ));
+          const staleRunning = running.find((run) => ageMs(run.started) > 3.25 * 60 * 60 * 1000);
           if (staleRunning) {
-            reasons.push(
-              `nightly run ${staleRunning.index_in_repo} has been running for more than ${staleLimitHours(staleRunning)} hours`,
-            );
+            reasons.push(`nightly run ${staleRunning.index_in_repo} has been running for more than 3 hours 15 minutes`);
           }
 
           const stalledWaiting = running.length === 0
