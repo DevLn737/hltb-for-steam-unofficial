@@ -4,9 +4,13 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [2.2.3] - 2026-09-07
+
 ### Changed
 
 - Open HowLongToBeat links in the current window inside the Steam desktop client while keeping normal new-tab behavior in Chrome and Firefox.
+- Refresh the packaged fallback database from signed snapshot 2026.09.07.1, covering 84,344 games and 58,927 unambiguous Steam mappings.
+- Accept and validate the updater's optional change-summary metadata when installing signed remote snapshots.
 
 ## [2.2.2] - 2026-08-26
 

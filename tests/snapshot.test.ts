@@ -24,8 +24,8 @@ describe('packaged HLTB snapshot v7', () => {
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };
     expect(manifest).toMatchObject({
-      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 172_588, timedEntryCount: 58_955,
-      originalEntryCount: 172_588, steamMappingCount: 58_517,
+      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 173_789, timedEntryCount: 59_554,
+      originalEntryCount: 173_789, steamMappingCount: 58_927,
     });
   });
 
@@ -49,10 +49,10 @@ describe('packaged HLTB snapshot v7', () => {
   it('returns current acceptance values and never the historical 4.6-hour mismatch', async () => {
     const snapshot = localSnapshot();
     await expect(snapshot.lookup('3375780', 'Trails in the Sky 1st Chapter')).resolves.toMatchObject({
-      mainStory: 2389, mainPlusExtras: 3411, completionist: 4511,
+      mainStory: 2381, mainPlusExtras: 3421, completionist: 4487,
     });
     await expect(snapshot.lookup('2680010', 'The First Berserker: Khazan')).resolves.toMatchObject({
-      mainStory: 2070, mainPlusExtras: 2827, completionist: 3469,
+      mainStory: 2062, mainPlusExtras: 2813, completionist: 3462,
     });
     await expect(snapshot.lookup('3639650', 'Kotama and Academy Citadel')).resolves.toMatchObject({
       mainStory: 590, mainPlusExtras: 996, completionist: 1126,

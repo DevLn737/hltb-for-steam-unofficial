@@ -79,7 +79,7 @@ export function parseSnapshotManifestV7(value: unknown, expectedVersion?: string
     'timedEntryCount', 'entryCount', 'originalEntryCount', 'excludedEntryCount', 'normalizedTitleCount', 'titleCollisionCount', 'titleCollisionRecordCount',
     'steamMappingCount', 'steamCollisionCount', 'bucketCount', 'origin', 'source', 'pack', 'entries',
   ];
-  if (!isRecord(value) || !exactKeys(value, keys)
+  if (!isRecord(value) || (!exactKeys(value, keys) && !exactKeys(value, [...keys, 'changeSummary']))
     || value.schema !== 7 || value.format !== 'front-coded-uleb128-delta-v3' || value.compression !== 'gzip' || value.bucketCount !== 16
     || typeof value.snapshotVersion !== 'string' || !isSnapshotVersion(value.snapshotVersion)
     || (expectedVersion !== undefined && value.snapshotVersion !== expectedVersion)
@@ -90,6 +90,14 @@ export function parseSnapshotManifestV7(value: unknown, expectedVersion?: string
     || value.checkedDates.some((date, index, dates) => index > 0 && String(date) <= String(dates[index - 1]))
     || typeof value.generatedAt !== 'string' || Number.isNaN(Date.parse(value.generatedAt))
     || typeof value.origin !== 'string' || value.origin.length === 0
+    || (value.changeSummary !== undefined && (!isRecord(value.changeSummary)
+      || !exactKeys(value.changeSummary, ['addedRecordCount', 'changedRecordCount', 'removedRecordCount', 'changedOrRemovedRatio'])
+      || !nonNegativeInteger(value.changeSummary.addedRecordCount)
+      || !nonNegativeInteger(value.changeSummary.changedRecordCount)
+      || !nonNegativeInteger(value.changeSummary.removedRecordCount)
+      || typeof value.changeSummary.changedOrRemovedRatio !== 'number'
+      || !Number.isFinite(value.changeSummary.changedOrRemovedRatio)
+      || value.changeSummary.changedOrRemovedRatio < 0 || value.changeSummary.changedOrRemovedRatio > 1))
     || !nonNegativeInteger(value.sourceEntryCount) || !nonNegativeInteger(value.timedEntryCount)
     || !nonNegativeInteger(value.entryCount) || !nonNegativeInteger(value.originalEntryCount)
     || !nonNegativeInteger(value.excludedEntryCount) || Number(value.entryCount) + Number(value.excludedEntryCount) !== Number(value.originalEntryCount)

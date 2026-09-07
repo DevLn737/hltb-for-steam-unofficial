@@ -52,7 +52,7 @@ async function assertWidget(context, fixture) {
   const badges = await widget.locator('.time-change').allTextContents();
   assert(JSON.stringify(badges) === JSON.stringify(fixture.badges), `${fixture.title} badge mismatch: ${JSON.stringify(badges)}`);
   const labels = await widget.locator('.time-change').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label')));
-  assert(labels.every((label) => label?.includes('Jul 22, 2026')), `${fixture.title} baseline date is missing: ${JSON.stringify(labels)}`);
+  assert(labels.every((label) => label?.includes('Sep 3, 2026')), `${fixture.title} baseline date is missing: ${JSON.stringify(labels)}`);
 }
 
 try {
@@ -64,8 +64,8 @@ try {
 
   const cases = [
     { appId: 1623730, title: 'Palworld', expected: ['delta', 'delta', 'delta'] },
-    { appId: 674750, title: 'Yet Another Zombie Defense HD', expected: ['delta', 'delta', 'delta'] },
-    { appId: 3628950, title: "Succubus Successor: Delilah's Juicy Journey", expected: ['new', 'new', null] },
+    { appId: 674750, title: 'Yet Another Zombie Defense HD', expected: ['delta', null, 'delta'] },
+    { appId: 3628950, title: "Succubus Successor: Delilah's Juicy Journey", expected: [null, null, null] },
   ];
   for (const fixture of cases) {
     const response = await message(page, { type: 'GET_GAME_TIMES', appId: fixture.appId, title: fixture.title, client: 'steam' });
@@ -75,9 +75,9 @@ try {
     assert(JSON.stringify(actual) === JSON.stringify(fixture.expected), `${fixture.title} history mismatch: ${JSON.stringify(actual)}`);
     console.log(`${fixture.title}: ${JSON.stringify(response.data.changes)}`);
   }
-  await assertWidget(context, { appId: 1623730, slug: 'Palworld', title: 'Palworld', badges: ['▲ 1.5h', '▲ 4h', '▲ 6h'] });
-  await assertWidget(context, { appId: 674750, slug: 'Yet_Another_Zombie_Defense_HD', title: 'Yet Another Zombie Defense HD', badges: ['▼ 1h', '▼ 3h', '▼ 0.5h'] });
-  await assertWidget(context, { appId: 3628950, slug: 'Succubus_Successor_Delilahs_Juicy_Journey', title: "Succubus Successor: Delilah's Juicy Journey", badges: ['NEW', 'NEW'] });
+  await assertWidget(context, { appId: 1623730, slug: 'Palworld', title: 'Palworld', badges: ['▲ 19.5h', '▲ 21h', '▲ 38.5h'] });
+  await assertWidget(context, { appId: 674750, slug: 'Yet_Another_Zombie_Defense_HD', title: 'Yet Another Zombie Defense HD', badges: [] });
+  await assertWidget(context, { appId: 3628950, slug: 'Succubus_Successor_Delilahs_Juicy_Journey', title: "Succubus Successor: Delilah's Juicy Journey", badges: [] });
   await context.close();
   activeContext = undefined;
 

@@ -57,6 +57,12 @@ export interface SnapshotManifestV7 {
   steamCollisionCount: number;
   bucketCount: 16;
   origin: string;
+  changeSummary?: {
+    addedRecordCount: number;
+    changedRecordCount: number;
+    removedRecordCount: number;
+    changedOrRemovedRatio: number;
+  };
   source: {
     lastGameId: number;
     databaseSha256: string;

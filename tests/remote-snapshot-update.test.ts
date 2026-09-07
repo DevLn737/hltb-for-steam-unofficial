@@ -52,6 +52,7 @@ async function remoteFixture(version = '2026.09.01.1') {
     generatedAt: '2026-09-01T00:00:00.000Z', sourceEntryCount: 0, timedEntryCount: 0, entryCount: 0, originalEntryCount: 0, excludedEntryCount: 0,
     normalizedTitleCount: 0, titleCollisionCount: 0, titleCollisionRecordCount: 0,
     steamMappingCount: 0, steamCollisionCount: 0, bucketCount: 16, origin: 'test',
+    changeSummary: { addedRecordCount: 0, changedRecordCount: 0, removedRecordCount: 0, changedOrRemovedRatio: 0 },
     source: { lastGameId: 0, databaseSha256: '1'.repeat(64) },
     pack: { path: 'snapshot.pack', bytes: pack.length, sha256: await sha256Hex(pack) }, entries,
   };
