@@ -55,7 +55,7 @@ function remoteManifest(): SnapshotManifestV7 {
   };
 }
 
-function packagedSource(): SnapshotSource {
+function packagedSource(sourceUpdatedAt = '2026-07-22'): SnapshotSource {
   const buckets = Array.from({ length: 16 }, (_, index) => ({
     name: index.toString(16),
     entries: 1,
@@ -68,7 +68,7 @@ function packagedSource(): SnapshotSource {
     schema: 7,
     format: 'front-coded-uleb128-delta-v3',
     compression: 'gzip',
-    sourceUpdatedAt: '2026-07-22',
+    sourceUpdatedAt,
     baselineUpdatedAt: '2026-07-22',
     checkedDates: ['2026-07-22'],
     bucketCount: 16,
@@ -91,6 +91,40 @@ function remoteStore(getBucket: RemoteSnapshotStore['getBucket']): RemoteSnapsho
 }
 
 describe('SnapshotRepository', () => {
+  it('uses newer packaged data instead of a remote snapshot retained from an older extension', async () => {
+    const getBucket = vi.fn(async () => emptyTitle);
+    const repository = new SnapshotRepository(
+      remoteStore(getBucket),
+      { source: packagedSource('2026-09-07') },
+    );
+
+    await expect(repository.lookup('0', 'Packaged Game')).resolves.toMatchObject({
+      gameId: 123, mainStory: 60, mainPlusExtras: 120, completionist: 180,
+    });
+    expect(getBucket).not.toHaveBeenCalled();
+  });
+
+  it('keeps a same-date remote miss authoritative', async () => {
+    const repository = new SnapshotRepository(
+      remoteStore(async (_version, path) => path.startsWith('title/') ? emptyTitle : emptySteam),
+      { source: packagedSource('2026-09-01') },
+    );
+
+    await expect(repository.lookup('0', 'Packaged Game')).resolves.toBeNull();
+  });
+
+  it('uses the remote snapshot when packaged metadata is unavailable', async () => {
+    const repository = new SnapshotRepository(
+      remoteStore(async (_version, path) => path.startsWith('title/') ? emptyTitle : emptySteam),
+      { source: {
+        getManifest: async () => { throw new Error('packaged metadata unavailable'); },
+        loadCompressed: vi.fn(),
+      } },
+    );
+
+    await expect(repository.lookup('0', 'Packaged Game')).resolves.toBeNull();
+  });
+
   it('treats a valid remote miss as authoritative', async () => {
     const repository = new SnapshotRepository(
       remoteStore(async (_version, path) => path.startsWith('title/') ? emptyTitle : emptySteam),

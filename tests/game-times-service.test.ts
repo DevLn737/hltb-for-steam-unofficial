@@ -36,6 +36,34 @@ const found: HltbGameTimes = {
 };
 
 describe('GameTimesService', () => {
+  it('starts a fresh lookup after snapshot activation and preserves it when the old lookup finishes', async () => {
+    const oldSnapshot: SnapshotGameTimes = {
+      gameId: 94_122, matchedTitle: 'Crimson Desert', mainStory: 60, mainPlusExtras: 120, completionist: 180,
+      changes: { mainStory: null, mainPlusExtras: null, completionist: null },
+      baselineUpdatedAt: Date.UTC(2026, 6, 22), updatedAt: Date.UTC(2026, 6, 22),
+    };
+    let resolveOld!: (value: SnapshotGameTimes) => void;
+    let resolveNew!: (value: SnapshotGameTimes) => void;
+    const oldLookup = new Promise<SnapshotGameTimes>((resolve) => { resolveOld = resolve; });
+    const newLookup = new Promise<SnapshotGameTimes>((resolve) => { resolveNew = resolve; });
+    let lookupCount = 0;
+    const service = new GameTimesService(new StubClient(null), 2, {
+      lookup: () => ++lookupCount === 1 ? oldLookup : newLookup,
+    });
+
+    const oldRequest = service.getGameTimes('3321460', 'Crimson Desert', 'steam');
+    service.invalidatePendingLookups();
+    const newRequest = service.getGameTimes('3321460', 'Crimson Desert', 'steam');
+    expect(newRequest).not.toBe(oldRequest);
+    resolveOld(oldSnapshot);
+    await oldRequest;
+    expect(service.getGameTimes('3321460', 'Crimson Desert', 'steam')).toBe(newRequest);
+
+    resolveNew({ ...oldSnapshot, mainStory: 4149, updatedAt: Date.UTC(2026, 8, 5) });
+    await expect(newRequest).resolves.toMatchObject({ ok: true, data: { mainStory: 4149 } });
+    expect(lookupCount).toBe(2);
+  });
+
   it('stores a successful network result', async () => {
     const result = await new GameTimesService(new StubClient(found)).getGameTimes('3375780', 'Trails in the Sky 1st Chapter');
     expect(result).toMatchObject({ ok: true, data: { source: 'network', mainStory: 2400, stale: false } });

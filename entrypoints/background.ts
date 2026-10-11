@@ -23,8 +23,11 @@ async function handleMessage(message: unknown): Promise<RuntimeResponse> {
     switch (message.type) {
       case 'GET_GAME_TIMES':
         return await service.getGameTimes(message.appId, message.title, message.client);
-      case 'CHECK_SNAPSHOT_UPDATE':
-        return { ok: true, update: await snapshotUpdates.check(message.force === true) };
+      case 'CHECK_SNAPSHOT_UPDATE': {
+        const update = await snapshotUpdates.check(message.force === true);
+        if (update.status === 'updated') service.invalidatePendingLookups();
+        return { ok: true, update };
+      }
       case 'GET_SETTINGS':
         return { ok: true, settings: await getSettings() };
       case 'UPDATE_SETTINGS':

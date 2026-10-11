@@ -46,6 +46,13 @@ describe('packaged HLTB snapshot v7', () => {
     });
   });
 
+  it('contains the September Crimson Desert estimates and its per-game check date', async () => {
+    await expect(localSnapshot().lookup('3321460', 'Crimson Desert')).resolves.toMatchObject({
+      gameId: 94_122, mainStory: 4149, mainPlusExtras: 8516, completionist: 15_402,
+      updatedAt: Date.UTC(2026, 8, 5),
+    });
+  });
+
   it('returns current acceptance values and never the historical 4.6-hour mismatch', async () => {
     const snapshot = localSnapshot();
     await expect(snapshot.lookup('3375780', 'Trails in the Sky 1st Chapter')).resolves.toMatchObject({

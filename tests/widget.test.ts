@@ -40,7 +40,7 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).not.toContain('Updated');
   });
 
-  it('shows the per-game snapshot check time and removes failed Steam artwork without a placeholder', () => {
+  it('hides the snapshot check date and removes failed Steam artwork without a placeholder', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
@@ -54,7 +54,8 @@ describe('Steam widget', () => {
     ['https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2258500/library_600x900_2x.jpg'],
     'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2258500/header.jpg');
     expect(host.shadowRoot?.textContent).not.toContain('Локальный снимок');
-    expect(host.shadowRoot?.textContent).toContain('Проверено');
+    expect(host.shadowRoot?.textContent).not.toContain('Проверено');
+    expect(host.shadowRoot?.querySelector('.updated')).toBeNull();
     const image = host.shadowRoot?.querySelector('img');
     image?.dispatchEvent(new Event('error'));
     expect(host.shadowRoot?.querySelector('.artwork')).toBeNull();
@@ -95,7 +96,7 @@ describe('Steam widget', () => {
     expect(host.shadowRoot?.textContent).toContain('2 Hours');
   });
 
-  it('shows the age of a cached fallback', () => {
+  it('keeps the cached fallback badge without displaying a check date', () => {
     const anchor = document.body.appendChild(document.createElement('div'));
     const host = ensureWidgetHost(document, { anchor, position: 'before' });
     renderResult(host, {
@@ -106,7 +107,8 @@ describe('Steam widget', () => {
       updatedAt: Date.UTC(2026, 6, 28), stale: true,
     }, DEFAULT_SETTINGS, 'en');
     expect(host.shadowRoot?.textContent).toContain('Saved result');
-    expect(host.shadowRoot?.textContent).toContain('Checked');
+    expect(host.shadowRoot?.textContent).not.toContain('Checked');
+    expect(host.shadowRoot?.querySelector('.updated')).toBeNull();
   });
 
   it('falls back to horizontal Steam artwork without distortion and then to text-only', () => {

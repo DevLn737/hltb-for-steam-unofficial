@@ -181,14 +181,8 @@ function renderTimeCard(
   content.append(times);
 
   const footer = createElement(documentRef, 'footer');
-  if (!unavailable && data.updatedAt !== null && data.source !== 'network') {
-    const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(data.updatedAt);
-    if (data.source === 'snapshot') {
-      footer.append(createElement(documentRef, 'span', 'updated', translate('checked', locale, { date })));
-    } else {
-      footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
-      footer.append(createElement(documentRef, 'span', 'updated', translate('checked', locale, { date })));
-    }
+  if (data.source === 'cache') {
+    footer.append(createElement(documentRef, 'span', 'badge', translate(data.stale ? 'stale' : 'cached', locale)));
   }
   const link = createElement(documentRef, 'a', undefined, `${translate(unavailable ? 'searchHltb' : 'openHltb', locale)} ↗`);
   link.href = safeHltbUrl(data.hltbUrl) ?? 'https://howlongtobeat.com/';

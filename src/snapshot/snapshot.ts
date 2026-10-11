@@ -104,6 +104,10 @@ export class HltbSnapshot {
     return matches.length === 1 ? this.toResult(matches[0]!, manifest) : null;
   }
 
+  async getSourceUpdatedAt(): Promise<number> {
+    return Date.parse((await this.getManifest()).sourceUpdatedAt);
+  }
+
   private toResult(row: SnapshotRow, manifest: SnapshotLookupManifest): SnapshotGameTimes {
     return {
       gameId: row[1],
@@ -193,7 +197,11 @@ export class SnapshotRepository {
   async lookup(appId: string, title: string): Promise<SnapshotGameTimes | null> {
     try {
       const active = await this.store.getActive();
-      if (active) {
+      // An extension upgrade can package newer data than the stored remote snapshot.
+      const packagedUpdatedAt = active
+        ? await this.packaged.getSourceUpdatedAt().catch(() => Number.NEGATIVE_INFINITY)
+        : Number.NEGATIVE_INFINITY;
+      if (active && Date.parse(active.manifest.sourceUpdatedAt) >= packagedUpdatedAt) {
         if (!this.remote || this.remoteVersion !== active.activeVersion) {
           const version = active.activeVersion;
           const manifest = toLookupManifest(active.manifest);

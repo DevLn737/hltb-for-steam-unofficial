@@ -4,6 +4,17 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [2.2.4] - 2026-10-12
+
+### Changed
+
+- Remove the visible "Checked" date from snapshot and cached game cards while retaining cached-result badges and completion-time change indicators.
+
+### Fixed
+
+- Prefer the newer packaged snapshot when an extension upgrade encounters an older remote snapshot retained in IndexedDB.
+- Refresh the open Steam game card after a signed snapshot update is installed, without requiring a page reload.
+
 ## [2.2.3] - 2026-09-07
 
 ### Changed

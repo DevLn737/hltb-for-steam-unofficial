@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import { DEFAULT_SETTINGS, type ExtensionSettings, type RuntimeRequest } from '../src/core/contracts';
+import { DEFAULT_SETTINGS, type ExtensionSettings, type RuntimeRequest, type RuntimeResponse } from '../src/core/contracts';
 import { withTimeout } from '../src/core/async';
 import { detectClientContext } from '../src/core/client-context';
 import { isLookupResult, isSettingsResponse } from '../src/core/runtime-validation';
@@ -16,6 +16,7 @@ export default defineContentScript({
   runAt: 'document_idle',
   main() {
     let currentPage = '';
+    let snapshotGeneration = 0;
     let scheduled: ReturnType<typeof setTimeout> | undefined;
 
     const refresh = async () => {
@@ -26,7 +27,7 @@ export default defineContentScript({
         currentPage = '';
         return;
       }
-      const pageKey = `${page.appId}:${page.title}`;
+      const pageKey = `${page.appId}:${page.title}:${snapshotGeneration}`;
       const host = ensureWidgetHost(document, placement);
       if (pageKey === currentPage) return;
       currentPage = pageKey;
@@ -69,7 +70,13 @@ export default defineContentScript({
       scheduled = setTimeout(() => void refresh(), 150);
     };
 
-    void send({ type: 'CHECK_SNAPSHOT_UPDATE' }, 120_000).catch(() => undefined);
+    void send({ type: 'CHECK_SNAPSHOT_UPDATE' }, 120_000).then((response) => {
+      const result = response as RuntimeResponse;
+      if (result.ok && 'update' in result && result.update.status === 'updated') {
+        snapshotGeneration += 1;
+        void refresh();
+      }
+    }).catch(() => undefined);
     void refresh();
     const observer = new MutationObserver(schedule);
     observer.observe(document.documentElement, { childList: true, subtree: true });

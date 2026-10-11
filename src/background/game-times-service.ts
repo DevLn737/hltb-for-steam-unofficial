@@ -25,9 +25,15 @@ export class GameTimesService {
     const key = `${clientContext}:${appId}:${title}`;
     const existing = this.pending.get(key);
     if (existing) return existing;
-    const request = this.lookup(appId, title, clientContext).finally(() => this.pending.delete(key));
+    const request = this.lookup(appId, title, clientContext).finally(() => {
+      if (this.pending.get(key) === request) this.pending.delete(key);
+    });
     this.pending.set(key, request);
     return request;
+  }
+
+  invalidatePendingLookups(): void {
+    this.pending.clear();
   }
 
   private async lookup(appId: string, requestedTitle: string, clientContext: ClientContext): Promise<LookupResult> {
