@@ -15,9 +15,10 @@ services:
       - /root/hltb-updater-state:/var/lib/hltb-updater
       - /root/hltb-runner-build:/hltb-runner-build:ro
     networks:
-      - updater-runner
-      - updater-egress
-      - frontend
+      updater-runner: {}
+      updater-egress: {}
+      frontend:
+        ipv4_address: 172.30.50.6
     healthcheck:
       test:
         - CMD-SHELL
@@ -59,8 +60,9 @@ services:
       - --config
       - /data/config.yaml
     networks:
-      - updater-runner
-      - frontend
+      updater-runner: {}
+      frontend:
+        ipv4_address: 172.30.50.7
     depends_on:
       server:
         condition: service_healthy

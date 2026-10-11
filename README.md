@@ -12,6 +12,8 @@ Private updater for the signed data channel used by HLTB for Steam v2.2. It keep
 The dedicated runner job image is built from `runner/Dockerfile`. It combines Node.js 22 for JavaScript-based Forgejo actions with an isolated Python 3.11 environment for the updater.
 `runner/docker-compose.override.yaml` creates a repository-scoped runner with its own Docker-in-Docker daemon, image cache, TLS certificates, and private network. The SQLite state is never mounted into the shared runner or its Docker daemon.
 
+The updater DinD and runner use fixed frontend addresses `172.30.50.6` and `172.30.50.7`. Addresses `.2` through `.5` belong to the Forgejo proxy, server, shared DinD, and shared runner; dynamic allocation in this network can otherwise take the stopped server's address and prevent it from restarting.
+
 ## Bootstrap
 
 ```bash
@@ -69,5 +71,6 @@ An independent ten-minute health monitor runs on the shared `docker` runner. It 
 - `429` honors `Retry-After`; `403`, repeated parse errors, and canary failures stop the run.
 - A game becomes a tombstone only after three 404 responses on separate days over at least 30 days.
 - The stable channel is not modified when coverage, size, parser, checksum, or contract gates fail.
+- Publication requires a completed updater cycle within the last 36 hours, a successful game refresh from that cycle, and no unfinished catch-up cohort. A server restart cannot republish old database contents under a new calendar version.
 - Publication stops when changed or removed records exceed 5% of the previous stable snapshot.
 - Raw HTML, descriptions, reviews, and images are never stored.

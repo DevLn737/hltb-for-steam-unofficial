@@ -14,6 +14,7 @@ from .scheduler import (
     UpdateStats,
     apply_result,
     check_canaries,
+    check_publication_readiness,
     refresh_catch_up,
     run_update_cycle,
     update_database,
@@ -42,6 +43,9 @@ def parser() -> argparse.ArgumentParser:
     canary = commands.add_parser("canary")
     canary.add_argument("--database", required=True)
     canary.add_argument("--config", required=True)
+    publication = commands.add_parser("check-publication")
+    publication.add_argument("--database", required=True)
+    publication.add_argument("--max-age-hours", type=positive_int, default=36)
     update = commands.add_parser("update")
     update.add_argument("--database", required=True)
     update.add_argument("--max-tail", type=int, default=2000)
@@ -109,6 +113,10 @@ def main() -> None:
         print(f"Imported {imported} games from {source_count} source entries")
     elif arguments.command == "rebalance-schedule":
         print(json.dumps({"rescheduled": database.rebalance_legacy_import_schedule()}, sort_keys=True))
+    elif arguments.command == "check-publication":
+        from datetime import timedelta
+        updated = check_publication_readiness(database, timedelta(hours=arguments.max_age_hours))
+        print(json.dumps({"lastUpdateAt": updated.isoformat(), "ready": True}, sort_keys=True))
     elif arguments.command == "canary":
         config = json.loads(Path(arguments.config).read_text(encoding="utf-8"))
         if config.get("schema") != 1 or not isinstance(config.get("games"), list):

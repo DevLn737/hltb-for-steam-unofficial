@@ -37,6 +37,8 @@ jobs:
       - name: Install and test updater
         run: python3 -m pip install --disable-pip-version-check '.[test]'
       - run: pytest -q
+      - name: Require a recently completed updater cycle
+        run: hltb-updater check-publication --database /var/lib/hltb-updater/hltb.sqlite --max-age-hours 36
       - name: Derive scheduled version
         id: version
         shell: bash

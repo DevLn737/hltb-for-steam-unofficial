@@ -12,6 +12,30 @@ class CircuitBreakerError(RuntimeError):
     pass
 
 
+def check_publication_readiness(
+    database: Database,
+    maximum_age: timedelta = timedelta(hours=36),
+    now: datetime | None = None,
+) -> datetime:
+    now = now or datetime.now(timezone.utc)
+    value = database.get_metadata("last_update_at")
+    try:
+        updated = datetime.fromisoformat(value or "")
+    except ValueError as error:
+        raise ValueError("Publication requires a completed updater cycle") from error
+    if updated.tzinfo is None or updated > now + timedelta(minutes=5):
+        raise ValueError("The completed updater timestamp is invalid")
+    if now - updated > maximum_age:
+        raise ValueError(f"The last completed updater cycle is too old: {value}")
+    if database.active_catch_up() is not None:
+        raise ValueError("Publication must wait for the active catch-up cohort to complete")
+    with database.connect() as connection:
+        latest_success = connection.execute("SELECT MAX(last_success_at) FROM games WHERE tombstoned=0").fetchone()[0]
+    if latest_success is None or date.fromisoformat(latest_success) < updated.date():
+        raise ValueError("The completed cycle contains no successful game refresh")
+    return updated
+
+
 @dataclass(slots=True)
 class UpdateStats:
     attempted: int = 0
