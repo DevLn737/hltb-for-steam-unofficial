@@ -43,6 +43,7 @@ def parser() -> argparse.ArgumentParser:
     canary = commands.add_parser("canary")
     canary.add_argument("--database", required=True)
     canary.add_argument("--config", required=True)
+    canary.add_argument("--save-results", action="store_true")
     publication = commands.add_parser("check-publication")
     publication.add_argument("--database", required=True)
     publication.add_argument("--max-age-hours", type=positive_int, default=36)
@@ -122,7 +123,12 @@ def main() -> None:
         if config.get("schema") != 1 or not isinstance(config.get("games"), list):
             raise SystemExit("Invalid canary config")
         with HltbClient() as client:
-            check_canaries(client, config["games"])
+            records = check_canaries(client, config["games"])
+        if arguments.save_results:
+            from .database import utc_now
+            checked_at = utc_now()
+            for record in records:
+                database.upsert(record, checked_at)
         print(f"Verified {len(config['games'])} canaries")
     elif arguments.command == "update":
         with HltbClient() as client:

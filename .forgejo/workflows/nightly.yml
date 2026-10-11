@@ -58,7 +58,7 @@ jobs:
       - name: Rebalance legacy import schedule
         run: hltb-updater rebalance-schedule --database /var/lib/hltb-updater/hltb.sqlite
       - name: Verify parser canaries
-        run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json
+        run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json --save-results
       - name: Initialize requested catch-up cohort
         if: ${{ inputs.catchUpCutoff != '' }}
         run: >-

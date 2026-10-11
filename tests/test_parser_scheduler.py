@@ -47,6 +47,12 @@ def test_canary_breaks_on_parser_failure() -> None:
         check_canaries(FakeClient([FetchResult("parse_error")]), [{"hltbGameId": 1, "title": None}])  # type: ignore[arg-type]
 
 
+def test_canaries_return_the_successfully_validated_records() -> None:
+    record = GameRecord(1, "Game", 60, None, None, 1, None)
+    client = FakeClient([FetchResult("ok", record, 200)])
+    assert check_canaries(client, [{"hltbGameId": 1, "title": "Game"}]) == [record]  # type: ignore[arg-type]
+
+
 def test_tail_scan_stops_after_500_forward_404s(tmp_path) -> None:
     database = Database(tmp_path / "state.sqlite")
     database.initialize()

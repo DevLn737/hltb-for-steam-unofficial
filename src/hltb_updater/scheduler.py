@@ -6,6 +6,7 @@ from typing import Callable
 
 from .client import FetchResult, HltbClient
 from .database import Database
+from .model import GameRecord
 
 
 class CircuitBreakerError(RuntimeError):
@@ -197,7 +198,8 @@ def run_update_cycle(
     return "normal", None, update_database(database, client, max_tail, max_refresh)
 
 
-def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> None:
+def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> list[GameRecord]:
+    records = []
     for canary in canaries:
         game_id = int(canary["hltbGameId"])
         result = client.fetch(game_id)
@@ -206,3 +208,5 @@ def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> Non
         expected = canary.get("title")
         if expected is not None and result.record.title != expected:
             raise CircuitBreakerError(f"Canary {game_id} title changed: {result.record.title!r}")
+        records.append(result.record)
+    return records
