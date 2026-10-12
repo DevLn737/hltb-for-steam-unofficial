@@ -36,7 +36,7 @@ cp -R "$candidate/." "$work/repository/"
 
 # Retain only the three newest immutable versions.
 mapfile -t versions < <(find versions -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -r)
-for version in "${versions[@]:3}"; do rm -rf -- "versions/$version"; done
+for expired_version in "${versions[@]:3}"; do rm -rf -- "versions/$expired_version"; done
 
 git add --all
 if git diff --cached --quiet; then exit 0; fi
