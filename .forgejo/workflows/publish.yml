@@ -39,6 +39,8 @@ jobs:
       - run: pytest -q
       - name: Require a recently completed updater cycle
         run: hltb-updater check-publication --database /var/lib/hltb-updater/hltb.sqlite --max-age-hours 36
+      - name: Verify and retain publication canaries
+        run: hltb-updater canary --database /var/lib/hltb-updater/hltb.sqlite --config config/canaries.json --save-results
       - name: Derive scheduled version
         id: version
         shell: bash

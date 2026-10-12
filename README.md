@@ -29,7 +29,7 @@ The importer streams the top-level JSON array and never loads the source file in
 
 ## Shadow-mode operations
 
-Nightly parser canaries include Crimson Desert. With `canary --save-results`, the validated responses are retained in the database only after all canaries pass, so these control games are refreshed on each successful nightly check instead of waiting in the regular due queue.
+Nightly parser canaries include Crimson Desert. With `canary --save-results`, the validated responses are retained in the database only after all canaries pass, so these control games are refreshed on each successful nightly check instead of waiting in the regular due queue. Publication repeats this live control check after the completed-cycle gate and before signing the candidate.
 
 ```bash
 hltb-updater canary --database state/hltb.sqlite --config config/canaries.json
