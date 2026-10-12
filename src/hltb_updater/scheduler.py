@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Callable
 
 from .client import FetchResult, HltbClient
-from .database import Database
+from .database import Database, utc_now
 from .model import GameRecord
 
 
@@ -30,9 +30,20 @@ def check_publication_readiness(
         raise ValueError(f"The last completed updater cycle is too old: {value}")
     if database.active_catch_up() is not None:
         raise ValueError("Publication must wait for the active catch-up cohort to complete")
+    started_value = database.get_metadata("last_update_started_at")
+    started = updated
+    if started_value:
+        try:
+            started = datetime.fromisoformat(started_value)
+        except ValueError as error:
+            raise ValueError("The updater start timestamp is invalid") from error
+        if started.tzinfo is None or started > updated:
+            raise ValueError("Publication must wait for the latest updater cycle to complete")
+        if updated - started > maximum_age:
+            raise ValueError("The updater cycle started too long ago to publish")
     with database.connect() as connection:
         latest_success = connection.execute("SELECT MAX(last_success_at) FROM games WHERE tombstoned=0").fetchone()[0]
-    if latest_success is None or date.fromisoformat(latest_success) < updated.date():
+    if latest_success is None or date.fromisoformat(latest_success) < started.date():
         raise ValueError("The completed cycle contains no successful game refresh")
     return updated
 
@@ -69,7 +80,7 @@ def update_database(
     max_refresh: int = 1000,
     on_result: Callable[[int, FetchResult], None] | None = None,
 ) -> UpdateStats:
-    now = datetime.now(timezone.utc)
+    now = utc_now()
     retry_after_until = database.get_metadata("retry_after_until")
     if retry_after_until:
         try:
@@ -78,6 +89,7 @@ def update_database(
             database.set_metadata("retry_after_until", "")
         except ValueError:
             database.set_metadata("retry_after_until", "")
+    database.set_metadata("last_update_started_at", now.isoformat())
     original_max = database.max_id()
     stats = UpdateStats(highest_id=original_max)
     touched: set[int] = set()
@@ -88,21 +100,22 @@ def update_database(
 
     for game_id in range(tail_start, tail_end + 1):
         result = client.fetch(game_id)
+        checked_at = utc_now()
         on_result and on_result(game_id, result)
         touched.add(game_id)
         if result.status == "rate_limited":
-            apply_result(database, game_id, result, now, stats)
+            apply_result(database, game_id, result, checked_at, stats)
             retry_seconds = max(60, result.retry_after or 3600)
             limited_at = datetime.now(timezone.utc)
             database.set_metadata("retry_after_until", (limited_at + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
-            apply_result(database, game_id, result, now, stats)
+            apply_result(database, game_id, result, checked_at, stats)
             raise CircuitBreakerError(f"HLTB stopped the updater with {result.status_code}")
         if result.status == "parse_error":
             consecutive_parser_errors += 1
             if consecutive_parser_errors >= 5:
-                apply_result(database, game_id, result, now, stats)
+                apply_result(database, game_id, result, checked_at, stats)
                 raise CircuitBreakerError("Five consecutive HLTB parser failures")
         else:
             consecutive_parser_errors = 0
@@ -112,33 +125,34 @@ def update_database(
             else:
                 consecutive_forward_404 = 0
             if consecutive_forward_404 >= 500:
-                apply_result(database, game_id, result, now, stats)
+                apply_result(database, game_id, result, checked_at, stats)
                 break
-        apply_result(database, game_id, result, now, stats)
+        apply_result(database, game_id, result, checked_at, stats)
 
     due = database.due_ids(now.date(), max_refresh, touched)
     consecutive_parser_errors = 0
     for game_id in due:
         result = client.fetch(game_id)
+        checked_at = utc_now()
         on_result and on_result(game_id, result)
         if result.status == "rate_limited":
-            apply_result(database, game_id, result, now, stats)
+            apply_result(database, game_id, result, checked_at, stats)
             retry_seconds = max(60, result.retry_after or 3600)
             limited_at = datetime.now(timezone.utc)
             database.set_metadata("retry_after_until", (limited_at + timedelta(seconds=retry_seconds)).isoformat())
             raise CircuitBreakerError(f"HLTB rate limit is active for {retry_seconds} seconds")
         if result.status == "forbidden":
-            apply_result(database, game_id, result, now, stats)
+            apply_result(database, game_id, result, checked_at, stats)
             raise CircuitBreakerError(f"HLTB stopped the updater with {result.status_code}")
         if result.status == "parse_error":
             consecutive_parser_errors += 1
             if consecutive_parser_errors >= 5:
-                apply_result(database, game_id, result, now, stats)
+                apply_result(database, game_id, result, checked_at, stats)
                 raise CircuitBreakerError("Five consecutive HLTB parser failures")
         else:
             consecutive_parser_errors = 0
-        apply_result(database, game_id, result, now, stats)
-    database.set_metadata("last_update_at", now.isoformat())
+        apply_result(database, game_id, result, checked_at, stats)
+    database.set_metadata("last_update_at", utc_now().isoformat())
     database.set_metadata("highest_seen_id", str(stats.highest_id))
     return stats
 
@@ -150,7 +164,7 @@ def refresh_catch_up(
     max_refresh: int = 5000,
     on_result: Callable[[int, FetchResult], None] | None = None,
 ) -> UpdateStats:
-    now = datetime.now(timezone.utc)
+    now = utc_now()
     retry_after_until = database.get_metadata("retry_after_until")
     if retry_after_until:
         try:
@@ -160,13 +174,15 @@ def refresh_catch_up(
         except ValueError:
             database.set_metadata("retry_after_until", "")
 
+    database.set_metadata("last_update_started_at", now.isoformat())
     stats = UpdateStats(highest_id=database.max_id())
     consecutive_parser_errors = 0
     for game_id in database.catch_up_ids(cutoff, now.date(), max_refresh):
         result = client.fetch(game_id)
+        checked_at = utc_now()
         on_result and on_result(game_id, result)
-        apply_result(database, game_id, result, now, stats)
-        database.record_catch_up_result(cutoff, game_id, result.status, now)
+        apply_result(database, game_id, result, checked_at, stats)
+        database.record_catch_up_result(cutoff, game_id, result.status, checked_at)
         if result.status == "rate_limited":
             retry_seconds = max(60, result.retry_after or 3600)
             limited_at = datetime.now(timezone.utc)
@@ -181,7 +197,7 @@ def refresh_catch_up(
         else:
             consecutive_parser_errors = 0
 
-    database.set_metadata("last_update_at", now.isoformat())
+    database.set_metadata("last_update_at", utc_now().isoformat())
     return stats
 
 

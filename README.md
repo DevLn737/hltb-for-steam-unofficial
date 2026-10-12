@@ -74,5 +74,6 @@ An independent ten-minute health monitor runs on the shared `docker` runner. It 
 - A game becomes a tombstone only after three 404 responses on separate days over at least 30 days.
 - The stable channel is not modified when coverage, size, parser, checksum, or contract gates fail.
 - Publication requires a completed updater cycle within the last 36 hours, a successful game refresh from that cycle, and no unfinished catch-up cohort. A server restart cannot republish old database contents under a new calendar version.
+- Each game's UTC check date is recorded after its response, not at cycle startup. Cycle completion has its own timestamp, and a newer unfinished or failed cycle blocks publication even when an earlier completed cycle is recent.
 - Publication stops when changed or removed records exceed 5% of the previous stable snapshot.
 - Raw HTML, descriptions, reviews, and images are never stored.

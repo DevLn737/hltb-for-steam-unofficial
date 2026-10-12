@@ -50,3 +50,26 @@ def test_waits_for_an_incomplete_catch_up_cohort(tmp_path) -> None:
     database.initialize_catch_up(date(2026, 10, 12), NOW)
     with pytest.raises(ValueError, match="catch-up"):
         check_publication_readiness(database, now=NOW)
+
+
+def test_accepts_a_completed_cycle_crossing_midnight(tmp_path) -> None:
+    started = NOW - timedelta(minutes=10)
+    database = database_with_cycle(tmp_path, started)
+    database.set_metadata("last_update_started_at", started.isoformat())
+    database.set_metadata("last_update_at", NOW.isoformat())
+    assert check_publication_readiness(database, now=NOW) == NOW
+
+
+@pytest.mark.parametrize("started", ["invalid", "2026-10-12T00:00:00", "2026-10-12T00:00:01+00:00"])
+def test_rejects_invalid_or_unfinished_cycle_start(tmp_path, started) -> None:
+    database = database_with_cycle(tmp_path, NOW)
+    database.set_metadata("last_update_started_at", started)
+    with pytest.raises(ValueError):
+        check_publication_readiness(database, now=NOW)
+
+
+def test_rejects_a_cycle_started_in_september_despite_recent_completion(tmp_path) -> None:
+    database = database_with_cycle(tmp_path, NOW)
+    database.set_metadata("last_update_started_at", "2026-09-07T00:00:00+00:00")
+    with pytest.raises(ValueError, match="started too long ago"):
+        check_publication_readiness(database, now=NOW)
