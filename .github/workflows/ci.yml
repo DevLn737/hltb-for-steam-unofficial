@@ -24,7 +24,7 @@ jobs:
       - run: npm run test:browser
       - run: npm run build:firefox
       - run: npm run verify:firefox
-      - run: npm run zip:all
+      - run: npm run zip:build
       - uses: actions/upload-artifact@v7
         with:
           name: browser-extensions

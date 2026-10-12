@@ -24,8 +24,9 @@ describe('packaged HLTB snapshot v7', () => {
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
     };
     expect(manifest).toMatchObject({
-      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceEntryCount: 173_789, timedEntryCount: 59_554,
-      originalEntryCount: 173_789, steamMappingCount: 58_927,
+      schema: 7, format: 'front-coded-uleb128-delta-v3', sourceUpdatedAt: '2026-10-12',
+      sourceEntryCount: 175_256, timedEntryCount: 59_688,
+      originalEntryCount: 175_256, steamMappingCount: 59_404,
     });
   });
 
@@ -41,15 +42,15 @@ describe('packaged HLTB snapshot v7', () => {
 
   it('uses Steam App ID before the page title and returns direct HLTB IDs', async () => {
     await expect(localSnapshot().lookup('2258500', 'Wrong page title')).resolves.toMatchObject({
-      gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: 918, mainPlusExtras: 1164, completionist: 1726,
-      updatedAt: Date.UTC(2026, 6, 22),
+      gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: 918, mainPlusExtras: 1148, completionist: 1726,
+      updatedAt: Date.UTC(2026, 9, 12),
     });
   });
 
-  it('contains the September Crimson Desert estimates and its per-game check date', async () => {
+  it('contains the verified October 12 Crimson Desert estimates and its per-game check date', async () => {
     await expect(localSnapshot().lookup('3321460', 'Crimson Desert')).resolves.toMatchObject({
-      gameId: 94_122, mainStory: 4149, mainPlusExtras: 8516, completionist: 15_402,
-      updatedAt: Date.UTC(2026, 8, 5),
+      gameId: 94_122, mainStory: 4158, mainPlusExtras: 8308, completionist: 15_402,
+      updatedAt: Date.UTC(2026, 9, 12),
     });
   });
 

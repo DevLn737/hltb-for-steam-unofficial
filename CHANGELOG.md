@@ -4,6 +4,16 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [2.2.5] - 2026-10-12
+
+### Changed
+
+- Refresh the packaged fallback from signed snapshot 2026.10.12.1 after restoring the private updater and completing a fresh incremental update cycle: 84,881 useful games and 59,404 Steam mappings, with freshly verified Crimson Desert estimates.
+
+### Fixed
+
+- Reject release packaging when the built-in signed-channel snapshot is older than 72 hours or has no successful game checks on its declared source date. Keep historical CI and reviewer builds reproducible through the separate `zip:build` command.
+
 ## [2.2.4] - 2026-10-12
 
 ### Changed

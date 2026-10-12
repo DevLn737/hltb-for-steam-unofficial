@@ -6,7 +6,7 @@ The repository can build a Firefox extension and a clean matching source archive
 
 - Manifest V3 Firefox build.
 - Stable Gecko ID: `hltb-for-steam-unofficial@devln737.github.io`.
-- Firefox Desktop 140 and Firefox Android 142 minimum versions declared in the manifest.
+- Firefox Desktop 140 minimum version; Android compatibility is not declared or selected for this desktop-only release.
 - `websiteContent` data-transmission declaration.
 - Privacy policy describing the title sent to HowLongToBeat.
 - Reproducible reviewer instructions in the [README Development section](../README.md#development).
@@ -22,7 +22,7 @@ The repository can build a Firefox extension and a clean matching source archive
 ## Before AMO submission
 
 - [ ] Create or verify the Mozilla/AMO developer account and accept the current agreements.
-- [x] Run Mozilla `web-ext lint` against the final Firefox ZIP with zero errors, warnings, or notices.
+- [x] Run Mozilla `web-ext lint` with zero errors. Review its Android data-collection-version warning; Android is intentionally not a supported submission platform.
 - [ ] Test the exact build on current Firefox Release and the oldest declared compatible version; add ESR coverage if ESR support is claimed.
 - [x] Confirm Firefox Desktop 140 as the intentional minimum version.
 - [ ] Complete a legal/redistribution review for the packaged HLTB-derived snapshot.
@@ -78,7 +78,7 @@ npm run verify:firefox
 
 ## Files to upload
 
-- Extension: `.output/hltb-for-steam-unofficial-2.2.4-firefox.zip`
-- Reviewer sources: `.output/hltb-for-steam-unofficial-2.2.4-sources.zip`
+- Extension: `.output/hltb-for-steam-unofficial-2.2.5-firefox.zip`
+- Reviewer sources: `.output/hltb-for-steam-unofficial-2.2.5-sources.zip`
 
 The `firefox-unsigned.xpi` artifact is for temporary local testing only. Mozilla produces the installable signed XPI after submission.
