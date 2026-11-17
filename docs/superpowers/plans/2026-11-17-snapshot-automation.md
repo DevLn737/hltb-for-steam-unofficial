@@ -48,3 +48,5 @@
 - Live HTTPS channel verified by the Node importer: snapshot 2026.11.17.201, 85,186 distributed games and 59,683 Steam mappings; source date 2026-11-17. Individual record dates remain historical unless actually checked.
 - Both obsolete repositories are archived. The legacy data repository contains a migration notice and still serves its original signed pointer byte-for-byte. The unified repository preserves both imported histories.
 - Local release packaging and reviewer-source archive checks passed. Final review findings were fixed; no deferred review minors.
+
+- Final fresh-data browser run exposed one more October-only assertion (39.5/57 hours versus current 41/58). Updated the smoke test to check all category labels, valid duration format, and the exact game identity; all 3 browser tests pass. Publish patch 2.2.7 rather than rewriting the already published 2.2.6 tag.

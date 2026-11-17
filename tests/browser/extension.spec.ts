@@ -49,9 +49,12 @@ test('injects one Shadow DOM widget on a Steam game page', async () => {
   const widget = page.locator('#hltb-for-steam-unofficial');
   await expect(widget).toHaveCount(1);
   await expect(widget.locator('xpath=following-sibling::*[1]')).toHaveClass('game_area_purchase');
-  await expect(widget).toContainText('39½ Hours');
-  await expect(widget).toContainText('57 Hours');
-  await expect(widget).toContainText('75 Hours');
+  await expect(widget.locator('.time-label-text')).toHaveText(['Main Story', 'Main + Extras', 'Completionist']);
+  await expect(widget.locator('.time strong')).toHaveText([
+    /^\d+[½¼¾]?(?:\.\d+)? Hours$/,
+    /^\d+[½¼¾]?(?:\.\d+)? Hours$/,
+    /^\d+[½¼¾]?(?:\.\d+)? Hours$/,
+  ]);
   await expect(widget.locator('a')).toHaveAttribute('href', /howlongtobeat\.com\/game\/156025/);
   await expect(widget.locator('a')).toHaveAttribute('target', '_self');
   await expect(widget).not.toContainText('4.6');

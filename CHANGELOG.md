@@ -4,6 +4,12 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [2.2.7] - 2026-11-17
+
+### Fixed
+
+- Validate current duration formatting, categories, and game identity in browser smoke tests without pinning estimates that legitimately change during automatic data refreshes. Exact duration regressions remain covered by the retained historical fixture.
+
 ## [2.2.6] - 2026-11-17
 
 ### Changed
