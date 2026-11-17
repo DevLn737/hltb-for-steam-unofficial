@@ -1,0 +1,85 @@
+services:
+  updater-dind:
+    image: docker@sha256:e8faad5a8dc5279dff929afc5449f2791736912fff9f99351d742db2fad01b4c
+    container_name: forgejo-runner-hltb-dind
+    restart: unless-stopped
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+      DOCKER_TLS_SAN: DNS:updater-dind
+    dns:
+      - 10.254.1.1
+    volumes:
+      - updater-runner-docker:/var/lib/docker
+      - /root/hltb-updater-runner-certs:/certs
+      - /root/hltb-updater-state:/var/lib/hltb-updater
+      - /root/hltb-runner-build:/hltb-runner-build:ro
+    networks:
+      updater-runner: {}
+      updater-egress: {}
+      frontend:
+        ipv4_address: 172.30.50.6
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          docker info >/dev/null 2>&1 &&
+          test -f /certs/client/key.pem &&
+          chown -R 1000:1000 /certs/client &&
+          chmod 700 /certs/client &&
+          chmod 600 /certs/client/key.pem
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "3"
+
+  updater-runner:
+    image: data.forgejo.org/forgejo/runner@sha256:eb6e7bc21973382d261e6eb883dbd27b8cb56939d33a3bfd79a1352b7f9a33a0
+    container_name: forgejo-runner-hltb-updater
+    restart: unless-stopped
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      DOCKER_HOST: tcp://updater-dind:2376
+      DOCKER_TLS_VERIFY: "1"
+      DOCKER_CERT_PATH: /certs/client
+    dns:
+      - 10.254.1.1
+    volumes:
+      - /root/hltb-runner-data:/data
+      - /root/hltb-updater-runner-certs/client:/certs/client:ro
+    command:
+      - forgejo-runner
+      - daemon
+      - --config
+      - /data/config.yaml
+    networks:
+      updater-runner: {}
+      frontend:
+        ipv4_address: 172.30.50.7
+    depends_on:
+      server:
+        condition: service_healthy
+      updater-dind:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+volumes:
+  updater-runner-docker:
+
+networks:
+  updater-runner:
+    driver: bridge
+    internal: true
+  updater-egress:
+    driver: bridge

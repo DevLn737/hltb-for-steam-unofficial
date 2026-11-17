@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "games": [
+    { "hltbGameId": 94122, "title": "Crimson Desert" },
+    { "hltbGameId": 124771, "title": "CRYMACHINA" },
+    { "hltbGameId": 175491, "title": "AV Director Life!" },
+    { "hltbGameId": 189049, "title": null }
+  ]
+}
+

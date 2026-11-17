@@ -1,0 +1,124 @@
+name: Monitor updater health
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+      timezone: Indian/Mauritius
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    # This intentionally uses the shared runner so it can report a dead or
+    # unreachable dedicated hltb-updater runner.
+    runs-on: docker
+    steps:
+      - name: Check nightly workflow health
+        env:
+          FORGEJO_TOKEN: ${{ forgejo.token }}
+          FORGEJO_API_URL: http://server:3000
+          FORGEJO_REPOSITORY: ${{ forgejo.repository }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const token = process.env.FORGEJO_TOKEN;
+          const base = process.env.FORGEJO_API_URL;
+          const repository = process.env.FORGEJO_REPOSITORY;
+          const title = '[monitor] HLTB updater requires attention';
+          const headers = {
+            Authorization: `token ${token}`,
+            Accept: 'application/json',
+          };
+
+          async function request(path, options = {}) {
+            const response = await fetch(`${base}${path}`, {
+              ...options,
+              headers: { ...headers, ...(options.headers || {}) },
+            });
+            if (!response.ok) {
+              throw new Error(`${options.method || 'GET'} ${path}: HTTP ${response.status}`);
+            }
+            if (response.status === 204) return null;
+            return response.json();
+          }
+
+          const now = Date.now();
+          const runsResponse = await request(`/api/v1/repos/${repository}/actions/runs?limit=50`);
+          const updaterRuns = runsResponse.workflow_runs.filter((run) => (
+            run.workflow_id === 'nightly.yml' || run.workflow_id === 'publish.yml'
+          ));
+          const nightly = updaterRuns.filter((run) => run.workflow_id === 'nightly.yml');
+          const running = nightly.filter((run) => run.status === 'running');
+          const waiting = nightly.filter((run) => run.status === 'waiting');
+          const successes = nightly.filter((run) => run.status === 'success');
+          const ageMs = (value) => now - Date.parse(value);
+          const reasons = [];
+
+          for (const workflowId of ['nightly.yml', 'publish.yml']) {
+            const latestTerminal = updaterRuns.find((run) => (
+              run.workflow_id === workflowId
+              && ['success', 'failure', 'cancelled', 'skipped'].includes(run.status)
+            ));
+            if (latestTerminal?.status === 'failure') {
+              reasons.push(`${workflowId} run ${latestTerminal.index_in_repo} failed`);
+            }
+          }
+
+          const staleRunning = running.find((run) => ageMs(run.started) > 3.25 * 60 * 60 * 1000);
+          if (staleRunning) {
+            reasons.push(`nightly run ${staleRunning.index_in_repo} has been running for more than 3 hours 15 minutes`);
+          }
+
+          const stalledWaiting = running.length === 0
+            ? waiting.find((run) => ageMs(run.created) > 15 * 60 * 1000)
+            : null;
+          if (stalledWaiting) {
+            reasons.push(`nightly run ${stalledWaiting.index_in_repo} has waited for a runner for more than 15 minutes`);
+          }
+
+          const latestSuccess = successes
+            .map((run) => Date.parse(run.stopped))
+            .filter(Number.isFinite)
+            .sort((a, b) => b - a)[0];
+          if ((!latestSuccess || now - latestSuccess > 36 * 60 * 60 * 1000) && running.length === 0) {
+            reasons.push('no successful nightly run was recorded during the last 36 hours');
+          }
+
+          const issues = await request(`/api/v1/repos/${repository}/issues?state=open&type=issues&limit=50`);
+          const existing = issues.find((issue) => issue.title === title);
+          if (reasons.length === 0) {
+            if (existing) {
+              await request(`/api/v1/repos/${repository}/issues/${existing.number}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ state: 'closed' }),
+              });
+              console.log(`Closed recovered updater alert #${existing.number}.`);
+            } else {
+              console.log('Updater health is normal.');
+            }
+            process.exit(0);
+          }
+
+          const body = [
+            'The independent monitor detected an updater health problem:',
+            '',
+            ...reasons.map((reason) => `- ${reason}`),
+            '',
+            `Actions: ${base.replace('http://server:3000', 'https://git.local')}/${repository}/actions`,
+          ].join('\n');
+          if (existing) {
+            await request(`/api/v1/repos/${repository}/issues/${existing.number}/comments`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ body }),
+            });
+            console.log(`Updated updater alert #${existing.number}.`);
+          } else {
+            const issue = await request(`/api/v1/repos/${repository}/issues`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title, body }),
+            });
+            console.log(`Created updater alert #${issue.number}.`);
+          }
+          NODE
