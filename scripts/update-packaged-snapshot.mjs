@@ -117,7 +117,7 @@ try {
     steamMappingCount: manifest.steamMappingCount,
     steamCollisionCount: manifest.steamCollisionCount,
     bucketCount: 16,
-    origin: `${manifest.origin}; packaged from signed snapshot ${manifest.snapshotVersion}`,
+    origin: `Incremental HLTB detail snapshot; packaged from signed snapshot ${manifest.snapshotVersion}`,
     titleBuckets: sortedEntries.filter((entry) => entry.kind === 'title').map(bucketInfo),
     steamBuckets: sortedEntries.filter((entry) => entry.kind === 'steam').map(bucketInfo),
   };

@@ -118,7 +118,7 @@ Package outputs are written to the ignored `.output/` directory:
 
 The content script reads the Steam App ID, visible title, and an existing Steam artwork URL, then renders the card inside Shadow DOM. A Manifest V3 service worker handles the HLTB adapter, strict matching, request concurrency, versioned local cache, and snapshot lookup.
 
-The packaged schema-v7 snapshot contains 84,881 useful HLTB games: every one of the 59,688 games with completion-time data, plus Steam-linked games without submitted times, with 59,404 unambiguous Steam App ID mappings. Empty games without times, Steam mappings, or overrides remain in the private updater database but are omitted from distributed snapshots. Version 2.2 can atomically install a signed schema-v7 snapshot in IndexedDB while retaining the previous remote version and the packaged fallback. Each record carries its compact last-successful-check date for internal freshness comparisons; the widget omits the check date and retains completion-time change indicators. Remote packs contain 16 gzip front-coded binary title buckets with compact completion-time deltas and 16 gzip ULEB128 App ID indexes; they cannot contain executable code or configuration. Images, descriptions, reviews, and the 755,986,614-byte source scrape are never packaged. The complete packaged snapshot payload is 1,682,645 bytes.
+The packaged schema-v7 snapshot contains 84,881 useful HLTB games: every one of the 59,688 games with completion-time data, plus Steam-linked games without submitted times, with 59,404 unambiguous Steam App ID mappings. Empty games without times, Steam mappings, or overrides are omitted from distributed snapshots. Version 2.2 can atomically install a signed schema-v7 snapshot in IndexedDB while retaining the previous remote version and the packaged fallback. Each record carries its compact last-successful-check date for internal freshness comparisons; the widget omits the check date and retains completion-time change indicators. Remote packs contain 16 gzip front-coded binary title buckets with compact completion-time deltas and 16 gzip ULEB128 App ID indexes; they cannot contain executable code or configuration. Images, descriptions, reviews, and the 755,986,614-byte source scrape are never packaged. The complete packaged snapshot payload is 1,682,645 bytes.
 
 Records are refreshed incrementally; individual check dates can be older than the snapshot's source date. The source date does not mean that every game was rechecked on that day.
 
@@ -129,7 +129,7 @@ npm run snapshot:update-packaged
 npm run verify:snapshot
 ```
 
-Public extension CI validates committed data and never scrapes HLTB. Incremental collection and signed data-channel generation run in a separate private Forgejo updater repository; its SQLite state, scraper, signing key, and raw input are not part of this project or its reviewer source archive. The Development section
+Public extension CI validates committed data and never scrapes HLTB. Incremental collection and signed data-channel generation are handled separately from this extension. The previous updater host is no longer available, and replacement hosting has not yet been selected. The updater's SQLite state, scraper, signing key, and raw input are not part of this project or its reviewer source archive. Published snapshots remain usable while the updater awaits migration. The Development section
 above contains the complete reproducible-build instructions used by Mozilla
 reviewers.
 

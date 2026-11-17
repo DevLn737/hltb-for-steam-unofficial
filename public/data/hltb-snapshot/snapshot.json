@@ -28,7 +28,7 @@
   "steamMappingCount": 59404,
   "steamCollisionCount": 622,
   "bucketCount": 16,
-  "origin": "Incremental HLTB detail snapshot maintained by the private Forgejo updater; packaged from signed snapshot 2026.10.12.1",
+  "origin": "Incremental HLTB detail snapshot; packaged from signed snapshot 2026.10.12.1",
   "titleBuckets": [
     {
       "name": "0",

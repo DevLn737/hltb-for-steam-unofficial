@@ -6,7 +6,7 @@ export const REMOTE_SNAPSHOT_BASE_URL = import.meta.env.WXT_REMOTE_SNAPSHOT_BASE
   || PRODUCTION_SNAPSHOT_BASE_URL;
 
 // This key is generated for the v2.2 snapshot channel. Its matching private key
-// must remain only in the private Forgejo updater's secret store.
+// must remain only in the updater's private secret store.
 export const REMOTE_SNAPSHOT_PUBLIC_KEY: JsonWebKey = {
   kty: 'EC',
   crv: 'P-256',

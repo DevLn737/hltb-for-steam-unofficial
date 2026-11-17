@@ -4,6 +4,11 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Changed
+
+- Remove obsolete updater hosting references from documentation, signing-key guidance, and packaged-snapshot metadata; replacement hosting is pending.
+- Keep packaged-snapshot origin metadata independent of the updater's hosting provider when importing signed updates.
+
 ## [2.2.5] - 2026-10-12
 
 ### Changed
@@ -55,7 +60,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Show the last successful check date of each individual snapshot record instead of the publication date of the whole archive.
 - Add atomic IndexedDB installation with active/previous remote versions and packaged-snapshot fallback.
 - Add strict pointer, manifest, pack, bucket, SHA-256, and signature validation with no remote executable logic.
-- Add a separate private Forgejo/SQLite updater foundation for incremental ID discovery, adaptive refresh, retained backups, guarded monthly publication, and data-only pack generation.
+- Add a separate private SQLite updater foundation for incremental ID discovery, adaptive refresh, retained backups, guarded monthly publication, and data-only pack generation.
 
 ### Changed
 
