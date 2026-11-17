@@ -199,7 +199,9 @@ def build_snapshot(
         if game_id not in records:
             raise ValueError(f"Override points to unknown HLTB ID {game_id}")
         override_targets.add(game_id)
-    useful_rows = [row for row in rows if any(row[key] is not None for key in (
+    with database.connect() as connection:
+        restored_ids = {row[0] for row in connection.execute("SELECT hltb_id FROM restored_snapshot_entries")}
+    useful_rows = [row for row in rows if int(row["hltb_id"]) in restored_ids or any(row[key] is not None for key in (
         "main_minutes", "extra_minutes", "completion_minutes", "steam_app_id", "steam_alt_app_id"
     )) or int(row["hltb_id"]) in override_targets]
     current_times = {
@@ -309,7 +311,7 @@ def build_snapshot(
         "steamMappingCount": sum(len(bucket) for bucket in steam_buckets),
         "steamCollisionCount": steam_collisions,
         "bucketCount": BUCKET_COUNT,
-        "origin": "Incremental HLTB detail snapshot maintained by the private Forgejo updater",
+        "origin": "Incremental HLTB detail snapshot",
         "source": {"lastGameId": max(records), "databaseSha256": database_digest(rows)},
         "changeSummary": change_summary,
         "pack": {"path": "snapshot.pack", "bytes": len(pack), "sha256": digest(pack)},

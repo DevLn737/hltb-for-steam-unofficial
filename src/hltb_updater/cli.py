@@ -34,6 +34,10 @@ def parser() -> argparse.ArgumentParser:
     commands = root.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init-db")
     init.add_argument("--database", required=True)
+    restore = commands.add_parser("restore-snapshot")
+    restore.add_argument("--database", required=True)
+    restore.add_argument("--candidate", required=True)
+    restore.add_argument("--public-key", required=True)
     import_command = commands.add_parser("import-json")
     import_command.add_argument("--database", required=True)
     import_command.add_argument("--source", required=True)
@@ -56,6 +60,7 @@ def parser() -> argparse.ArgumentParser:
     cycle.add_argument("--max-tail", type=int, default=2000)
     cycle.add_argument("--max-refresh", type=int, default=1000)
     cycle.add_argument("--catch-up-limit", type=positive_int, default=5000)
+    cycle.add_argument("--max-seconds", type=positive_int)
     catch_up_init = commands.add_parser("catch-up-init")
     catch_up_init.add_argument("--database", required=True)
     catch_up_init.add_argument("--cutoff", required=True, type=date.fromisoformat)
@@ -106,6 +111,9 @@ def main() -> None:
     database.initialize()
     if arguments.command == "init-db":
         print(f"Initialized {database.path}")
+    elif arguments.command == "restore-snapshot":
+        from .restore import restore_snapshot
+        print(json.dumps({"restored": restore_snapshot(database, arguments.candidate, arguments.public_key)}))
     elif arguments.command == "import-json":
         source_count, imported = import_json(
             database, arguments.source, arguments.source_date,
@@ -138,6 +146,7 @@ def main() -> None:
         with HltbClient() as client:
             mode, cutoff, stats = run_update_cycle(
                 database, client, arguments.max_tail, arguments.max_refresh, arguments.catch_up_limit,
+                max_seconds=arguments.max_seconds,
             )
         output = {"mode": mode, "cutoffDate": cutoff.isoformat() if cutoff else None, **asdict(stats)}
         if cutoff is not None:

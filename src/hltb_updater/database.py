@@ -36,6 +36,9 @@ CREATE TABLE IF NOT EXISTS games (
 );
 CREATE INDEX IF NOT EXISTS games_due ON games(tombstoned, next_refresh_at, hltb_id);
 CREATE INDEX IF NOT EXISTS games_steam ON games(steam_app_id, steam_alt_app_id);
+CREATE TABLE IF NOT EXISTS restored_snapshot_entries (
+    hltb_id INTEGER PRIMARY KEY REFERENCES games(hltb_id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
@@ -159,6 +162,7 @@ class Database:
                     first_seen, checked_day, checked_day, checked_day, due, record.content_hash,
                 ),
             )
+            connection.execute("DELETE FROM restored_snapshot_entries WHERE hltb_id=?", (record.hltb_id,))
             connection.commit()
             return changed
 

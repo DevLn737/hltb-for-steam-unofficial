@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Callable
+import time
 
 from .client import FetchResult, HltbClient
 from .database import Database, utc_now
@@ -50,6 +51,7 @@ def check_publication_readiness(
 
 @dataclass(slots=True)
 class UpdateStats:
+    budget_exhausted: bool = False
     attempted: int = 0
     found: int = 0
     changed: int = 0
@@ -79,7 +81,9 @@ def update_database(
     max_tail: int = 2000,
     max_refresh: int = 1000,
     on_result: Callable[[int, FetchResult], None] | None = None,
+    max_seconds: int | None = None,
 ) -> UpdateStats:
+    deadline = time.monotonic() + max_seconds if max_seconds is not None else float('inf')
     now = utc_now()
     retry_after_until = database.get_metadata("retry_after_until")
     if retry_after_until:
@@ -99,6 +103,9 @@ def update_database(
     tail_end = original_max + max_tail
 
     for game_id in range(tail_start, tail_end + 1):
+        if time.monotonic() >= deadline:
+            stats.budget_exhausted = True
+            break
         result = client.fetch(game_id)
         checked_at = utc_now()
         on_result and on_result(game_id, result)
@@ -132,6 +139,9 @@ def update_database(
     due = database.due_ids(now.date(), max_refresh, touched)
     consecutive_parser_errors = 0
     for game_id in due:
+        if time.monotonic() >= deadline:
+            stats.budget_exhausted = True
+            break
         result = client.fetch(game_id)
         checked_at = utc_now()
         on_result and on_result(game_id, result)
@@ -163,7 +173,9 @@ def refresh_catch_up(
     cutoff: date,
     max_refresh: int = 5000,
     on_result: Callable[[int, FetchResult], None] | None = None,
+    max_seconds: int | None = None,
 ) -> UpdateStats:
+    deadline = time.monotonic() + max_seconds if max_seconds is not None else float('inf')
     now = utc_now()
     retry_after_until = database.get_metadata("retry_after_until")
     if retry_after_until:
@@ -178,6 +190,9 @@ def refresh_catch_up(
     stats = UpdateStats(highest_id=database.max_id())
     consecutive_parser_errors = 0
     for game_id in database.catch_up_ids(cutoff, now.date(), max_refresh):
+        if time.monotonic() >= deadline:
+            stats.budget_exhausted = True
+            break
         result = client.fetch(game_id)
         checked_at = utc_now()
         on_result and on_result(game_id, result)
@@ -207,11 +222,12 @@ def run_update_cycle(
     max_tail: int = 2000,
     max_refresh: int = 1000,
     catch_up_limit: int = 5000,
+    max_seconds: int | None = None,
 ) -> tuple[str, date | None, UpdateStats]:
     cutoff = database.active_catch_up()
     if cutoff is not None:
-        return "catch_up", cutoff, refresh_catch_up(database, client, cutoff, catch_up_limit)
-    return "normal", None, update_database(database, client, max_tail, max_refresh)
+        return "catch_up", cutoff, refresh_catch_up(database, client, cutoff, catch_up_limit, max_seconds=max_seconds)
+    return "normal", None, update_database(database, client, max_tail, max_refresh, max_seconds=max_seconds)
 
 
 def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> list[GameRecord]:
