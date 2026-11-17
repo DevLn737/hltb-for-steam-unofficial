@@ -162,7 +162,8 @@ def update_database(
         else:
             consecutive_parser_errors = 0
         apply_result(database, game_id, result, checked_at, stats)
-    database.set_metadata("last_update_at", utc_now().isoformat())
+    if stats.found:
+        database.set_metadata("last_update_at", utc_now().isoformat())
     database.set_metadata("highest_seen_id", str(stats.highest_id))
     return stats
 
@@ -212,7 +213,8 @@ def refresh_catch_up(
         else:
             consecutive_parser_errors = 0
 
-    database.set_metadata("last_update_at", utc_now().isoformat())
+    if stats.found:
+        database.set_metadata("last_update_at", utc_now().isoformat())
     return stats
 
 
@@ -230,11 +232,20 @@ def run_update_cycle(
     return "normal", None, update_database(database, client, max_tail, max_refresh, max_seconds=max_seconds)
 
 
-def check_canaries(client: HltbClient, canaries: list[dict[str, object]]) -> list[GameRecord]:
+def check_canaries(
+    client: HltbClient, canaries: list[dict[str, object]], database: Database | None = None,
+) -> list[GameRecord]:
+    if database is not None:
+        retry_until = database.get_metadata('retry_after_until')
+        if retry_until and datetime.fromisoformat(retry_until) > datetime.now(timezone.utc):
+            raise CircuitBreakerError(f'HLTB Retry-After remains active until {retry_until}')
     records = []
     for canary in canaries:
         game_id = int(canary["hltbGameId"])
         result = client.fetch(game_id)
+        if database is not None and result.status == 'rate_limited':
+            until = datetime.now(timezone.utc) + timedelta(seconds=max(60, result.retry_after or 3600))
+            database.set_metadata('retry_after_until', until.isoformat())
         if result.status != "ok" or result.record is None:
             raise CircuitBreakerError(f"Canary {game_id} failed with {result.status}")
         expected = canary.get("title")

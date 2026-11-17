@@ -6,7 +6,10 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ### Changed
 
-- Remove obsolete updater hosting references from documentation, signing-key guidance, and packaged-snapshot metadata; replacement hosting is pending.
+- Consolidate the updater source and data-channel history into this repository, with signed updates served from its own GitHub Pages site.
+- Rotate the lost snapshot signing key and use the new `/data/v2/` channel; retain the legacy channel for older extension versions.
+- Update and commit signed and packaged data together every six hours using resumable 90-minute collection chunks, durable SQLite checkpoints, and full validation before publication.
+- Remove obsolete updater hosting references from documentation, signing-key guidance, and packaged-snapshot metadata.
 - Keep packaged-snapshot origin metadata independent of the updater's hosting provider when importing signed updates.
 
 ## [2.2.5] - 2026-10-12

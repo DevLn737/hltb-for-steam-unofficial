@@ -1,0 +1,71 @@
+name: Update HLTB data
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      max_seconds:
+        description: Collection time budget in seconds (maximum 5400)
+        default: '5400'
+        type: string
+      max_refresh:
+        description: Maximum due games in this chunk
+        default: '5000'
+        type: string
+concurrency:
+  group: hltb-data-update
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: python -m pip install './updater[test]'
+      - run: python -m pytest updater/tests -q
+      - name: Collect resumable chunk and prepare signed channel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
+          MAX_SECONDS: ${{ inputs.max_seconds || '5400' }}
+          MAX_REFRESH: ${{ inputs.max_refresh || '5000' }}
+        run: python updater/scripts/github-run.py
+      - run: npm ci
+      - name: Import the verified local channel
+        shell: bash
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory docs/data/v2 &
+          server=$!
+          trap 'kill "$server"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8765/stable.json > /dev/null; then break; fi
+            sleep 1
+          done
+          npm run snapshot:update-packaged -- http://127.0.0.1:8765/
+      - run: npm run check
+      - run: npm run verify:release-data
+      - run: npm run build:firefox && npm run verify:firefox
+      - name: Commit current channel and packaged data together
+        run: |
+          git add docs/data/v2 public/data/hltb-snapshot
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name='HLTB snapshot updater' -c user.email='noreply@localhost' commit -m 'data: update signed and packaged HLTB snapshots'
+          git push origin HEAD:main
+  pages:
+    needs: update
+    uses: ./.github/workflows/pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

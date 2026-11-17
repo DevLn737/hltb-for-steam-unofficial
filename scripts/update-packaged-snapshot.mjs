@@ -4,7 +4,7 @@ import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
 import { verifySnapshot } from './verify-snapshot.mjs';
 
-const baseUrl = new URL(process.argv[2] ?? 'https://devln737.github.io/hltb-for-steam-data/');
+const baseUrl = new URL(process.argv[2] ?? 'https://devln737.github.io/hltb-for-steam-unofficial/data/v2/');
 const target = path.resolve('public/data/hltb-snapshot');
 const temporary = path.resolve('public/data', `.hltb-snapshot.next-${process.pid}`);
 const backup = path.resolve('public/data', `.hltb-snapshot.backup-${process.pid}`);
@@ -12,8 +12,8 @@ const publicKey = createPublicKey({
   key: {
     kty: 'EC',
     crv: 'P-256',
-    x: 'DoAI6ekg6mzGS-JV1--swocaIj5dirgUWQXQpT1-H2w',
-    y: '8_cDANXlU-7HNIdwVS4qrFqUlEiQ4sOnzfi2T_-9JGQ',
+    x: 'Cna5Y2StFag996HThLBW7gZdc0drcBbgGZ1GqXWkZEI',
+    y: 'Drkqhr-hTTjiDKpYZJ0mzy1iIepi9-Lf4v6w8zsOjK4',
     ext: true,
   },
   format: 'jwk',

@@ -23,7 +23,7 @@ English and Russian are selected automatically. The extension has no analytics, 
 - `storage`: saves display settings and completion-time cache locally.
 - Steam Store and Steam Community content-script matches: run only on declared `/app/*` game pages to read the public App ID, title, and existing artwork and insert the widget. No separate Steam host permission is requested.
 - `howlongtobeat.com`: requests current completion-time data in Chrome/Chromium.
-- `devln737.github.io/hltb-for-steam-data`: downloads fixed signed snapshot files; no opened-game identifier or title is sent to this host.
+- `devln737.github.io/hltb-for-steam-unofficial/data/v2`: downloads fixed signed snapshot files; no opened-game identifier or title is sent to this host.
 - `declarativeNetRequestWithHostAccess`: applies the narrowly scoped request headers required by the HLTB search endpoint.
 
 The dashboard privacy answers must disclose **website content** processing, transmission of the game title to HowLongToBeat, and the fixed static snapshot host. They must remain consistent with [PRIVACY.md](../PRIVACY.md). Remote code: **No**; the external resource is a signed, fixed-schema data file and cannot change extension logic.

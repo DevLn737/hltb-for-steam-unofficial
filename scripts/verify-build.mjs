@@ -24,7 +24,7 @@ if (JSON.stringify(manifest.permissions) !== JSON.stringify(['storage', 'declara
 }
 if (JSON.stringify(manifest.host_permissions) !== JSON.stringify([
   'https://howlongtobeat.com/*',
-  'https://devln737.github.io/hltb-for-steam-data/*',
+  'https://devln737.github.io/hltb-for-steam-unofficial/data/v2/*',
 ])) {
   throw new Error(`Unexpected host permissions: ${JSON.stringify(manifest.host_permissions)}`);
 }

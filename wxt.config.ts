@@ -33,6 +33,10 @@ export default defineConfig({
       '*.pem',
       '*.xpi',
       'widget-preview.png',
+      'updater/.tmp/**',
+      'updater/.venv/**',
+      'updater/.pytest_cache/**',
+      'updater/**/__pycache__/**',
     ],
   },
   manifest: ({ browser }) => ({
@@ -40,13 +44,13 @@ export default defineConfig({
     short_name: '__MSG_extensionShortName__',
     description: '__MSG_extensionDescription__',
     default_locale: 'en',
-    version: '2.2.5',
+    version: '2.2.6',
     homepage_url: 'https://github.com/DevLn737/hltb-for-steam-unofficial',
     ...(browser === 'firefox' ? {} : { minimum_chrome_version: '88' }),
     permissions: ['storage', 'declarativeNetRequestWithHostAccess'],
     host_permissions: [
       'https://howlongtobeat.com/*',
-      'https://devln737.github.io/hltb-for-steam-data/*',
+      'https://devln737.github.io/hltb-for-steam-unofficial/data/v2/*',
       ...(acceptanceSnapshotHost ? [acceptanceSnapshotHost] : []),
     ],
     declarative_net_request: {

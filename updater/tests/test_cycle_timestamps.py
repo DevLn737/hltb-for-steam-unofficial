@@ -58,3 +58,21 @@ def test_failed_cycle_preserves_previous_completion_and_blocks_publication(tmp_p
     assert database.get_metadata("last_update_at") == START.isoformat()
     with pytest.raises(ValueError, match="latest updater cycle"):
         scheduler.check_publication_readiness(database, now=COMPLETE)
+
+
+def test_fresh_canary_cannot_make_an_unsuccessful_collection_publishable(tmp_path, monkeypatch):
+    database = Database(tmp_path / 'state.sqlite')
+    database.initialize()
+    database.upsert(GameRecord(1, 'Fresh canary', 60, None, None, 1, None), RESPONSE)
+    database.set_metadata('last_update_at', START.isoformat())
+    monkeypatch.setattr(scheduler, 'utc_now', lambda: COMPLETE)
+
+    class Client:
+        def fetch(self, _game_id):
+            return FetchResult('network_error', status_code=503)
+
+    stats = scheduler.update_database(database, Client(), max_tail=0, max_refresh=0)
+    assert stats.found == 0
+    assert database.get_metadata('last_update_at') == START.isoformat()
+    with pytest.raises(ValueError, match='latest updater cycle'):
+        scheduler.check_publication_readiness(database, now=COMPLETE)

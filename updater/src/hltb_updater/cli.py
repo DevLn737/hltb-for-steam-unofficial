@@ -131,7 +131,7 @@ def main() -> None:
         if config.get("schema") != 1 or not isinstance(config.get("games"), list):
             raise SystemExit("Invalid canary config")
         with HltbClient() as client:
-            records = check_canaries(client, config["games"])
+            records = check_canaries(client, config["games"], database=database)
         if arguments.save_results:
             from .database import utc_now
             checked_at = utc_now()
