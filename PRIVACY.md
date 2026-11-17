@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: August 10, 2026
+Last updated: November 17, 2026
 
 HLTB for Steam has no accounts, analytics, advertising, telemetry, or dynamic developer-operated backend. The developer does not receive, collect, sell, or analyze user data. A public GitHub Pages endpoint distributes signed static snapshot files.
 

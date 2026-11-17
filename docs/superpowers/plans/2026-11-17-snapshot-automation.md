@@ -14,9 +14,9 @@
 - [x] Add failing recovery tests for checked-date preservation, Steam mappings, invalid signatures, nonempty databases, and empty Steam-linked records. Implement `restore_snapshot(database, candidate, public_key)` using verified schema-v7 data without inventing fresh checks.
 - [x] Verify Python recovery, time-budget, and checkpoint tests. Neutralize source metadata and replace obsolete runner configuration with GitHub workflows.
 - [x] Generate/store the new signing key as an Actions secret and keep public keys in source. Consolidation removes the need for cross-repository credentials. Persist state before publication and after collection failures; never use an expiring cache as the only state copy.
-- [ ] Deploy daily collection with serialized runs, bounded requests, existing canary/rate-limit/publication gates, durable state recovery, versioned publication, and fixed new-channel URLs. Verify a real run, live source date, checksums, and signature.
-- [ ] Switch the extension to the new key/channel. Import and validate the signed local channel in the same scheduled/manual update job, then commit both forms of data together. Update documentation and CHANGELOG.md.
-- [ ] Run extension checks, Firefox build verification, and a live import. Publish changes, dispatch the sync workflow, and inspect completion and committed data in both repositories.
+- [x] Deploy daily collection with serialized runs, bounded requests, existing canary/rate-limit/publication gates, durable state recovery, versioned publication, and fixed new-channel URLs. Verify a real run, live source date, checksums, and signature.
+- [x] Switch the extension to the new key/channel. Import and validate the signed local channel in the same scheduled/manual update job, then commit both forms of data together. Update documentation and CHANGELOG.md.
+- [x] Run extension checks, Firefox build verification, and a live import. Publish changes, dispatch the sync workflow, and inspect completion and committed data in both repositories.
 
 ## Review focus
 
@@ -43,3 +43,8 @@
 - Live deployment found hard-coded October values in packaged-snapshot tests. Pinned exact reader regressions to the retained October fixture and added a separate current-package lookup check; 110 TypeScript tests and npm check pass.
 - Strengthened interruption regression to prove normal frontier scans resume at the next ID. It failed on repeated ID 1, then passed after checkpointing the frontier cursor. Full Python suite: 59 passing tests.
 - First live collection checkpoint was retained despite publication tests failing, confirming failed validation does not publish or lose collection state.
+
+- Deployment complete: Update HLTB data run 44057153956 passed collection, recovery from the previous saved state, signature/import checks, 110 TypeScript tests, fresh-data release gate, Chrome/Firefox builds, coupled data commit, and Pages deployment.
+- Live HTTPS channel verified by the Node importer: snapshot 2026.11.17.201, 85,186 distributed games and 59,683 Steam mappings; source date 2026-11-17. Individual record dates remain historical unless actually checked.
+- Both obsolete repositories are archived. The legacy data repository contains a migration notice and still serves its original signed pointer byte-for-byte. The unified repository preserves both imported histories.
+- Local release packaging and reviewer-source archive checks passed. Final review findings were fixed; no deferred review minors.

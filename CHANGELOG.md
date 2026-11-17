@@ -4,6 +4,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [2.2.6] - 2026-11-17
+
 ### Changed
 
 - Consolidate the updater source and data-channel history into this repository, with signed updates served from its own GitHub Pages site.
