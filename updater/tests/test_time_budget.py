@@ -37,5 +37,5 @@ def test_time_budget_finishes_response_and_resumes_remaining_work(tmp_path, monk
     assert rows[2]['main_minutes'] == 60
     if catch_up:
         assert database.catch_up_status(cutoff)['pending'] == 1
-        scheduler.run_update_cycle(database, Client(), max_seconds=100)
-        assert calls == [1, 2]
+    scheduler.run_update_cycle(database, Client(), max_tail=0, max_refresh=0, max_seconds=100)
+    assert calls == [1, 2]

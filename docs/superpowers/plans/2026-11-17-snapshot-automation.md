@@ -39,3 +39,7 @@
 - Browser validation: all three Playwright tests passed; Firefox build and package verification passed.
 - Ruling: isolated network failures may coexist with publishable successful collection responses; a chunk with no successful collection never advances completion metadata or publishes. This permits useful partial updates while failing fully unsuccessful runs.
 - Final review deliberately did not verify remote settings or old Git objects; deployment checks below cover remote permissions, signature, state resume, and Pages. Archive inventory and Git-bundle path inspection found no private-key or state paths in imported history.
+
+- Live deployment found hard-coded October values in packaged-snapshot tests. Pinned exact reader regressions to the retained October fixture and added a separate current-package lookup check; 110 TypeScript tests and npm check pass.
+- Strengthened interruption regression to prove normal frontier scans resume at the next ID. It failed on repeated ID 1, then passed after checkpointing the frontier cursor. Full Python suite: 59 passing tests.
+- First live collection checkpoint was retained despite publication tests failing, confirming failed validation does not publish or lose collection state.

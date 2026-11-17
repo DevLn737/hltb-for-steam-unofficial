@@ -2,7 +2,10 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HltbSnapshot } from '../src/snapshot/snapshot';
-function localSnapshot(): HltbSnapshot {
+import type { SnapshotManifestV7 } from '../src/snapshot/contracts';
+import { toLookupManifest } from '../src/snapshot/manifest';
+
+function packagedSnapshot(): HltbSnapshot {
   return new HltbSnapshot({
     getUrl: (relative) => path.resolve('public', relative),
     fetch: async (input) => {
@@ -16,9 +19,27 @@ function localSnapshot(): HltbSnapshot {
   });
 }
 
-describe('packaged HLTB snapshot v7', () => {
+const historicalRoot = 'docs/data/versions/2026.10.12.1';
+
+function localSnapshot(): HltbSnapshot {
+  const manifest = readFile(`${historicalRoot}/manifest.json`, 'utf8')
+    .then((content) => JSON.parse(content) as SnapshotManifestV7);
+  return new HltbSnapshot({
+    source: {
+      getManifest: async () => toLookupManifest(await manifest),
+      loadCompressed: async (relative) => {
+        const entry = (await manifest).entries.find((entry) => entry.path === relative);
+        if (!entry) throw new Error(`Missing historical snapshot entry: ${relative}`);
+        const pack = await readFile(`${historicalRoot}/snapshot.pack`);
+        return new Uint8Array(pack.subarray(entry.offset, entry.offset + entry.compressedBytes));
+      },
+    },
+  });
+}
+
+describe('HLTB v7 reader against the retained October fixture', () => {
   it('contains all useful source records in the pruned binary format', async () => {
-    const manifest = JSON.parse(await readFile('public/data/hltb-snapshot/snapshot.json', 'utf8')) as {
+    const manifest = JSON.parse(await readFile(`${historicalRoot}/manifest.json`, 'utf8')) as {
       schema: number; format: string; sourceEntryCount: number; timedEntryCount: number; entryCount: number;
       originalEntryCount: number; excludedEntryCount: number;
       normalizedTitleCount: number; titleCollisionCount: number; steamMappingCount: number;
@@ -72,6 +93,12 @@ describe('packaged HLTB snapshot v7', () => {
     await expect(localSnapshot().lookup('0', 'CRYMACHINA')).resolves.toMatchObject({ gameId: 124_771 });
     await expect(localSnapshot().lookup('0', 'A Dark Room')).resolves.toBeNull();
     await expect(localSnapshot().lookup('4294967295', 'Definitely Not A Real Game 987654')).resolves.toBeNull();
+  });
+
+  it('resolves the current packaged Steam mapping independently of historical estimates', async () => {
+    await expect(packagedSnapshot().lookup('2258500', 'Wrong page title')).resolves.toMatchObject({
+      gameId: 124_771, matchedTitle: 'CRYMACHINA', mainStory: expect.any(Number), updatedAt: expect.any(Number),
+    });
   });
 });
 

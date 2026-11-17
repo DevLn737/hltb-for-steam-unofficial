@@ -101,10 +101,16 @@ def update_database(
     consecutive_parser_errors = 0
     tail_start = max(1, original_max - 249)
     tail_end = original_max + max_tail
+    resume_id = database.get_metadata('tail_next_id')
+    if resume_id:
+        tail_start = int(resume_id)
+        tail_end = int(database.get_metadata('tail_end_id'))
+    database.set_metadata('tail_end_id', str(tail_end))
 
     for game_id in range(tail_start, tail_end + 1):
         if time.monotonic() >= deadline:
             stats.budget_exhausted = True
+            database.set_metadata('tail_next_id', str(game_id))
             break
         result = client.fetch(game_id)
         checked_at = utc_now()
@@ -135,6 +141,10 @@ def update_database(
                 apply_result(database, game_id, result, checked_at, stats)
                 break
         apply_result(database, game_id, result, checked_at, stats)
+
+    if not stats.budget_exhausted:
+        database.set_metadata('tail_next_id', '')
+        database.set_metadata('tail_end_id', '')
 
     due = database.due_ids(now.date(), max_refresh, touched)
     consecutive_parser_errors = 0
