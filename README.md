@@ -129,7 +129,7 @@ npm run snapshot:update-packaged
 npm run verify:snapshot
 ```
 
-The extension, Python collector (`updater/`), and versioned signed channel (`docs/data/`) live in this repository, including their imported Git histories. The collector runs on standard public GitHub Actions runners every six hours, with at most 90 minutes of sequential collection per job. A durable SQLite checkpoint in the `updater-state` prerelease lets later jobs continue long refreshes. Signing material is held only in an Actions secret; checkpoints contain game data and collection status, never keys or raw pages. Normal CI validates committed data without contacting HLTB.
+The extension, Python collector (`updater/`), and versioned signed channel (`docs/data/`) live in this repository, including their imported Git histories. The collector uses hourly eligibility checks on standard public GitHub Actions runners, collecting at six-hour intervals from actual collection starts, with at most 90 minutes of sequential collection per job. A durable SQLite checkpoint in the `updater-state` prerelease lets later jobs continue long refreshes. Signing material is held only in an Actions secret; checkpoints contain game data and collection status, never keys or raw pages. Normal CI validates committed data without contacting HLTB.
 
 Version 2.2.6 uses a new signing key and the `/data/v2/` channel on this repository's GitHub Pages site. The previous data repository remains unchanged for older extension versions. See [`updater/README.md`](updater/README.md) for operations and recovery.
 

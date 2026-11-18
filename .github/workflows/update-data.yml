@@ -1,9 +1,13 @@
 name: Update HLTB data
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '37 * * * *'
   workflow_dispatch:
     inputs:
+      force:
+        description: Collect immediately even if the previous collection was less than six hours ago
+        default: true
+        type: boolean
       max_seconds:
         description: Collection time budget in seconds (maximum 5400)
         default: '5400'
@@ -16,9 +20,31 @@ concurrency:
   group: hltb-data-update
   cancel-in-progress: false
 permissions:
-  contents: write
+  contents: read
 jobs:
+  due:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      collect: ${{ steps.check.outputs.collect }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Check age of the actual saved collection
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE_COLLECTION: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
+        run: python updater/src/hltb_updater/schedule.py
   update:
+    needs: due
+    if: needs.due.outputs.collect == 'true'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

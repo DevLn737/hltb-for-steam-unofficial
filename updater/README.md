@@ -4,7 +4,7 @@ The Python collector, extension, and signed snapshots are maintained together in
 
 ## Automatic operation
 
-`.github/workflows/update-data.yml` runs every six hours on a standard GitHub-hosted Ubuntu runner. Each serialized job allows 90 minutes of collection inside a 120-minute job limit, then validates and commits the signed channel (`docs/data/v2`) and packaged fallback (`public/data/hltb-snapshot`) together. The site and data channel are deployed explicitly through `pages.yml`, since pushes made with GITHUB_TOKEN do not start ordinary push workflows.
+`.github/workflows/update-data.yml` checks hourly on a standard GitHub-hosted Ubuntu runner and collects when at least six hours have elapsed since the last checkpoint-producing collection started. Each serialized job allows 90 minutes of collection inside a 120-minute job limit, then validates and commits the signed channel (`docs/data/v2`) and packaged fallback (`public/data/hltb-snapshot`) together. The site and data channel are deployed explicitly through `pages.yml`, since pushes made with GITHUB_TOKEN do not start ordinary push workflows.
 
 Collection remains sequential with 0.75–1.5-second pacing. Requests already completed are committed immediately to SQLite. The `updater-state` prerelease stores one compressed database checkpoint; its replacement is uploaded before the previous asset is removed. Checkpoints include parsed game data and scheduling/status metadata, without keys, raw HTML, images, or user data. They are public along with the repository. GitHub Actions caches and temporary artifacts are not the authoritative state store.
 
@@ -30,3 +30,5 @@ pytest -q
 Manual workflow dispatch accepts a collection budget (clamped to 1–5400 seconds) and maximum due records (clamped to 0–5000). Short dispatches are useful for validating deployment. To inspect current counts and successful-check dates, use `../docs/data/v2/stable.json` and its referenced manifest.
 
 The existing CLI supports JSON import, canaries, bounded update cycles, catch-up cohorts, snapshot recovery, and signed candidate verification. Publication retains parser canaries, coverage and size checks, the 5% record-change guard, signature verification, and a recently completed successful-cycle requirement.
+
+The hourly eligibility check reads the latest durable checkpoint's producing run, not the latest workflow result. A skipped check therefore cannot postpone collection. GitHub may delay or drop individual cron events; subsequent hourly events retry eligibility. This improves recovery within GitHub Actions but does not provide an independent wall-clock scheduling guarantee. Manual dispatch has an explicit `force` option; use `false` to exercise the same eligibility check as cron.

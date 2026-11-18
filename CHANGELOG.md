@@ -4,6 +4,10 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Fixed
+
+- Retry collection eligibility hourly instead of relying on one six-hour cron event. Base the six-hour interval on the last checkpoint-producing collection, so skipped checks never postpone work. Keep explicit manual collection available.
+
 ## [2.2.7] - 2026-11-17
 
 ### Fixed

@@ -50,3 +50,28 @@
 - Local release packaging and reviewer-source archive checks passed. Final review findings were fixed; no deferred review minors.
 
 - Final fresh-data browser run exposed one more October-only assertion (39.5/57 hours versus current 41/58). Updated the smoke test to check all category labels, valid duration format, and the exact game identity; all 3 browser tests pass. Publish patch 2.2.7 rather than rewriting the already published 2.2.6 tag.
+
+## Readiness audit — 2026-11-17
+
+- Repository is public and active; all four project workflows are enabled. Default workflow token is read-only; update/release and Pages jobs explicitly request the required permissions. Pages uses workflow deployment, and SNAPSHOT_SIGNING_KEY is configured.
+- Latest main CI, Pages and v2.2.7 release runs passed. The release contains Chrome ZIP, Firefox ZIP, unsigned XPI, and reviewer sources.
+- Live ECDSA signature, manifest/pack SHA-256, all packaged snapshot buckets, 72-hour freshness gate, privacy page and support page verified successfully. Current version: 2026.11.17.201, source date 2026-11-17, 85,186 distributed games and 59,683 Steam mappings.
+- Restored SQLite checkpoint passes quick_check. It contains 85,237 internal rows; 80 were successfully checked today, and 58,457 are currently due. No catch-up cohort is active. The two integration collection runs used 90-second budgets, not full 90-minute scheduled collection.
+- Scheduled collection: 00:17/06:17/12:17/18:17 UTC; at this audit, next expected start is November 17 at 13:17 Europe/Berlin. A full-budget run should finish around 14:50 local time, subject to queue and network delays.
+- Recommendation: observe 2–4 full scheduled runs (12–24 hours) before a broad store rollout. At roughly 15,000–20,000 requests/day, the currently due queue is several days of work (roughly 4–7 days allowing overhead), not a 12-hour guarantee. Older individual record dates remain valid and are not relabeled by publication.
+- Nonblocking documentation drift: docs/FIREFOX_AMO.md still names 2.2.5 upload artifacts; current release artifacts are 2.2.7. Main is not branch-protected; the data workflow currently requires direct pushes.
+
+## Runner and database audit — 2026-11-18
+
+- Full scheduled run 44174002500 succeeded: November 17, 21:53–23:25 Europe/Berlin. Collection consumed its 90-minute budget; total update job took 91m44s, followed by a successful Pages deployment.
+- Collection: 4,002 attempts, 3,996 successful responses, 358 changed records, 6 missing responses, zero network/parser errors. Python 59 tests and TypeScript 110 tests passed before publication.
+- Saved checkpoint state-44174002500-1.sqlite.gz passes SQLite quick_check. Internal rows increased from 85,237 to 85,446; 4,074 records have successful checks dated November 17 (previous audit: 80). At November 18 audit time, 55,063 records are due. No November 18 successful checks yet; the latest completed cycle remains November 17 22:23 UTC. Frontier cursor completed and was cleared.
+- Published signed snapshot 2026.11.17.301 contains 85,225 distributed games and 59,713 Steam mappings (+39/+30). Live ECDSA signature and SHA-256 verified; committed packaged bucket hashes match the live channel. Data commit ca44d41.
+- Scheduling caveat: only one schedule-triggered run is visible despite the six-hour cron. At 02:39 Europe/Berlin on November 18, no 00:17 UTC invocation appears. Workflow is active, and GitHub reports Actions operational; exact delay/omission cause is not established. GitHub documents schedule delays and possible dropped jobs under load. Full-run health is confirmed, but four daily starts are not yet demonstrated; the earlier 4–7-day backlog estimate assumes that cadence.
+
+## Schedule recovery — 2026-11-18
+
+- Confirmed the missing invocation has no workflow run at all; it did not reach runner allocation. Workflow is enabled, cron is valid on main, and the previous scheduled run succeeded. GitHub does not expose an internal reason for an omitted schedule event; no specific outage or configuration failure is established.
+- Replace a single six-hour cron opportunity with hourly eligibility checks. Determine actual collection age from the latest checkpoint asset's producing run. Skipped checks never reset that age; retain the single-writer concurrency group and explicit manual override. Changing cron also refreshes the schedule actor association.
+- Five regression tests cover initial bootstrap, early skip, six-hour boundary/late retry, forced manual invocation, and malformed/future timestamps. Tests failed before schedule.py existed and pass after implementation. Read-only execution against the real checkpoint correctly skipped an early repeat.
+- Scope: push a normal source commit and validate Actions. Do not create a new extension version, release tag, or GitHub Release; the user explicitly requires separate authorization for those.
