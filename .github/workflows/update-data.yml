@@ -45,6 +45,8 @@ jobs:
     if: needs.due.outputs.collect == 'true'
     permissions:
       contents: write
+    outputs:
+      remaining: ${{ steps.collect.outputs.remaining }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -61,6 +63,7 @@ jobs:
       - run: python -m pip install './updater[test]'
       - run: python -m pytest updater/tests -q
       - name: Collect resumable chunk and prepare signed channel
+        id: collect
         env:
           GH_TOKEN: ${{ github.token }}
           SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
@@ -84,7 +87,7 @@ jobs:
       - run: npm run build:firefox && npm run verify:firefox
       - name: Commit current channel and packaged data together
         run: |
-          git add docs/data/v2 public/data/hltb-snapshot
+          git add docs/data/v2 public/data/hltb-snapshot updater/progress.json
           if git diff --cached --quiet; then exit 0; fi
           git -c user.name='HLTB snapshot updater' -c user.email='noreply@localhost' commit -m 'data: update signed and packaged HLTB snapshots'
           git push origin HEAD:main
@@ -95,3 +98,24 @@ jobs:
       contents: read
       pages: write
       id-token: write
+  continue:
+    needs: [update, pages]
+    if: >-
+      needs.update.result == 'success' && needs.pages.result == 'success' &&
+      needs.update.outputs.remaining != '' && needs.update.outputs.remaining != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Continue the published backlog without waiting for cron
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          for attempt in 1 2 3; do
+            if gh workflow run update-data.yml --ref main -f force=false; then exit 0; fi
+            sleep "$((attempt * 5))"
+          done
+          exit 1

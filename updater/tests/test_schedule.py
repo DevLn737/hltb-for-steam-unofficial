@@ -5,10 +5,27 @@ import io
 import json
 import subprocess
 
-from hltb_updater.schedule import collection_due, main
+from hltb_updater.schedule import backlog_pending, collection_due, main
 
 
 class ScheduleTests(unittest.TestCase):
+    def test_published_pending_work_continues_without_waiting_six_hours(self):
+        self.assertTrue(collection_due('2026-11-22T02:00:00Z', datetime(2026, 11, 22, 4, tzinfo=timezone.utc), backlog=True))
+
+    def test_only_the_current_checkpoint_can_enable_acceleration(self):
+        self.assertTrue(backlog_pending({'schema': 1, 'checkpoint': 'state-123-1.sqlite.gz', 'dueCount': 14}, 'state-123-1.sqlite.gz'))
+        self.assertFalse(backlog_pending({'schema': 1, 'checkpoint': 'state-122-1.sqlite.gz', 'dueCount': 14}, 'state-123-1.sqlite.gz'))
+        self.assertFalse(backlog_pending(None, 'state-123-1.sqlite.gz'))
+
+    def test_drained_queue_returns_to_regular_interval(self):
+        self.assertFalse(backlog_pending({'schema': 1, 'checkpoint': 'state-123-1.sqlite.gz', 'dueCount': 0}, 'state-123-1.sqlite.gz'))
+        self.assertFalse(collection_due('2026-11-22T02:00:00Z', datetime(2026, 11, 22, 4, tzinfo=timezone.utc), backlog=False))
+
+    def test_corrupt_pending_count_fails_closed(self):
+        for count in [-1, True, '14', None]:
+            with self.assertRaises(ValueError):
+                backlog_pending({'schema': 1, 'checkpoint': 'state-123-1.sqlite.gz', 'dueCount': count}, 'state-123-1.sqlite.gz')
+
     def test_missing_checkpoint_is_due(self):
         self.assertTrue(collection_due(None, datetime(2026, 11, 18, tzinfo=timezone.utc)))
 

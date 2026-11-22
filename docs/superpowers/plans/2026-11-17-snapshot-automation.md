@@ -75,3 +75,24 @@
 - Replace a single six-hour cron opportunity with hourly eligibility checks. Determine actual collection age from the latest checkpoint asset's producing run. Skipped checks never reset that age; retain the single-writer concurrency group and explicit manual override. Changing cron also refreshes the schedule actor association.
 - Five regression tests cover initial bootstrap, early skip, six-hour boundary/late retry, forced manual invocation, and malformed/future timestamps. Tests failed before schedule.py existed and pass after implementation. Read-only execution against the real checkpoint correctly skipped an early repeat.
 - Scope: push a normal source commit and validate Actions. Do not create a new extension version, release tag, or GitHub Release; the user explicitly requires separate authorization for those.
+
+## Progress and stability audit — 2026-11-22
+
+- Audited all 15 workflow runs since November 18: all succeeded. There were 11 full scheduled collection runs, 2 scheduled eligibility skips, 1 short manual collection and 1 manual eligibility skip. All 12 collection runs published successfully; no failed or cancelled runs in this period.
+- Aggregate collection statistics: 45,175 attempts, 45,008 successful game responses, 6,543 change events (may repeat a game), 166 missing responses, 1 network/parser error. Missing HTTP responses are not counted as transport/parser failures.
+- Current SQLite passes quick_check: 86,396 active rows; 42,520 distinct games successfully checked since November 18, 5,578 previously known rows changed, 950 new working rows. Due queue: 14,288, versus 55,063 in the previous audit (74.1% net reduction). Statuses: 86,385 ok, 10 missing, 1 network_error.
+- Live signed snapshot 2026.11.22.1801 is dated November 22 and contains 85,546 distributed games and 60,046 Steam mappings (+321/+333 since the November 18 baseline). ECDSA signature, manifest/pack SHA-256, and correspondence with committed packaged bucket hashes verified.
+- Latest scheduled collection finished November 22 at 05:08 Europe/Berlin; checkpoint saved at 05:07 local. Last successful collection metadata and checkpoint agree.
+- Throughput is stable around 4,000 requests per 90-minute chunk. Schedule remains approximate: full collection start gaps range 6.19–13.90 hours, averaging about 8.8 hours rather than 6. Hourly eligibility events are not being created hourly by GitHub; do not describe this as strict scheduling reliability. At observed throughput the current due queue is roughly 1–2 further days of work, subject to incoming due records and GitHub/HLTB delays.
+- No source, Actions, version, or release changes made during this audit. Results recorded in the existing journal only.
+
+## Backlog acceleration implementation — 2026-11-22
+
+User authorized immediate backlog acceleration and stronger scheduling, explicitly forbidding extension versions and releases.
+
+Plan: test checkpoint-linked backlog eligibility and read-only queue counting; publish progress with both data forms and self-dispatch successful jobs until the queue is empty; retain hourly recovery, singleton collection, current pacing and safety gates; run full tests, review, deploy a normal commit and verify a real continuation. No package version, tag, extension release, signing key, request parallelism or request interval changes.
+
+Design choice: use GitHub's documented GITHUB_TOKEN workflow_dispatch exception, so successful collection does not wait for another best-effort cron event. A matching durable checkpoint is required for accelerated eligibility; failed jobs do not dispatch successors. A replaced pending continuation remains recoverable through the hourly gate.
+
+- New regression tests failed before implementation (missing backlog/progress APIs) and pass afterward: 10 schedule tests plus one SQLite eligibility test. Queue exhaustion restores normal timing; stale checkpoints cannot enable acceleration; malformed queue counts fail closed; progress observation preserves actual game-check dates.
+- Full local Python suite: 70 passed. Additional runtime dependencies were installed only into a temporary test environment for verification.

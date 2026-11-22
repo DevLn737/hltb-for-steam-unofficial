@@ -16,6 +16,7 @@ from hltb_updater.database import Database, utc_now
 from hltb_updater.restore import restore_snapshot
 from hltb_updater.scheduler import check_canaries, check_publication_readiness, run_update_cycle
 from hltb_updater.snapshot import build_snapshot, verify_candidate
+from hltb_updater.progress import snapshot_progress
 
 
 repository = os.environ['GITHUB_REPOSITORY']
@@ -86,6 +87,11 @@ with tempfile.TemporaryDirectory() as temporary:
     build_snapshot(database, channel, version, signing_key, 'updater/config/overrides.json',
                    previous / pointer['manifestPath'])
     manifest = verify_candidate(channel, public_key)
+    progress = snapshot_progress(database, filename, utc_now())
+    Path('updater/progress.json').write_text(json.dumps(progress, indent=2) + '\n', encoding='utf-8')
+    if output := os.environ.get('GITHUB_OUTPUT'):
+        with Path(output).open('a', encoding='utf-8') as stream:
+            stream.write(f"remaining={progress['dueCount']}\n")
     for obsolete in sorted((channel / 'versions').iterdir(), key=lambda path: tuple(map(int, path.name.split('.'))), reverse=True)[3:]:
         assert obsolete.resolve().parent == (channel / 'versions').resolve()
         shutil.rmtree(obsolete)

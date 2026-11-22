@@ -6,6 +6,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ### Fixed
 
+- Drain eligible overdue records through consecutive bounded jobs, scheduling the next job after successful validation and Pages deployment instead of waiting for the next cron event.
+- Persist a checkpoint-linked pending-record count with published data so hourly recovery checks can resume an interrupted continuation chain. Stop accelerated collection when the eligible queue is empty.
 - Retry collection eligibility hourly instead of relying on one six-hour cron event. Base the six-hour interval on the last checkpoint-producing collection, so skipped checks never postpone work. Keep explicit manual collection available.
 
 ## [2.2.7] - 2026-11-17
