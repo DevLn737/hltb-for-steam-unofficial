@@ -35,11 +35,11 @@ The dashboard privacy answers must disclose **website content** processing, tran
 - [x] Public privacy-policy text and Limited Use statement.
 - [x] No remote executable code, telemetry, advertising, or developer server.
 - [x] Automated checks and manual Chrome/Steam smoke testing.
-- [x] Review every host permission and DNR header rewrite. Steam host permissions were removed; HLTB access is the only host permission, and DNR filters are pinned to HTTPS API endpoints.
+- [x] Review both host permissions (HowLongToBeat and the signed GitHub Pages data channel) and confirm that DNR filters are pinned to the HTTPS HLTB API endpoints.
 - [x] Record the publication decision for the packaged HLTB-derived snapshot: publish while knowingly accepting the risk of a complaint, rejection, or removal. This is a project-owner risk decision, not legal clearance.
 - [ ] Add original final store assets listed in [STORE_ASSETS.md](STORE_ASSETS.md).
 - [x] Register/verify the Chrome Web Store developer account and enable 2-Step Verification.
-- [x] Add public privacy and support pages under `docs/`, ready for GitHub Pages at the URLs below. Repository Pages still has to be enabled and the live URLs checked.
+- [x] Publish the public privacy and support pages through GitHub Pages at the URLs below.
 - [ ] Fill the Listing, Privacy practices, Distribution, and support fields in the dashboard.
 - [ ] Upload the exact `*-chrome.zip`, first as a controlled/private test if desired.
 - [ ] Perform a final installed-from-store smoke test before public visibility.

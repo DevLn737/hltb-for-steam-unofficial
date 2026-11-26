@@ -30,6 +30,7 @@ jobs:
       actions: read
     outputs:
       collect: ${{ steps.check.outputs.collect }}
+      republish: ${{ steps.pages_check.outputs.republish }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -40,6 +41,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           FORCE_COLLECTION: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
         run: python updater/src/hltb_updater/schedule.py
+      - name: Check for committed snapshots still awaiting publication
+        id: pages_check
+        if: steps.check.outputs.collect == 'false'
+        run: |
+          live="$RUNNER_TEMP/hltb-live-stable.json"
+          if ! curl --fail --silent --show-error --max-time 15 --retry 2 \
+            https://devln737.github.io/hltb-for-steam-unofficial/data/v2/stable.json -o "$live" ||
+            ! cmp -s docs/data/v2/stable.json "$live"; then
+            echo 'republish=true' >> "$GITHUB_OUTPUT"
+          fi
   update:
     needs: due
     if: needs.due.outputs.collect == 'true'
@@ -92,9 +103,14 @@ jobs:
           git -c user.name='HLTB snapshot updater' -c user.email='noreply@localhost' commit -m 'data: update signed and packaged HLTB snapshots'
           git push origin HEAD:main
   pages:
-    needs: update
+    needs: [due, update]
+    if: >-
+      !cancelled() && needs.due.result == 'success' &&
+      (needs.update.result == 'success' ||
+       (needs.update.result == 'skipped' && needs.due.outputs.republish == 'true'))
     uses: ./.github/workflows/pages.yml
     permissions:
+      actions: read
       contents: read
       pages: write
       id-token: write

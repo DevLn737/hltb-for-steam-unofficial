@@ -96,3 +96,15 @@ Design choice: use GitHub's documented GITHUB_TOKEN workflow_dispatch exception,
 
 - New regression tests failed before implementation (missing backlog/progress APIs) and pass afterward: 10 schedule tests plus one SQLite eligibility test. Queue exhaustion restores normal timing; stale checkpoints cannot enable acceleration; malformed queue counts fail closed; progress observation preserves actual game-check dates.
 - Full local Python suite: 70 passed. Additional runtime dependencies were installed only into a temporary test environment for verification.
+
+- Deployment verification: commit 200a006 and CI run 44986563006 succeeded. Probe collection 44986563761 passed data checks, both builds, coupled commit 5316c14, Pages, and its continuation job. It published checkpoint-linked progress with 14,288 pending records.
+- The continuation itself created workflow_dispatch run 44986834848 as github-actions[bot], without a human dispatch or cron event. Its due gate passed within minutes of the previous collection and it entered the next update job using normal default limits. This confirms immediate real chaining; normal 90-minute collection is now in progress. Queue-empty stop is covered by regression tests; the real backlog is not yet empty.
+- Extension remains 2.2.7. No extension version changes, release tags, or GitHub extension releases created. Temporary test environment and generated local test caches removed. This verification note is kept locally while the chain runs, avoiding a main-branch push racing the collector's data commit.
+
+## Pages deployment recovery — 2026-11-26
+
+Four failed data workflows (44993648353, 45052511093, 45594549243, 45691970701) succeeded through collection, verification and commit. Pages failed to list the artifact immediately after upload. The latest upload reported artifact ID 15060300679, which the Actions API subsequently returned as available. Before repair, Pages served snapshot 2026.11.25.3001 while main contained 2026.11.25.3201.
+
+The Pages workflow waits for the exact uploaded artifact, uses run-attempt-specific artifact names and retries deployment twice with delays. If a later collection check skips collection while the public snapshot differs from main, it retries Pages alone. This lets publication recover without another HLTB scan. Updated store checklists to reference matching current artifacts and the actual host permissions.
+
+Local actionlint, packaged snapshot validation and the 72-hour release freshness gate passed. A normal main push exercises Pages and the CI packaging path. No version bump or release tag is part of this change.

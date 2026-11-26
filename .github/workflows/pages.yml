@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
   workflow_call:
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -17,14 +18,52 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url || steps.deployment_final.outputs.page_url }}
+    env:
+      PAGES_ARTIFACT: github-pages-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v7
         with:
           ref: main
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
+        id: upload
         with:
+          name: ${{ env.PAGES_ARTIFACT }}
           path: docs
+      - name: Wait for the uploaded Pages artifact to become visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: |
+          test -n "$ARTIFACT_ID"
+          for attempt in {1..12}; do
+            if gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID" --jq '.name' | grep -Fxq "$PAGES_ARTIFACT"; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Pages artifact $ARTIFACT_ID was uploaded but did not become visible within 60 seconds"
+          exit 1
       - uses: actions/deploy-pages@v5
         id: deployment
+        continue-on-error: true
+        with:
+          artifact_name: ${{ env.PAGES_ARTIFACT }}
+      - name: Wait before retrying Pages
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 15
+      - uses: actions/deploy-pages@v5
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
+        continue-on-error: true
+        with:
+          artifact_name: ${{ env.PAGES_ARTIFACT }}
+      - name: Wait before the final Pages attempt
+        if: steps.deployment_retry.outcome == 'failure'
+        run: sleep 30
+      - uses: actions/deploy-pages@v5
+        id: deployment_final
+        if: steps.deployment_retry.outcome == 'failure'
+        with:
+          artifact_name: ${{ env.PAGES_ARTIFACT }}

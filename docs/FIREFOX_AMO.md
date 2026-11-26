@@ -78,7 +78,7 @@ npm run verify:firefox
 
 ## Files to upload
 
-- Extension: `.output/hltb-for-steam-unofficial-2.2.5-firefox.zip`
-- Reviewer sources: `.output/hltb-for-steam-unofficial-2.2.5-sources.zip`
+- Extension: `.output/hltb-for-steam-unofficial-<version>-firefox.zip`
+- Reviewer sources: `.output/hltb-for-steam-unofficial-<version>-sources.zip` from the same build.
 
 The `firefox-unsigned.xpi` artifact is for temporary local testing only. Mozilla produces the installable signed XPI after submission.
