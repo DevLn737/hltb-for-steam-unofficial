@@ -271,6 +271,19 @@ class Database:
             row = connection.execute("SELECT COALESCE(MAX(hltb_id), 0) AS value FROM games").fetchone()
             return int(row["value"])
 
+    def queue_refresh_through(self, cutoff: date, today: date) -> int:
+        if cutoff >= today:
+            raise ValueError('Refresh cutoff must be before today (UTC)')
+        with self.connect() as connection:
+            result = connection.execute(
+                """UPDATE games SET next_refresh_at=?
+                WHERE tombstoned=0 AND last_status='ok'
+                AND last_success_at<=? AND next_refresh_at>?""",
+                (today.isoformat(), cutoff.isoformat(), today.isoformat()),
+            )
+            connection.commit()
+            return result.rowcount
+
     def due_ids(self, today: date, limit: int, excluded: set[int]) -> list[int]:
         with self.connect() as connection:
             rows = connection.execute(

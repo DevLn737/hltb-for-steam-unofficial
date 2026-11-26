@@ -35,6 +35,8 @@ The hourly eligibility check reads the latest durable checkpoint's producing run
 
 ## Backlog acceleration
 
+For a one-off refresh of old data, dispatch **Update HLTB data** with `refresh_through` set to a past UTC date. This makes active games last successfully checked on or before that date due now. Existing retry dates for failed or missing responses are preserved. The normal bounded collection and continuation handle the resulting queue.
+
 `updater/progress.json` is committed atomically with the signed channel and packaged snapshot after validation. It records the producing checkpoint filename, a UTC observation timestamp, and the number of active games currently due. The schedule gate only trusts its backlog count when that checkpoint is still the latest durable state. A failed collection or failed data commit therefore cannot reuse an older backlog count to trigger a hot retry loop.
 
 The continuation job has repository-scoped `actions: write` permission and dispatches this same workflow with `force=false`, using the normal backlog gate. It runs only after successful data commit and Pages deployment, retries dispatch up to three times, and stops when the remaining count is zero. The existing concurrency group serializes cron, manual and chained runs. If GitHub cron replaces a pending continuation, the recovery gate sees the same published backlog and still collects.

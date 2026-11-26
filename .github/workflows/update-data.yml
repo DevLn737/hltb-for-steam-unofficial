@@ -4,6 +4,9 @@ on:
     - cron: '37 * * * *'
   workflow_dispatch:
     inputs:
+      refresh_through:
+        description: Queue active games last successfully checked on or before this date (YYYY-MM-DD UTC)
+        type: string
       force:
         description: Collect immediately even if the previous collection was less than six hours ago
         default: true
@@ -39,7 +42,7 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
-          FORCE_COLLECTION: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
+          FORCE_COLLECTION: ${{ github.event_name == 'workflow_dispatch' && (inputs.force || inputs.refresh_through) && 'true' || 'false' }}
         run: python updater/src/hltb_updater/schedule.py
       - name: Check for committed snapshots still awaiting publication
         id: pages_check
@@ -80,6 +83,7 @@ jobs:
           SNAPSHOT_SIGNING_KEY: ${{ secrets.SNAPSHOT_SIGNING_KEY }}
           MAX_SECONDS: ${{ inputs.max_seconds || '5400' }}
           MAX_REFRESH: ${{ inputs.max_refresh || '5000' }}
+          REFRESH_THROUGH: ${{ inputs.refresh_through }}
         run: python updater/scripts/github-run.py
       - run: npm ci
       - name: Import the verified local channel

@@ -1,6 +1,6 @@
 """Collect one bounded chunk, persist progress, and build the next signed channel."""
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import base64
 import json
 import os
@@ -25,6 +25,8 @@ previous = channel if (channel / 'stable.json').exists() else Path('docs/data')
 public_key = Path('updater/config/snapshot-public-key.json')
 previous_key = public_key if previous == channel else Path('updater/config/legacy-snapshot-public-key.json')
 database = Database('updater/.tmp/state.sqlite')
+refresh_through = os.environ.get('REFRESH_THROUGH')
+refresh_cutoff = date.fromisoformat(refresh_through) if refresh_through else None
 release = subprocess.run(['gh', 'api', f'repos/{repository}/releases/tags/updater-state'], capture_output=True, text=True)
 if release.returncode and '(HTTP 404)' not in release.stderr:
     raise RuntimeError(release.stderr)
@@ -46,6 +48,9 @@ with tempfile.TemporaryDirectory() as temporary:
         print(f'Recovered {restore_snapshot(database, previous, previous_key)} distributed records', flush=True)
 
     try:
+        if refresh_cutoff is not None:
+            queued = database.queue_refresh_through(refresh_cutoff, utc_now().date())
+            print(f'Queued {queued} games last successfully checked through {refresh_cutoff}', flush=True)
         canaries = json.loads(Path('updater/config/canaries.json').read_text())['games']
         with HltbClient() as client:
             records = check_canaries(client, canaries, database=database)
